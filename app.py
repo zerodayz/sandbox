@@ -4,7 +4,7 @@ from flask import (Flask, jsonify, redirect, render_template, request, session,
 from apps.apps import add_exercise, delete_exercise, exercise, exercise_app
 from authentication import login, logout
 from team import (delete_team, get_user_team, invite_user_to_team, join_team,
-                  leave_team)
+                  leave_team, get_teams_dashboard)
 from user import get_user_profile, create_user
 
 app = Flask(__name__)
@@ -26,6 +26,9 @@ app.route("/team/invite", methods=["POST"])(invite_user_to_team)
 app.route("/team/join", methods=["POST"])(join_team)
 app.route("/team/leave", methods=["POST"])(leave_team)
 app.route("/team/delete", methods=["POST"])(delete_team)
+
+# Register the teams routes
+app.route("/teams", methods=["GET"])(get_teams_dashboard)
 
 # Register the exercises routes
 app.route("/exercises", methods=["GET"])(exercise_app)

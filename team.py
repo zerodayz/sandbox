@@ -38,6 +38,10 @@ def invite_user_to_team():
     return redirect(url_for("get_user_team"))
 
 
+def get_teams_dashboard():
+    return render_template("/team/dashboard.html")
+
+
 def update_user_invitation(username, team_id):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
