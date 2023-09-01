@@ -6,6 +6,7 @@ from authentication import login, logout
 from team import (delete_team, get_user_team, invite_user_to_team, join_team,
                   leave_team, get_teams_dashboard)
 from user import get_user_profile, create_user
+from ctf import get_ctf
 
 app = Flask(__name__)
 
@@ -32,6 +33,9 @@ app.route("/team/delete", methods=["POST"])(delete_team)
 
 # Register the teams routes
 app.route("/teams", methods=["GET"])(get_teams_dashboard)
+
+# Register the CTF routes
+app.route("/ctf", methods=["GET"])(get_ctf)
 
 # Register the exercises routes
 app.route("/exercises", methods=["GET"])(exercise_app)

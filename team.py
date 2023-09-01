@@ -167,7 +167,7 @@ def join_team():
 def get_user_team():
     if request.method == "GET":
         user = user_utils.get_user_by_username(session["username"])
-        return render_template("/team/get.html", user=user)
+        return render_template("/team/team.html", user=user)
 
     try:
         user = user_utils.get_user_by_username(session["username"])

@@ -512,7 +512,7 @@ def exercise(exercise_id):
         user_code = request.form["code"]
         result, top_scores = run_exercise(ex, exercise_id, user_code)
         return render_template(
-            "/exercise/get.html",
+            "/exercise/exercise.html",
             exercise=ex,
             user=user,
             num_of_exercises=num_of_exercises,
@@ -529,7 +529,7 @@ def exercise(exercise_id):
 
     top_scores = get_top_scores(exercise_id)
     return render_template(
-        "/exercise/get.html",
+        "/exercise/exercise.html",
         exercise=ex,
         user=user,
         num_of_exercises=num_of_exercises,
