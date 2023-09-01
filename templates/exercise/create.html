@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Add Exercise{% endblock %}
+{% block title %}Create Exercise{% endblock %}
 {% block head %}
 {{ super() }}
 {% endblock %}
@@ -280,7 +280,7 @@
 
         var form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "/exercise/add");
+        form.setAttribute("action", "/exercise/create");
 
         var actionInput = document.createElement("input");
         actionInput.setAttribute("type", "hidden");

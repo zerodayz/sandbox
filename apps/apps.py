@@ -153,7 +153,7 @@ def add_exercise():
             ex["code"] = code
             result, _ = run_exercise(ex, 0, code)
 
-    return render_template("/exercise/add.html", result=result, exercise=ex)
+    return render_template("/exercise/create.html", result=result, exercise=ex)
 
 
 def check_login():

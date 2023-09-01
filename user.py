@@ -40,6 +40,27 @@ def get_user_profile():
         return render_template("/user/profile.html", user=user)
 
 
+def create_user():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        password_hash = generate_password_hash(password)
+
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+
+            insert_query = """
+                INSERT INTO users (username, password)
+                VALUES (?, ?);
+            """
+            cursor.execute(insert_query, (username, password_hash))
+            conn.commit()
+
+        flash("Account created successfully", "success")
+        return redirect(url_for("login"))
+    return render_template("/user/create.html")
+
+
 def get_user_by_username(username):
     user = None
 

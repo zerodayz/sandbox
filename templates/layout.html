@@ -23,24 +23,30 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
+
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if session['username'] %}
                         <a class="nav-link text-white active" aria-current="page" href="/exercises">
                             Exercises
                         </a>
+                        {% endif %}
                     </ul>
+
                     <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
                         <a class="navbar-brand text-white" href="#" onclick="toggleTheme()">
                             <i class="bi bi-moon-stars-fill pe-none me-2" width="30" height="24" id="theme-toggler"></i>
                         </a>
+                        {% if session['username'] %}
                         <li class="nav-item dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Welcome, {{ session['username'] }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
                                 <li><a class="dropdown-item" href="/logout">Sign out</a></li>
                             </ul>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
