@@ -39,7 +39,29 @@ def invite_user_to_team():
 
 
 def get_teams_dashboard():
-    return render_template("/team/dashboard.html")
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+
+        select_query = """
+            SELECT
+                t.name AS TeamName,
+                t.logo AS TeamLogo,
+                SUM(s.total_score) AS TeamScore,
+                MAX(s.date_created) AS LastScoreUpdateDate,
+                COUNT(DISTINCT u.username) AS NumberOfMembers
+            FROM
+                teams t
+            JOIN
+                users u ON t.id = u.team
+            LEFT JOIN
+                scores s ON u.username = s.username
+            GROUP BY
+                t.name, t.logo
+            """
+        cursor.execute(select_query)
+        team_score = cursor.fetchall()
+
+    return render_template("/team/dashboard.html", top_scores=team_score)
 
 
 def update_user_invitation(username, team_id):
@@ -148,6 +170,11 @@ def get_user_team():
         return render_template("/team/get.html", user=user)
 
     try:
+        user = user_utils.get_user_by_username(session["username"])
+        if user.team:
+            flash("You are already part of a team.", "danger")
+            return redirect(url_for("get_user_profile"))
+
         team_crest = request.files["team_crest"]
         img = Image.open(team_crest)
         img = img.resize((24, 24))
@@ -158,8 +185,7 @@ def get_user_team():
         team_name = request.form["team_name"]
         team_password = request.form["team_password"]
 
-        user = user_utils.get_user_by_username(session["username"])
-        owner = user.username
+        user = user_utils.get_user_by_username(user.username)
 
         new_password_hash = generate_password_hash(team_password)
 
@@ -171,7 +197,7 @@ def get_user_team():
                 VALUES (?, ?, ?, ?);
             """
             cursor.execute(
-                insert_team_query, (team_name, owner, new_password_hash, team_crest_b64)
+                insert_team_query, (team_name, user.username, new_password_hash, team_crest_b64)
             )
 
             update_user_query = """
@@ -179,7 +205,7 @@ def get_user_team():
                 SET team = ?
                 WHERE username = ?;
             """
-            cursor.execute(update_user_query, (cursor.lastrowid, owner))
+            cursor.execute(update_user_query, (cursor.lastrowid, user.username))
 
             conn.commit()
 

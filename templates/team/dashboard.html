@@ -29,13 +29,13 @@
                 {% for score in top_scores %}
                 <tr>
                   <td>
-                    {% if score[3] %}
-                    <img src="data:image/png;base64, {{ score[3] }}"/>
+                    {% if score[1] %}
+                    <img src="data:image/png;base64, {{ score[1] }}"/>
                     {% endif %}
                     {{ score[0] }}
                   </td>
-                  <td>{{ score[1] }}</td>
                   <td>{{ score[2] }}</td>
+                  <td>{{ score[3] }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
