@@ -1,7 +1,7 @@
+
 #content {
     margin-top: 56px;
 }
-
 
 .container {
     max-width: 500px;
@@ -54,3 +54,4 @@ input[type="submit"] {
     border-bottom-left-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
 }
+
