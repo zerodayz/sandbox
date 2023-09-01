@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block title %}Exercises{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <pre>{{ message }}</pre>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    <input type="text" id="searchInput" class="form-control mb-4" placeholder="Search exercises...">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 exercise-list">
+                    <a class="card btn btn-light exercise-add-card" href="/exercise/add" class="btn">
+                        <div>
+                            <span><i class="bi bi-plus-circle-fill"></i></span>
+                        </div>
+                    </a>
+                    {% for exercise in exercises %}
+                        <div class="card exercise-card">
+                            <div class="card-header">
+                                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ exercise['description'] }}</p>
+                                <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
+                                <span class="badge bg-secondary">{{ exercise['language'] }}</span>
+                                <br/>
+                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-light mt-4">Open</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Individual Top Scores</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Score</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for score in top_scores %}
+                                    <tr>
+                                        <td>
+                                            {% if score[3] %}
+                                            <img src="data:image/png;base64, {{ score[3] }}"/>
+                                            {% endif %}
+                                            {{ score[0] }}
+                                        </td>
+                                        <td>{{ score[1] }}</td>
+                                        <td>{{ score[2] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<style>
+    .exercise-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+    }
+
+    .exercise-card {
+        display: block;
+    }
+    .exercise-add-card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .exercise-add-card span {
+        display: inline-block;
+        font-size: 30px; /* Set the font size */
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const exerciseCards = document.querySelectorAll(".exercise-card");
+
+        searchInput.addEventListener("input", function () {
+            const searchText = searchInput.value.trim().toLowerCase();
+
+            exerciseCards.forEach(function (card) {
+                const cardText = card.textContent.toLowerCase();
+                const tags = card.querySelectorAll(".badge");
+                let found = false;
+
+                tags.forEach(function (tag) {
+                    if (tag.textContent.toLowerCase().includes(searchText)) {
+                        found = true;
+                    }
+                });
+
+                if (cardText.includes(searchText) || found) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

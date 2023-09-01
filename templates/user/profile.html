@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block title %}Profile{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <pre>{{ message }}</pre>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+    {% if team_invitation %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      You have been invited to join the team:
+      {% if team_invitation.logo %}
+      <img src="data:image/png;base64, {{ team_invitation.logo if team_invitation.logo else '' }}"/>
+      {% endif %}
+      {{ team_invitation.name }}</p>
+      <form method="post" action="/team/join">
+        <input type="hidden" name="team_id" value="{{ team_invitation.id }}">
+        <input type="hidden" name="user_id" value="{{ user.username }}">
+        <input type="password" class="form-control" id="team_password" name="team_password" placeholder="Team Password" required>
+        <button type="submit" class="btn btn-success">Join</button>
+      </form>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="mt-4">User Profile</h1>
+        <hr/>
+        <div class="card mt-4">
+          <div class="card-header">
+            <i class="bi bi-person-circle pe-none me-2" width="30" height="24"></i>
+            <span class="fs-5 fw-semibold">Profile</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">Username: {{ user.username }}</p>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header">
+            <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
+            <span class="fs-5 fw-semibold">Team</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">Team:
+              {% if user.team.logo %}
+              <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+              {% endif %}
+              {{ user.team.name if user.team else 'No Team' }}</p>
+            <a href="/team" type="button" class="btn btn-light">Team Management</a>
+          </div>
+        </div>
+        <!-- Change password -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+            <span class="fs-5 fw-semibold">Change Password</span>
+          </div>
+          <div class="card-body">
+            <form method="post" action="/profile">
+              <div class="mb-3">
+                <label for="old_password" class="form-label">Old Password</label>
+                <input type="password" class="form-control" id="old_password" name="old_password" required>
+              </div>
+              <div class="mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" required>
+              </div>
+              <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+              </div>
+              <button type="submit" class="btn btn-light">Change Password</button>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

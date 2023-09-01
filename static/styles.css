@@ -1,0 +1,143 @@
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+input[type="text"],
+input[type="password"]
+{ width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+p {
+    margin-top: 10px;
+}
+
+a {
+    color: #007bff;
+}
+
+#content {
+    margin-top: 56px;
+}
+
+#code-container:read-write:focus {
+    outline: none;
+}
+
+.code-container {
+    position: relative;
+    height: 350px;
+}
+
+#sample-output {
+    font-family: "Courier New", Courier, monospace;
+}
+
+.code-wrapper {
+    position: relative;
+}
+
+#editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-size: 1rem;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+.file-browser {
+    padding: 10px;
+}
+
+.file-list {
+    list-style-type: none;
+    padding: 10px;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    border: 1px solid rgb(222, 226, 230); !important;
+}
+
+.file-ops {
+    list-style-type: none;
+    padding: 4px;
+    background-color: rgba(33, 37, 41, 0.03);
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    border-top: 1px solid rgb(222, 226, 230); !important;
+    border-left: 1px solid rgb(222, 226, 230); !important;
+    border-right: 1px solid rgb(222, 226, 230); !important;
+}
+
+
+.ops-icon {
+    padding: 6px;
+    margin-left: 2px;
+    margin-right: 2px;
+    border-radius: 0.375rem;
+}
+
+.run-icon {
+    padding: 6px;
+    margin-left: 2px;
+    margin-right: 2px;
+    border-radius: 0.375rem;
+}
+
+
+.ops-icon:hover {
+    background-color: #ced4da;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 0.375rem;
+}
+
+.file-icon {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.file-name {
+    color: #333;
+}
+
+.file-item:hover {
+    background-color: #ced4da;
+}
+
+.separator {
+    height: 35px;
+    width: 1px;
+    background-color: rgb(222, 226, 230);
+}

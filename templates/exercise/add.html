@@ -1,0 +1,610 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Exercise{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="mt-4">Add Exercise</h1>
+                <hr/>
+                {% if result['type'] %}
+                <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
+                    <pre>{{ result['message'] }}</pre>
+                    {% if result['full_score'] %}
+                    <a href="#" class="btn btn-light mt-4" onclick="runCode('save')">Save Exercise</a>
+                    {% endif %}
+                    {% if result['stdout'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Output</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['stdout'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['stderr'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Error</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['stderr'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['flake8'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Flake8</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['flake8'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['mypy'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Mypy</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['mypy'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['black'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Black</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['black'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['pylint'] %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Pylint</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['pylint'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">
+                            <input type="text" id="title" class="input-as-span" value="{% if exercise['title'] %}{{ exercise['title'] }}{% else %}Type your title here{% endif %}">
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p><textarea rows="4" id="description" class="input-as-span">{% if exercise['description'] %}{{ exercise['description'] }}{% else %}Type your description here{% endif %}</textarea></p>
+                        <span class="badge difficulty {% if exercise['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
+                        <span class="badge difficulty {% if exercise['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
+                        <span class="badge difficulty {% if exercise['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+                        <span class="badge language {% if exercise['language'] == 'python3' %}selected{% else %}{% endif %}"  onclick="selectLanguageBadge(this)">python3</span>
+                    </div>
+                </div>
+                <div id="sample-sections">
+                    {% if exercise['sample_1_input'] and exercise['sample_1_output'] %}
+                        <div>
+                            <div class="card mt-4 input-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Input</span>
+                                    <span class="trash-button" onclick="removeSample(1)"><i class="bi bi-trash"></i></span>
+                                </div>
+                                <div class="card-body">
+                                    <span id="sample_1_input">
+                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_1_input'] }}</textarea>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card mt-4 output-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Output</span>
+                                </div>
+                                <div id="sample_1_output-body" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="card-body">
+                                    <span id="sample_1_output">
+                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif exercise['sample_1_output'] %}
+                        <div>
+                            <div class="card mt-4 output-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Output</span>
+                                    <span class="trash-button" onclick="removeOutputSample(1)"><i class="bi bi-trash"></i></span>
+                                </div>
+                                <div id="sample_1_output-body" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="card-body">
+                                            <span id="sample_1_output">
+                                                <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if exercise['sample_2_input'] and exercise['sample_2_output'] %}
+                        <div>
+                            <div class="card mt-4 input-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Input</span>
+                                    <span class="trash-button" onclick="removeSample(2)"><i class="bi bi-trash"></i></span>
+                                </div>
+                                <div class="card-body">
+                                    <span id="sample_2_input">
+                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_2_input'] }}</textarea>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card mt-4 output-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Output</span>
+
+                                </div>
+                                <div id="sample_2_output-body" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="card-body">
+                                <span id="sample_2_output">
+                                    <textarea rows="4" class="input-as-span">{{ exercise['sample_2_output'] }}</textarea>
+                                </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if exercise['sample_3_input'] and exercise['sample_3_output'] %}
+                        <div>
+                            <div class="card mt-4 input-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Input</span>
+                                    <span class="trash-button" onclick="removeSample(3)"><i class="bi bi-trash"></i></span>
+                                </div>
+                                <div class="card-body">
+                                    <span id="sample_3_input">
+                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_3_input'] }}</textarea>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card mt-4 output-section">
+                                <div class="card-header">
+                                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                                    <span class="fs-5 fw-semibold">Sample Output</span>
+
+                                </div>
+                                <div id="sample_3_output-body" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="card-body">
+                                        <span id="sample_3_output">
+                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_3_output'] }}</textarea>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <button id="add-sample-button" type="button" class="btn btn-light mt-4">Sample Input and Output</button>
+                <button id="add-output-button" type="button" class="btn btn-light mt-4">Sample Output</button>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Your Solution</span>
+                    </div>
+                    <div class="card-body" style="padding: 0px !important;">
+                        <form method="post" id="code-form">
+                            <div class="form-group code-container">
+                                <div id="editor">{% if exercise['code'] %}{{ exercise['code'] }}{% else %}# Write your code here{% endif %}</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-light mt-4" onclick="runCode('run')">Submit</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .badge {
+        cursor: pointer;
+        padding: 5px 10px;
+        background-color: #6c757d;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .badge.selected {
+        background-color: #007bff;
+    }
+
+    .trash-button {
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .trash-button:hover {
+        color: #dc3545;
+    }
+
+    .input-as-span {
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 0px !important;
+        border-radius: 0px !important;
+        background-color: transparent;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        width: calc(100% - 30px) !important;
+    }
+</style>
+<script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/python");
+
+    function runCode(action) {
+        var filename = "0.py";
+        var code = editor.getValue();
+
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/exercise/add");
+
+        var actionInput = document.createElement("input");
+        actionInput.setAttribute("type", "hidden");
+        actionInput.setAttribute("name", "action");
+        actionInput.setAttribute("value", action);
+
+        var codeInput = document.createElement("input");
+        codeInput.setAttribute("type", "hidden");
+        codeInput.setAttribute("name", "code");
+        codeInput.setAttribute("value", code);
+
+        var titleInput = document.createElement("input");
+        titleInput.setAttribute("type", "hidden");
+        titleInput.setAttribute("name", "title");
+        titleInput.setAttribute("value", document.getElementById("title").value);
+
+        var descriptionInput = document.createElement("input");
+        descriptionInput.setAttribute("type", "hidden");
+        descriptionInput.setAttribute("name", "description");
+        descriptionInput.setAttribute("value", document.getElementById("description").value);
+
+        var languageInput = document.createElement("input");
+        languageInput.setAttribute("type", "hidden");
+        languageInput.setAttribute("name", "language");
+        const badgesLang = document.querySelectorAll('.language');
+        badgesLang.forEach(b => {
+            if (b.classList.contains('selected')) {
+                languageInput.setAttribute("value", b.textContent);
+            }
+        });
+
+        var difficultyInput = document.createElement("input");
+        difficultyInput.setAttribute("type", "hidden");
+        difficultyInput.setAttribute("name", "difficulty");
+        const badges = document.querySelectorAll('.difficulty');
+        badges.forEach(b => {
+            if (b.classList.contains('selected')) {
+                difficultyInput.setAttribute("value", b.textContent);
+            }
+        });
+
+        var sample_1_input = document.getElementById("sample_1_input");
+        if (sample_1_input != null) {
+            var sample_1_input_textarea = sample_1_input.getElementsByTagName("textarea")[0];
+            var sample1Input = document.createElement("input");
+            sample1Input.setAttribute("type", "hidden");
+            sample1Input.setAttribute("name", "sample_1_input");
+            sample1Input.setAttribute("value", sample_1_input_textarea.value);
+        }
+
+        var sample_1_output = document.getElementById("sample_1_output");
+        if (sample_1_output != null) {
+            var sample_1_output_textarea = sample_1_output.getElementsByTagName("textarea")[0];
+            var sample1Output = document.createElement("input");
+            sample1Output.setAttribute("type", "hidden");
+            sample1Output.setAttribute("name", "sample_1_output");
+            sample1Output.setAttribute("value", sample_1_output_textarea.value);
+        }
+
+        var sample_2_input = document.getElementById("sample_2_input");
+        if (sample_2_input != null) {
+            var sample_2_input_textarea = sample_2_input.getElementsByTagName("textarea")[0];
+            var sample2Input = document.createElement("input");
+            sample2Input.setAttribute("type", "hidden");
+            sample2Input.setAttribute("name", "sample_2_input");
+            sample2Input.setAttribute("value", sample_2_input_textarea.value);
+        }
+
+        var sample_2_output = document.getElementById("sample_2_output");
+        if (sample_2_output != null) {
+            var sample_2_output_textarea = sample_2_output.getElementsByTagName("textarea")[0];
+            var sample2Output = document.createElement("input");
+            sample2Output.setAttribute("type", "hidden");
+            sample2Output.setAttribute("name", "sample_2_output");
+            sample2Output.setAttribute("value", sample_2_output_textarea.value);
+        }
+
+        var sample_3_input = document.getElementById("sample_3_input");
+        if (sample_3_input != null) {
+            var sample_3_input_textarea = sample_3_input.getElementsByTagName("textarea")[0];
+            var sample3Input = document.createElement("input");
+            sample3Input.setAttribute("type", "hidden");
+            sample3Input.setAttribute("name", "sample_3_input");
+            sample3Input.setAttribute("value", sample_3_input_textarea.value);
+        }
+
+        var sample_3_output = document.getElementById("sample_3_output");
+        if (sample_3_output != null) {
+            var sample_3_output_textarea = sample_3_output.getElementsByTagName("textarea")[0];
+            var sample3Output = document.createElement("input");
+            sample3Output.setAttribute("type", "hidden");
+            sample3Output.setAttribute("name", "sample_3_output");
+            sample3Output.setAttribute("value", sample_3_output_textarea.value);
+        }
+
+        var filenameInput = document.createElement("input");
+        filenameInput.setAttribute("type", "hidden");
+        filenameInput.setAttribute("name", "filename");
+        filenameInput.setAttribute("value", filename);
+
+        if (titleInput.value === "") {
+            alert("Please fill out the title");
+            return;
+        }
+        if (descriptionInput.value === "") {
+            alert("Please fill out the description");
+            return;
+        }
+        if (languageInput.value === "") {
+            alert("Please select a language");
+            return;
+        }
+        if (difficultyInput.value === "") {
+            alert("Please select a difficulty");
+            return;
+        }
+        if (codeInput.value === "") {
+            alert("Please write your code");
+            return;
+        }
+        if (sample1Output == null) {
+            alert("Please fill out the sample output");
+            return;
+        }
+
+
+        form.appendChild(titleInput);
+        form.appendChild(descriptionInput);
+        form.appendChild(actionInput);
+        form.appendChild(codeInput);
+        form.appendChild(languageInput);
+        form.appendChild(difficultyInput);
+        if (sample1Input != null) {
+            form.appendChild(sample1Input);
+        }
+        if (sample1Output != null) {
+            form.appendChild(sample1Output);
+        }
+        if (sample2Input != null) {
+            form.appendChild(sample2Input);
+        }
+        if (sample2Output != null) {
+            form.appendChild(sample2Output);
+        }
+        if (sample3Input != null) {
+            form.appendChild(sample3Input);
+        }
+        if (sample3Output != null) {
+            form.appendChild(sample3Output);
+        }
+        form.appendChild(filenameInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+</script>
+<script>
+    function selectLanguageBadge(badge) {
+        const badges = document.querySelectorAll('.language');
+
+        badges.forEach(b => {
+            if (b === badge) {
+                b.classList.add('selected');
+            } else {
+                b.classList.remove('selected');
+            }
+        });
+    }
+    function selectDifficultyBadge(badge) {
+        const badges = document.querySelectorAll('.difficulty');
+
+        badges.forEach(b => {
+            if (b === badge) {
+                b.classList.add('selected');
+            } else {
+                b.classList.remove('selected');
+            }
+        });
+    }
+</script>
+
+<script>
+    const addButton = document.getElementById('add-sample-button');
+    const addOutputButton = document.getElementById('add-output-button');
+    const sampleSections = document.getElementById('sample-sections');
+    let sampleCount = 0;
+    const maxSamples = 3;
+    const maxOutput = 1;
+    let singleOutput = false;
+
+    // Recount samples and outputs at the page load
+    Array.from(document.getElementsByClassName('input-section')).forEach(el => {
+        if (el.style.display !== 'none') {
+            sampleCount++;
+        }
+    });
+    Array.from(document.getElementsByClassName('output-section')).forEach(el => {
+        if (el.style.display !== 'none') {
+            sampleCount++;
+        }
+    });
+
+    if (sampleCount === maxOutput) {
+        singleOutput = true;
+        addOutputButton.style.display = 'none';
+    }
+    if (sampleCount === maxSamples || singleOutput === true) {
+        addButton.style.display = 'none';
+    }
+
+    addButton.addEventListener('click', () => {
+        if (!singleOutput && sampleCount < maxSamples) {
+            addSampleSection();
+        }
+    });
+
+    addOutputButton.addEventListener('click', () => {
+        if (sampleCount < maxOutput) {
+            addSampleSection(false, true);
+        }
+    });
+
+    function outputAdded() {
+        return Array.from(document.getElementsByClassName('output-section')).some(el => el.style.display !== 'none');
+    }
+
+    function inputAdded() {
+        return Array.from(document.getElementsByClassName('input-section')).some(el => el.style.display !== 'none');
+    }
+
+    function addSampleSection(addInput = true, addOutput = true) {
+        sampleCount++;
+
+        const inputKey = `sample_${sampleCount}_input`;
+        const outputKey = `sample_${sampleCount}_output`;
+
+        if (addOutput && !addInput) {
+            singleOutput = true;
+            addOutputButton.style.display = 'none';
+            addButton.style.display = 'none';
+        } else if (addOutput && addInput) {
+            addOutputButton.style.display = 'none';
+        }
+
+        const sampleSection = document.createElement('div');
+        sampleSection.innerHTML = `
+            ${addInput ? `<div class="card mt-4 input-section">
+                <div class="card-header">
+                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">Sample Input</span>
+                    ${addOutput ? `<span class="trash-button" onclick="removeSample(${sampleCount})"><i class="bi bi-trash"></i></span>` : ''}
+                </div>
+                <div class="card-body">
+                    <span id="${inputKey}">
+                        <textarea rows="4" class="input-as-span">Sample Input code here, one line or multiple lines</textarea>
+                    </span>
+                </div>
+            </div>
+            ` : ''}
+            ${addOutput ? `
+            <div class="card mt-4 output-section">
+                <div class="card-header">
+                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">Sample Output</span>
+                    ${addOutput && !addInput ? `<span class="trash-button" onclick="removeOutputSample(${sampleCount})"><i class="bi bi-trash"></i></span>` : ''}
+                </div>
+                <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
+                    <div class="card-body">
+                        <span id="${outputKey}">
+                            <textarea rows="4" class="input-as-span">Expected Output code here, one line or multiple lines</textarea>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+        `;
+
+        sampleSections.appendChild(sampleSection);
+
+        if (addInput) {
+            inputAdded = true;
+        }
+        if (sampleCount == maxSamples) {
+            addButton.style.display = 'none';
+        }
+    }
+
+    function removeOutputSample(count) {
+        sampleCount--;
+        singleOutput = false;
+
+        const outputKey = `sample_${count}_output`;
+
+        const outputElement = document.getElementById(outputKey + "-body");
+
+        if (outputElement) {
+            outputElement.parentElement.remove();
+        }
+        addOutputButton.style.display = 'inline';
+        addButton.style.display = 'inline';
+    }
+
+    function removeSample(count) {
+        sampleCount--;
+
+        const inputKey = `sample_${count}_input`;
+        const outputKey = `sample_${count}_output`;
+
+        const inputElement = document.getElementById(inputKey);
+        const outputElement = document.getElementById(outputKey + "-body");
+
+        if (inputElement) {
+            inputElement.parentElement.parentElement.remove();
+        }
+
+        if (outputElement) {
+            outputElement.parentElement.remove();
+        }
+        if (sampleCount == 0) {
+            addOutputButton.style.display = 'inline';
+        } else if (sampleCount < maxSamples) {
+            addButton.style.display = 'inline';
+        }
+    }
+</script>
+{% endblock %}

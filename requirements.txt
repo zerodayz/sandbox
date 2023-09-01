@@ -1,0 +1,6 @@
+Flask
+gunicorn
+flake8
+mypy
+black
+isort
