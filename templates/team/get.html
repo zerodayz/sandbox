@@ -73,7 +73,7 @@
             <div class="col-md-12">
                 <h1 class="mt-4">Team</h1>
                 <hr/>
-                <div class="card mt-4">
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Team</span>
@@ -87,7 +87,7 @@
                     </div>
                 </div>
                 {% if not user.team %}
-                <div class="card mt-4">
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Create New</span>
@@ -110,13 +110,13 @@
                                 <label for="confirm_password" class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                             </div>
-                            <button type="submit" class="btn btn-light">Create</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
                 </div>
                 {% endif %}
                 {% if user.team and user.team.owner == user.username %}
-                <div class="card mt-4">
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Invite Member</span>
@@ -133,7 +133,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="card mt-4">
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Delete Team</span>
@@ -146,7 +146,7 @@
                 </div>
                 {% endif %}
                 {% if user.team %}
-                <div class="card mt-4">
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Leave Team</span>

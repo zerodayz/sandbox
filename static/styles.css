@@ -1,4 +1,144 @@
 
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bs-light); 
+    color: var(--bs-dark); 
+}
+
+
+.navbar {
+    background-color: var(--bs-dark); 
+    color: var(--bs-light); 
+    padding: 15px 0;
+    border-bottom: 2px solid var(--bs-primary); 
+}
+
+.navbar-brand {
+    font-size: 24px;
+}
+
+.navbar-brand i {
+    font-size: 30px;
+    vertical-align: middle;
+    margin-right: 5px;
+    color: var(--bs-primary); 
+}
+
+
+.navbar-nav a.nav-link {
+    color: var(--bs-light); 
+    margin-right: 20px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.navbar-nav a.nav-link:hover {
+    color: var(--bs-primary); 
+}
+
+
+#theme-toggler {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+.dropdown-menu {
+    background-color: var(--bs-dark); 
+    border: none;
+}
+
+.dropdown-item {
+    color: var(--bs-light); 
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: var(--bs-primary); 
+    color: var(--bs-light); 
+}
+
+
+#content {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+
+span.style-heart {
+    color: var(--bs-pink); 
+}
+
+
+
+
+.card {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.card-header {
+    background-color: var(--bs-light); 
+    color: var(--bs-primary); 
+    font-size: 24px;
+    padding: 15px;
+    border-bottom: 2px solid var(--bs-primary); 
+}
+
+.card-header i {
+    font-size: 30px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+
+a {
+    color: var(--bs-primary); 
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--bs-secondary); 
+}
+
+
+span.fs-5 {
+    font-size: 1.25rem; 
+    font-weight: 600;
+}
+
+
+.exercise-add-card span {
+    display: inline-block;
+    font-size: 30px;
+}
+
+
+
+
+
+#searchInput {
+    border-radius: 16px;
+    padding: 16px;
+}
+
+
+
+
 #content {
     margin-top: 56px;
 }
@@ -7,6 +147,7 @@
     max-width: 500px;
     margin: 0 auto;
     padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 input[type="text"],
@@ -20,8 +161,8 @@ input[type="password"]
 
 input[type="submit"] {
     padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--bs-primary);;
+    color: var(--bs-light);;
     border: none;
     border-radius: 4px;
     cursor: pointer;

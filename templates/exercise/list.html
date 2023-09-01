@@ -8,30 +8,36 @@
 {% block content %}
     <div class="container-fluid">
         <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
             <div class="row">
                 <div class="col-md-12">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    {% for category, message in messages %}
                     <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         <pre>{{ message }}</pre>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    <input type="text" id="searchInput" class="form-control mb-4" placeholder="Search exercises...">
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="input-group mb-4 mx-auto">
+                        <input type="text" id="searchInput" class="form-control border-light-subtle" placeholder="Search">
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12 exercise-list">
-                    <a class="card btn btn-light exercise-add-card" href="/exercise/create" class="btn">
+                    <a class="card border-0 btn btn-primary exercise-add-card" href="/exercise/create" class="btn">
                         <div>
                             <span><i class="bi bi-plus-circle-fill"></i></span>
                         </div>
                     </a>
                     {% for exercise in exercises %}
-                        <div class="card exercise-card">
+                        <div class="card exercise-card border-0 mb-3">
                             <div class="card-header">
                                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                 <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
@@ -41,7 +47,7 @@
                                 <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
                                 <span class="badge bg-secondary">{{ exercise['language'] }}</span>
                                 <br/>
-                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-light mt-4">Open</a>
+                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary mt-4">Open</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -49,7 +55,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Individual Top Scores</span>

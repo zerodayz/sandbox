@@ -16,10 +16,10 @@
                 <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
                     <pre>{{ result['message'] }}</pre>
                     {% if result['full_score'] %}
-                    <a href="#" class="btn btn-light mt-4" onclick="runCode('save')">Save Exercise</a>
+                    <a href="#" class="btn btn-primary mt-4" onclick="runCode('save')">Save Exercise</a>
                     {% endif %}
                     {% if result['stdout'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Output</span>
@@ -30,7 +30,7 @@
                     </div>
                     {% endif %}
                     {% if result['stderr'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Error</span>
@@ -41,7 +41,7 @@
                     </div>
                     {% endif %}
                     {% if result['flake8'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Flake8</span>
@@ -52,7 +52,7 @@
                     </div>
                     {% endif %}
                     {% if result['mypy'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Mypy</span>
@@ -63,7 +63,7 @@
                     </div>
                     {% endif %}
                     {% if result['black'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Black</span>
@@ -74,7 +74,7 @@
                     </div>
                     {% endif %}
                     {% if result['pylint'] %}
-                    <div class="card mt-4">
+                    <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Pylint</span>
@@ -89,7 +89,7 @@
                 {% endif %}
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card border-0">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">
@@ -107,19 +107,21 @@
                 <div id="sample-sections">
                     {% if exercise['sample_1_input'] and exercise['sample_1_output'] %}
                         <div>
-                            <div class="card mt-4 input-section">
+                            <div class="card border-0 mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
-                                    <span class="trash-button" onclick="removeSample(1)"><i class="bi bi-trash"></i></span>
+                                    <span class="trash-button" onclick="removeSample(1)"><i class="bi bi-x"></i></span>
                                 </div>
                                 <div class="card-body">
                                     <span id="sample_1_input">
-                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_1_input'] }}</textarea>
+                                        <p id="sample-output">
+                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_1_input'] }}</textarea>
+                                        </p>
                                     </span>
                                 </div>
                             </div>
-                            <div class="card mt-4 output-section">
+                            <div class="card border-0 mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -127,7 +129,9 @@
                                 <div id="sample_1_output-body" style="max-height: 300px; overflow-y: auto;">
                                     <div class="card-body">
                                     <span id="sample_1_output">
-                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                        <p id="sample-output">
+                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                        </p>
                                     </span>
                                     </div>
                                 </div>
@@ -135,16 +139,18 @@
                         </div>
                     {% elif exercise['sample_1_output'] %}
                         <div>
-                            <div class="card mt-4 output-section">
+                            <div class="card border-0 mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
-                                    <span class="trash-button" onclick="removeOutputSample(1)"><i class="bi bi-trash"></i></span>
+                                    <span class="trash-button" onclick="removeOutputSample(1)"><i class="bi bi-x"></i></span>
                                 </div>
                                 <div id="sample_1_output-body" style="max-height: 300px; overflow-y: auto;">
                                     <div class="card-body">
                                             <span id="sample_1_output">
-                                                <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                                <p id="sample-output">
+                                                    <textarea rows="4" class="input-as-span">{{ exercise['sample_1_output'] }}</textarea>
+                                                </p>
                                             </span>
                                     </div>
                                 </div>
@@ -153,19 +159,21 @@
                     {% endif %}
                     {% if exercise['sample_2_input'] and exercise['sample_2_output'] %}
                         <div>
-                            <div class="card mt-4 input-section">
+                            <div class="card border-0 mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
-                                    <span class="trash-button" onclick="removeSample(2)"><i class="bi bi-trash"></i></span>
+                                    <span class="trash-button" onclick="removeSample(2)"><i class="bi bi-x"></i></span>
                                 </div>
                                 <div class="card-body">
                                     <span id="sample_2_input">
-                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_2_input'] }}</textarea>
+                                        <p id="sample-output">
+                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_2_input'] }}</textarea>
+                                        </p>
                                     </span>
                                 </div>
                             </div>
-                            <div class="card mt-4 output-section">
+                            <div class="card border-0 mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -174,7 +182,9 @@
                                 <div id="sample_2_output-body" style="max-height: 300px; overflow-y: auto;">
                                     <div class="card-body">
                                 <span id="sample_2_output">
-                                    <textarea rows="4" class="input-as-span">{{ exercise['sample_2_output'] }}</textarea>
+                                    <p id="sample-output">
+                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_2_output'] }}</textarea>
+                                    </p>
                                 </span>
                                     </div>
                                 </div>
@@ -183,19 +193,21 @@
                     {% endif %}
                     {% if exercise['sample_3_input'] and exercise['sample_3_output'] %}
                         <div>
-                            <div class="card mt-4 input-section">
+                            <div class="card border-0 mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
-                                    <span class="trash-button" onclick="removeSample(3)"><i class="bi bi-trash"></i></span>
+                                    <span class="trash-button" onclick="removeSample(3)"><i class="bi bi-x"></i></span>
                                 </div>
                                 <div class="card-body">
                                     <span id="sample_3_input">
-                                        <textarea rows="4" class="input-as-span">{{ exercise['sample_3_input'] }}</textarea>
+                                        <p id="sample-output">
+                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_3_input'] }}</textarea>
+                                        </p>
                                     </span>
                                 </div>
                             </div>
-                            <div class="card mt-4 output-section">
+                            <div class="card border-0 mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -204,7 +216,9 @@
                                 <div id="sample_3_output-body" style="max-height: 300px; overflow-y: auto;">
                                     <div class="card-body">
                                         <span id="sample_3_output">
-                                            <textarea rows="4" class="input-as-span">{{ exercise['sample_3_output'] }}</textarea>
+                                            <p id="sample-output">
+                                                <textarea rows="4" class="input-as-span">{{ exercise['sample_3_output'] }}</textarea>
+                                            </p>
                                         </span>
                                     </div>
                                 </div>
@@ -212,9 +226,9 @@
                         </div>
                     {% endif %}
                 </div>
-                <button id="add-sample-button" type="button" class="btn btn-light mt-4">Sample Input and Output</button>
-                <button id="add-output-button" type="button" class="btn btn-light mt-4">Sample Output</button>
-                <div class="card mt-4">
+                <button id="add-sample-button" type="button" class="btn btn-primary mt-4">Sample Input and Output</button>
+                <button id="add-output-button" type="button" class="btn btn-primary mt-4">Sample Output</button>
+                <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Your Solution</span>
@@ -227,7 +241,7 @@
                         </form>
                     </div>
                 </div>
-                <a href="#" class="btn btn-light mt-4" onclick="runCode('run')">Submit</a>
+                <a href="#" class="btn btn-primary mt-4" onclick="runCode('run')">Submit</a>
             </div>
         </div>
     </div>
@@ -266,7 +280,7 @@
         font-size: inherit;
         font-weight: inherit;
         color: inherit;
-        width: calc(100% - 30px) !important;
+        width: calc(100% - 44px) !important;
     }
 </style>
 <script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -528,30 +542,34 @@
 
         const sampleSection = document.createElement('div');
         sampleSection.innerHTML = `
-            ${addInput ? `<div class="card mt-4 input-section">
+            ${addInput ? `<div class="card border-0 mt-4 input-section">
                 <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Sample Input</span>
-                    ${addOutput ? `<span class="trash-button" onclick="removeSample(${sampleCount})"><i class="bi bi-trash"></i></span>` : ''}
+                    ${addOutput ? `<span class="trash-button" onclick="removeSample(${sampleCount})"><i class="bi bi-x"></i></span>` : ''}
                 </div>
                 <div class="card-body">
                     <span id="${inputKey}">
-                        <textarea rows="4" class="input-as-span">Sample Input code here, one line or multiple lines</textarea>
+                        <p id="sample-output">
+                            <textarea rows="4" class="input-as-span">Sample Input code here, one line or multiple lines</textarea>
+                        </p>
                     </span>
                 </div>
             </div>
             ` : ''}
             ${addOutput ? `
-            <div class="card mt-4 output-section">
+            <div class="card border-0 mt-4 output-section">
                 <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Sample Output</span>
-                    ${addOutput && !addInput ? `<span class="trash-button" onclick="removeOutputSample(${sampleCount})"><i class="bi bi-trash"></i></span>` : ''}
+                    ${addOutput && !addInput ? `<span class="trash-button" onclick="removeOutputSample(${sampleCount})"><i class="bi bi-x"></i></span>` : ''}
                 </div>
                 <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
                     <div class="card-body">
                         <span id="${outputKey}">
-                            <textarea rows="4" class="input-as-span">Expected Output code here, one line or multiple lines</textarea>
+                            <p id="sample-output">
+                                <textarea rows="4" class="input-as-span">Expected Output code here, one line or multiple lines</textarea>
+                            </p>
                         </span>
                     </div>
                 </div>

@@ -42,7 +42,7 @@
       <div class="col-md-12">
         <h1 class="mt-4">User Profile</h1>
         <hr/>
-        <div class="card mt-4">
+        <div class="card border-0 mt-4">
           <div class="card-header">
             <i class="bi bi-person-circle pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Profile</span>
@@ -51,7 +51,7 @@
             <p class="card-text">Username: {{ user.username }}</p>
           </div>
         </div>
-        <div class="card mt-4">
+        <div class="card border-0 mt-4">
           <div class="card-header">
             <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Team</span>
@@ -62,11 +62,11 @@
               <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
               {% endif %}
               {{ user.team.name if user.team else 'No Team' }}</p>
-            <a href="/team" type="button" class="btn btn-light">Team Management</a>
+            <a href="/team" type="button" class="btn btn-primary">Team Management</a>
           </div>
         </div>
         <!-- Change password -->
-        <div class="card mt-4">
+        <div class="card border-0 mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Change Password</span>
@@ -85,7 +85,7 @@
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
               </div>
-              <button type="submit" class="btn btn-light">Change Password</button>
+              <button type="submit" class="btn btn-primary">Change Password</button>
             </form>
           </div>
       </div>
