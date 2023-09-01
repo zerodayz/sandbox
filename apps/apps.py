@@ -501,7 +501,11 @@ def exercise(exercise_id):
 
     user = user_utils.get_user_by_username(session["username"])
     exercises = fetch_exercises_from_database()
+
     ex = find_exercise_by_id(exercises, exercise_id)
+    if ex is None:
+        return render_template("/exercise/404.html", user=user)
+
     num_of_exercises = len(exercises)
 
     if request.method == "POST":

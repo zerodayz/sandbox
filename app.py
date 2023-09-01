@@ -16,6 +16,9 @@ app.secret_key = "your-secret-key"
 app.route("/", methods=["GET", "POST"])(login)
 app.route("/logout", methods=["GET"])(logout)
 
+# Register the page routes
+app.route("/about", methods=["GET"])(lambda: render_template("about.html"))
+
 # Register the user routes
 app.route("/user/profile", methods=["GET", "POST"])(get_user_profile)
 app.route("/user/create", methods=["GET", "POST"])(create_user)
