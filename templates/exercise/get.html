@@ -31,12 +31,8 @@
     </div>
     <div class="row">
       <div class="col-md-12 mb-4">
-        {% if (exercise['id'] - 1) != 0 %}
-        <a href="/exercise/{{ exercise['id'] - 1}}" class="btn btn-primary">Previous</a>
-        {% endif %}
-        {% if exercise['id'] != num_of_exercises %}
-        <a href="/exercise/{{ exercise['id'] + 1}}" class="btn btn-primary">Next</a>
-        {% endif %}
+        <button id="prevBtn" class="btn btn-primary">Previous</button>
+        <button id="nextBtn" class="btn btn-primary">Next</button>
       </div>
     </div>
     <div class="row">
@@ -226,7 +222,6 @@
 <script>
   var editor = ace.edit("editor");
   editor.session.setMode("ace/mode/python");
-
   function saveCode() {
     var filename = "{{ exercise['id'] }}.py";
     var code = editor.getValue();
