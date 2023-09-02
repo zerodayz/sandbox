@@ -125,7 +125,7 @@
                         <span>
                             <form method="post" action="/team/invite">
                                 <label for="invite_member" class="form-label">Username</label>
-                                <input class="form-control" id="invite_member" name="invite_member" required>
+                                <input type="text" class="form-control" id="invite_member" name="invite_member" required>
                                 <input type="hidden" id="team_id" name="team_id" value="{{ user.team.id }}">
                                 <br/>
                                 <button type="submit" class="btn btn-success">Send Invitation</button>
