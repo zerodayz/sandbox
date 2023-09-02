@@ -1,60 +1,54 @@
-<!DOCTYPE html>
-<html data-bs-theme="light">
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="static/bootstrap-5.3.0-dist/css/bootstrap.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <style>
-        html, body {
-            height: 100%;
-        }
+{% extends "layout.html" %}
 
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+{% block title %}Login{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-
-        .card {
-            width: 18rem;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="card border-0">
-        <div class="card-header bg-dark text-white">
-            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">Sandbox</span> Login
-        </div>
-        <div class="card-body">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
+{% block content %}
+<div class="container-fluid">
+    <div class="container">
+        <div class="card border-0">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Sandbox</span> Login
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
                 {% for message in messages %}
                 <div class="alert alert-warning" role="alert">
                     {{ message }}
                 </div>
                 {% endfor %}
-            {% endif %}
-            {% endwith %}
-            <form method="post">
-                <input type="text" name="username" placeholder="Username" required><br><br>
-                <input type="password" name="password" placeholder="Password" required><br><br>
-                <button type="submit" class="btn btn-primary">Login</button>
-                <a href="/user/create" class="btn btn-primary">Create</a>
-            </form>
+                {% endif %}
+                {% endwith %}
+                <form method="post">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" required><br><br>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <a href="/user/create" class="btn btn-primary">Create</a>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+<style>
+    html, body {
+        height: 100%;
+    }
 
-</body>
-</html>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .card {
+        width: 18rem;
+    }
+</style>
+{% endblock %}

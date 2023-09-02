@@ -16,6 +16,9 @@ def login():
         else:
             flash("Invalid credentials", "error")
 
+    if "username" in session:
+        return redirect(url_for("exercise_app"))
+    
     return render_template("/user/login.html")
 
 
