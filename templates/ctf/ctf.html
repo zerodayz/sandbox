@@ -65,14 +65,14 @@
                         <span class="fs-5 fw-semibold">{{ ctf['title'] }}</span>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">{{ ctf['description'] }}</p>
+                        <p class="card-text">{{ ctf['description'] | safe }}</p>
                         <span class="badge bg-secondary">{{ ctf['difficulty'] }}</span>
                     </div>
                 </div>
                 <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">Your Solution</span>
+                        <span class="fs-5 fw-semibold">Your Flag</span>
                     </div>
                     <div class="card-body" style="padding: 0px !important;">
                         <form method="post" id="code-form">
