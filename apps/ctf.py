@@ -185,7 +185,7 @@ def delete_ctf(ctf_id):
                 (ctf_id, user_id),
             )
 
-            cursor.execute("DELETE FROM scores WHERE ctf_id = ?", (ctf_id,))
+            cursor.execute("DELETE FROM ctf_scores WHERE ctf_id = ?", (ctf_id,))
 
             conn.commit()
 
@@ -317,9 +317,46 @@ def get_all_top_scores():
         return []
 
 
+def get_ctf_password(ctf_id):
+    with sqlite3.connect(DB_NAME) as connection:
+        cursor = connection.cursor()
+
+        query = """
+                SELECT
+                    password
+                FROM
+                    ctfs
+                WHERE
+                    id = ?;"""
+        cursor.execute(query, (ctf_id,))
+        password = cursor.fetchone()
+
+    return password
+
+
+def protected_ctf(ctf_id):
+    ctf_password = get_ctf_password(ctf_id)
+    if ctf_password is None:
+        return redirect(url_for("ctf", ctf_id=ctf_id))
+
+    if request.method == "POST":
+        user_input_password = request.form.get("password")
+        if user_input_password == ctf_password[0]:
+            session['ctf_' + str(ctf_id) + '_authenticated'] = True
+            return redirect(url_for("ctf", ctf_id=ctf_id))
+        else:
+            flash("Wrong password!", "danger")
+            return redirect(url_for("protected_ctf", ctf_id=ctf_id))
+    return redirect(url_for("ctf", ctf_id=ctf_id))
+
+
 def ctf(ctf_id):
     if not check_login():
         return redirect(url_for("login"))
+
+    if (session.get('ctf_' + str(ctf_id) + '_authenticated') is None
+            or session.get('ctf_' + str(ctf_id) + '_authenticated') is False):
+        return render_template("/ctf/password.html", ctf_id=ctf_id)
 
     user = user_utils.get_user_by_username(session["username"])
     ctfs = fetch_ctfs_from_database()
