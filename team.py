@@ -61,7 +61,30 @@ def get_teams_dashboard():
         cursor.execute(select_query)
         team_score = cursor.fetchall()
 
-    return render_template("/team/dashboard.html", top_scores=team_score)
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+
+        select_query = """
+                    SELECT
+                        teams.name AS team,
+                        teams.logo AS team_logo,
+                        SUM(ctf_scores.total_score) AS total_score,
+                        MAX(ctf_scores.date_created) AS last_date_created
+                    FROM
+                        ctf_scores
+                    JOIN
+                        ctfs ON ctf_scores.ctf_id = ctfs.id
+                    JOIN
+                        teams ON ctf_scores.team = teams.name
+                    GROUP BY
+                        teams.name, teams.logo
+                    ORDER BY
+                        teams.name;"""
+
+        cursor.execute(select_query)
+        ctf_team_score = cursor.fetchall()
+
+    return render_template("/team/dashboard.html", top_scores=team_score, ctf_top_scores=ctf_team_score)
 
 
 def update_user_invitation(username, team_id):

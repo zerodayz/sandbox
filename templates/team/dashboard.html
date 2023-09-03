@@ -15,7 +15,7 @@
         <div class="card border-0 mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">Team Top Scores <sup>Exercise</sup></span>
+            <span class="fs-5 fw-semibold">Exercise Team Top Scores</span>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -48,7 +48,7 @@
         <div class="card border-0 mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">Team Top Scores <sup>CTF</sup></span>
+            <span class="fs-5 fw-semibold">CTF Team Top Scores</span>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -61,7 +61,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for score in top_scores %}
+                {% for score in ctf_top_scores %}
                 <tr>
                   <td>
                     {% if score[1] %}
