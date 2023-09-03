@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}CTF{% endblock %}
+{% block title %}{{ ctf['title'] }}{% endblock %}
 {% block head %}
 {{ super() }}
 {% endblock %}
@@ -8,10 +8,161 @@
 {% block content %}
 <div class="container-fluid">
     <div class="container">
+        <!-- Modal deleteExerciseModal -->
+        <div class="modal fade" id="deleteExerciseModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Are you sure?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        You are about to delete <b>'{{ ctf['title'] }}'</b> Level.
+                        <p>This will remove the Level and all associated Top Scores.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="/ctf/{{ ctf['id'] }}/delete">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
+                {% if result['type'] %}
+                <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
+                    <pre>{{ result['message'] }}</pre>
+                    {% if result['next_text'] %}
+                    <div class="card border-0 mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Congratulations</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['next_text'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if result['next_password'] %}
+                    <div class="card border-0 mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Next Level Password</span>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <p id="sample-output">{{ result['next_password'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                <div class="card border-0">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">{{ ctf['title'] }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ ctf['description'] }}</p>
+                        <span class="badge bg-secondary">{{ ctf['difficulty'] }}</span>
+                    </div>
+                </div>
+                <div class="card border-0 mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Your Solution</span>
+                    </div>
+                    <div class="card-body" style="padding: 0px !important;">
+                        <form method="post" id="code-form">
+                            <div class="form-group code-container">
+                                <div id="editor">{{ ctf['code'] }}</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary mt-4" onclick="saveCode()">Submit</a>
+                <div class="card border-0 mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Team Top Scores</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for score in top_scores %}
+                                <tr>
+                                    <td>
+                                        {% if score[1] %}
+                                        <img src="data:image/png;base64, {{ score[1] }}"/>
+                                        {% endif %}
+                                        {{ score[0] }}
+                                    </td>
+                                    <td>{{ score[2] }}</td>
+                                    <td>{{ score[3] }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% if ctf['added_by'] == user.username %}
+                <div class="card border-0 mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Delete Level</span>
+                    </div>
+                    <div class="card-body">
+                <span>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteExerciseModal">Delete</button>
+                </span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+<style>
+</style>
+<script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/python");
+    function saveCode() {
+        var filename = "{{ ctf['id'] }}.py";
+        var code = editor.getValue();
+
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "");
+
+        var codeInput = document.createElement("input");
+        codeInput.setAttribute("type", "hidden");
+        codeInput.setAttribute("name", "code");
+        codeInput.setAttribute("value", code);
+
+        var filenameInput = document.createElement("input");
+        filenameInput.setAttribute("type", "hidden");
+        filenameInput.setAttribute("name", "filename");
+        filenameInput.setAttribute("value", filename);
+
+        form.appendChild(codeInput);
+        form.appendChild(filenameInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+</script>
 {% endblock %}

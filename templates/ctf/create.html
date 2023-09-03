@@ -1,0 +1,609 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Level{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="mt-4">Add Level</h1>
+        <hr/>
+        {% if result['type'] %}
+        <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
+          <pre>{{ result['message'] }}</pre>
+          {% if result['full_score'] %}
+          <a href="#" class="btn btn-primary mt-4" onclick="runCode('save')">Save Level</a>
+          {% endif %}
+          {% if result['next_text'] %}
+          <div class="card border-0 mt-4">
+            <div class="card-header">
+              <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+              <span class="fs-5 fw-semibold">Congratulations</span>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+              <p id="sample-output">{{ result['next_text'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+            </div>
+          </div>
+          {% endif %}
+          {% if result['next_password'] %}
+          <div class="card border-0 mt-4">
+            <div class="card-header">
+              <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+              <span class="fs-5 fw-semibold">Next Level Password</span>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+              <p id="sample-output">{{ result['next_password'] | replace("<", "&lt;") | replace(">", "&gt;") | replace("\n", "<br/>") | safe }}</p>
+            </div>
+          </div>
+          {% endif %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card border-0">
+              <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">
+                            <input type="text" id="title" class="input-as-span" value="{% if ctf['title'] %}{{ ctf['title'] }}{% else %}Type your title here{% endif %}">
+                        </span>
+              </div>
+              <div class="card-body">
+                <p><textarea rows="4" id="description" class="input-as-span">{% if ctf['description'] %}{{ ctf['description'] }}{% else %}Type your description here{% endif %}</textarea></p>
+                <span class="badge difficulty {% if ctf['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
+                <span class="badge difficulty {% if ctf['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
+                <span class="badge difficulty {% if ctf['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+              </div>
+            </div>
+            <div id="sample-sections">
+              {% if ctf['solution'] %}
+              <div><div class="card border-0 mt-4 output-section">
+                <div class="card-header">
+                  <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                  <span class="fs-5 fw-semibold">Solution</span>
+                  <span class="trash-button" onclick="removeOutputSample()"><i class="bi bi-x"></i></span>
+                </div>
+                <div id="solution-body" style="max-height: 300px; overflow-y: auto;">
+                  <div class="card-body">
+                    <span id="solution">
+                        <p id="sample-output">
+                            <textarea rows="4" class="input-as-span">{{ ctf['solution'] }}</textarea>
+                        </p>
+                    </span>
+                  </div>
+                </div>
+              </div></div>
+              {% endif %}
+              {% if ctf['password'] %}
+              <div>
+                <div class="card border-0 mt-4 input-section">
+                  <div class="card-header">
+                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">This Level Password</span>
+                    <span class="trash-button" onclick="removePasswordSample()"><i class="bi bi-x"></i></span>
+                  </div>
+                  <div id="password-body" style="max-height: 300px; overflow-y: auto;">
+                    <div class="card-body">
+                      <span id="password">
+                          <p id="sample-input">
+                              <input type="text" class="password-input" value="{{ ctf['password'] }}">
+                          </p>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if ctf['next_password'] %}
+              <div>
+                <div class="card border-0 mt-4 input-section">
+                  <div class="card-header">
+                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">Next Level Password</span>
+                    <span class="trash-button" onclick="removeNextPasswordSample()"><i class="bi bi-x"></i></span>
+                  </div>
+                  <div id="next_password-body" style="max-height: 300px; overflow-y: auto;">
+                    <div class="card-body">
+                      <span id="next_password">
+                          <p id="sample-input">
+                              <input type="text" class="password-input" value="{{ ctf['next_password'] }}">
+                          </p>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if ctf['next_text'] %}
+              <div>
+                <div class="card border-0 mt-4 output-section">
+                  <div class="card-header">
+                    <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">Congratulations</span>
+                    <span class="trash-button" onclick="removeNextOutputSample()"><i class="bi bi-x"></i></span>
+                  </div>
+                  <div id="next_text-body" style="max-height: 300px; overflow-y: auto;">
+                    <div class="card-body">
+                      <span id="next_text">
+                          <p id="sample-output">
+                              <textarea rows="4" class="input-as-span">{{ ctf['next_text'] }}</textarea>
+                          </p>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+            <button id="add-output-button" type="button" class="btn btn-primary mt-4">Solution</button>
+            <button id="add-password-button" type="button" class="btn btn-primary mt-4">This Level Password</button>
+            <button id="add-next-password-button" type="button" class="btn btn-primary mt-4">Next Level Password</button>
+            <button id="add-next-output-button" type="button" class="btn btn-primary mt-4">Congratulation Message</button>
+            <div class="card border-0 mt-4">
+              <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Your Solution</span>
+              </div>
+              <div class="card-body" style="padding: 0px !important;">
+                <form method="post" id="code-form">
+                  <div class="form-group code-container">
+                    <div id="editor">{{ ctf['code'] }}</div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <a href="#" class="btn btn-primary mt-4" onclick="runCode('run')">Submit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .badge {
+    cursor: pointer;
+    padding: 5px 10px;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 5px;
+  }
+
+  .badge.selected {
+    background-color: #007bff;
+  }
+
+  .trash-button {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  .trash-button:hover {
+    color: #dc3545;
+  }
+
+  .input-as-span {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 0px !important;
+    border-radius: 0px !important;
+    background-color: transparent;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    width: calc(100% - 44px) !important;
+  }
+</style>
+<script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+  var editor = ace.edit("editor");
+  editor.session.setMode("ace/mode/python");
+  function runCode(action) {
+    var filename = "0.py";
+    var code = editor.getValue();
+
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", "/ctf/create");
+
+    var actionInput = document.createElement("input");
+    actionInput.setAttribute("type", "hidden");
+    actionInput.setAttribute("name", "action");
+    actionInput.setAttribute("value", action);
+
+    var codeInput = document.createElement("input");
+    codeInput.setAttribute("type", "hidden");
+    codeInput.setAttribute("name", "code");
+    codeInput.setAttribute("value", code);
+
+    var titleInput = document.createElement("input");
+    titleInput.setAttribute("type", "hidden");
+    titleInput.setAttribute("name", "title");
+    titleInput.setAttribute("value", document.getElementById("title").value);
+
+    var descriptionInput = document.createElement("input");
+    descriptionInput.setAttribute("type", "hidden");
+    descriptionInput.setAttribute("name", "description");
+    descriptionInput.setAttribute("value", document.getElementById("description").value);
+
+    var difficultyInput = document.createElement("input");
+    difficultyInput.setAttribute("type", "hidden");
+    difficultyInput.setAttribute("name", "difficulty");
+    const badges = document.querySelectorAll('.difficulty');
+    badges.forEach(b => {
+      if (b.classList.contains('selected')) {
+        difficultyInput.setAttribute("value", b.textContent);
+      }
+    });
+
+    var solution = document.getElementById("solution");
+    if (solution != null) {
+      var solution_textarea = solution.getElementsByTagName("textarea")[0];
+      var solutionInput = document.createElement("input");
+      solutionInput.setAttribute("type", "hidden");
+      solutionInput.setAttribute("name", "solution");
+      solutionInput.setAttribute("value", solution_textarea.value);
+    }
+
+    var next_text = document.getElementById("next_text");
+    if (next_text != null) {
+      var next_text_textarea = next_text.getElementsByTagName("textarea")[0];
+      var next_textInput = document.createElement("input");
+      next_textInput.setAttribute("type", "hidden");
+      next_textInput.setAttribute("name", "next_text");
+      next_textInput.setAttribute("value", next_text_textarea.value);
+    }
+
+    var password = document.getElementById("password");
+    if (password != null) {
+      var password_textarea = password.getElementsByTagName("input")[0];
+      var passwordInput = document.createElement("input");
+      passwordInput.setAttribute("type", "hidden");
+      passwordInput.setAttribute("name", "password");
+      passwordInput.setAttribute("value", password_textarea.value);
+    }
+
+    var next_password = document.getElementById("next_password");
+    if (next_password != null) {
+      var next_password_textarea = next_password.getElementsByTagName("input")[0];
+      var next_passwordInput = document.createElement("input");
+      next_passwordInput.setAttribute("type", "hidden");
+      next_passwordInput.setAttribute("name", "next_password");
+      next_passwordInput.setAttribute("value", next_password_textarea.value);
+    }
+
+    var filenameInput = document.createElement("input");
+    filenameInput.setAttribute("type", "hidden");
+    filenameInput.setAttribute("name", "filename");
+    filenameInput.setAttribute("value", filename);
+
+    if (titleInput.value === "") {
+      alert("Please fill out the title");
+      return;
+    }
+    if (descriptionInput.value === "") {
+      alert("Please fill out the description");
+      return;
+    }
+    if (difficultyInput.value === "") {
+      alert("Please select a difficulty");
+      return;
+    }
+    if (codeInput.value === "") {
+      alert("Please write your code");
+      return;
+    }
+    if (solutionInput == null) {
+      alert("Please fill out the solution");
+      return;
+    }
+
+
+    form.appendChild(titleInput);
+    form.appendChild(descriptionInput);
+    form.appendChild(actionInput);
+    form.appendChild(codeInput);
+    form.appendChild(difficultyInput);
+    if (solutionInput != null) {
+      form.appendChild(solutionInput);
+    }
+    if (passwordInput != null) {
+      form.appendChild(passwordInput);
+    }
+    if (next_passwordInput != null) {
+      form.appendChild(next_passwordInput);
+    }
+    form.appendChild(filenameInput);
+    if (next_textInput != null) {
+      form.appendChild(next_textInput);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+</script>
+<script>
+  function selectDifficultyBadge(badge) {
+    const badges = document.querySelectorAll('.difficulty');
+
+    badges.forEach(b => {
+      if (b === badge) {
+        b.classList.add('selected');
+      } else {
+        b.classList.remove('selected');
+      }
+    });
+  }
+</script>
+
+
+<script>
+  const addOutputButton = document.getElementById('add-output-button');
+  const addPasswordButton = document.getElementById('add-password-button');
+  const addNextPasswordButton = document.getElementById('add-next-password-button');
+  const addNextOutputButton = document.getElementById('add-next-output-button');
+  const sampleSections = document.getElementById('sample-sections');
+  let passwordCount = 0;
+  let nextPasswordCount = 0;
+  let outputCount = 0;
+  let nextOutputCount = 0;
+  const maxOutput = 1;
+  const maxNextOutput = 1;
+  const maxPassword = 1;
+  const maxNextPassword = 1;
+  let singleOutput = false;
+  let singleNextOutput = false;
+  let singlePassword = false;
+  let singleNextPassword = false;
+
+
+  const outputKey = `solution`;
+  const outputElement = document.getElementById(outputKey + "-body");
+  if (outputElement) {
+      outputCount++;
+  }
+
+  const nextOutputKey = `next_text`;
+  const nextOutputElement = document.getElementById(nextOutputKey + "-body");
+  if (nextOutputElement) {
+      nextOutputCount++;
+  }
+
+  const passwordKey = `password`;
+  const passwordElement = document.getElementById(passwordKey + "-body");
+  if (passwordElement) {
+      passwordCount++;
+  }
+  const nextPasswordKey = `next_password`;
+  const nextPasswordElement = document.getElementById(nextPasswordKey + "-body");
+  if (nextPasswordElement) {
+      nextPasswordCount++;
+  }
+
+
+  if (outputCount === maxOutput) {
+    singleOutput = true;
+    addOutputButton.style.display = 'none';
+  }
+  if (passwordCount === maxPassword) {
+    singlePassword = true;
+    addPasswordButton.style.display = 'none';
+  }
+  if (nextPasswordCount === maxNextPassword) {
+    singleNextPassword = true;
+    addNextPasswordButton.style.display = 'none';
+  }
+  if (nextOutputCount === maxNextOutput) {
+    singleNextOutput = true;
+    addNextOutputButton.style.display = 'none';
+  }
+
+  addOutputButton.addEventListener('click', () => {
+    if (outputCount < maxOutput) {
+      addOutput();
+    }
+  });
+
+  addNextOutputButton.addEventListener('click', () => {
+    if (nextOutputCount < maxNextOutput) {
+      addNextOutput();
+    }
+  });
+
+  addPasswordButton.addEventListener('click', () => {
+    if (passwordCount < maxPassword) {
+      addPassword();
+    }
+  });
+
+  addNextPasswordButton.addEventListener('click', () => {
+      if (nextPasswordCount < maxNextPassword) {
+      addNextPassword();
+      }
+  });
+
+  function addOutput() {
+    outputCount++;
+
+    const outputKey = `solution`;
+
+    const sampleSection = document.createElement('div');
+    sampleSection.innerHTML = `<div class="card border-0 mt-4 output-section">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Solution</span>
+                <span class="trash-button" onclick="removeOutputSample()"><i class="bi bi-x"></i></span>
+            </div>
+            <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="card-body">
+                    <span id="${outputKey}">
+                        <p id="sample-output">
+                            <textarea rows="4" class="input-as-span">Expected Solution here, one line or multiple lines</textarea>
+                        </p>
+                    </span>
+                </div>
+            </div>
+        </div>`;
+
+    sampleSections.appendChild(sampleSection);
+
+    if (outputCount === maxOutput) {
+      addOutputButton.style.display = 'none';
+    }
+  }
+
+  function addNextOutput() {
+    nextOutputCount++;
+
+    const outputKey = `next_text`;
+
+    const sampleSection = document.createElement('div');
+    sampleSection.innerHTML = `<div class="card border-0 mt-4 output-section">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Congratulations</span>
+                <span class="trash-button" onclick="removeNextOutputSample()"><i class="bi bi-x"></i></span>
+            </div>
+            <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="card-body">
+                    <span id="${outputKey}">
+                        <p id="sample-output">
+                            <textarea rows="4" class="input-as-span">Expected Congratulations here, one line or multiple lines</textarea>
+                        </p>
+                    </span>
+                </div>
+            </div>
+        </div>`;
+
+    sampleSections.appendChild(sampleSection);
+
+    if (nextOutputCount === maxNextOutput) {
+      addNextOutputButton.style.display = 'none';
+    }
+  }
+
+  function addPassword() {
+    passwordCount++;
+
+    const outputKey = `password`;
+
+    const sampleSection = document.createElement('div');
+    sampleSection.innerHTML = `<div class="card border-0 mt-4 input-section">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">This Level Password</span>
+                <span class="trash-button" onclick="removePasswordSample()"><i class="bi bi-x"></i></span>
+            </div>
+            <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="card-body">
+                    <span id="${outputKey}">
+                        <p id="sample-input">
+                            <input type="text" class="password-input" placeholder="Password to protect this level.">
+                        </p>
+                    </span>
+                </div>
+            </div>
+        </div>`;
+
+    sampleSections.appendChild(sampleSection);
+
+    if (passwordCount === maxPassword) {
+      addPasswordButton.style.display = 'none';
+    }
+  }
+
+  function addNextPassword() {
+    nextPasswordCount++;
+
+    const outputKey = `next_password`;
+
+    const sampleSection = document.createElement('div');
+    sampleSection.innerHTML = `<div class="card border-0 mt-4 input-section">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Next Level Password</span>
+                <span class="trash-button" onclick="removeNextPasswordSample()"><i class="bi bi-x"></i></span>
+            </div>
+            <div id="${outputKey}-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="card-body">
+                    <span id="${outputKey}">
+                        <p id="sample-input">
+                            <input type="text" class="password-input" placeholder="Password to unlock the next level.">
+                        </p>
+                    </span>
+                </div>
+            </div>
+        </div>`;
+
+    sampleSections.appendChild(sampleSection);
+
+    if (nextPasswordCount === maxNextPassword) {
+      addNextPasswordButton.style.display = 'none';
+    }
+  }
+
+  function removePasswordSample() {
+    passwordCount--;
+    singlePassword = false;
+
+    const outputKey = `password`;
+
+    const outputElement = document.getElementById(outputKey + "-body");
+
+    if (outputElement) {
+      outputElement.parentElement.remove();
+    }
+    addPasswordButton.style.display = 'inline';
+  }
+
+  function removeOutputSample() {
+    outputCount--;
+    singleOutput = false;
+
+    const outputKey = `solution`;
+
+    const outputElement = document.getElementById(outputKey + "-body");
+
+    if (outputElement) {
+      outputElement.parentElement.remove();
+    }
+    addOutputButton.style.display = 'inline';
+  }
+
+  function removeNextOutputSample() {
+    nextOutputCount--;
+    singleNextOutput = false;
+
+    const outputKey = `next_text`;
+
+    const outputElement = document.getElementById(outputKey + "-body");
+
+    if (outputElement) {
+      outputElement.parentElement.remove();
+    }
+    addNextOutputButton.style.display = 'inline';
+  }
+
+  function removeNextPasswordSample() {
+    nextPasswordCount--;
+    singleNextPassword = false;
+
+    const outputKey = `next_password`;
+
+    const outputElement = document.getElementById(outputKey + "-body");
+
+    if (outputElement) {
+      outputElement.parentElement.remove();
+    }
+    addNextPasswordButton.style.display = 'inline';
+  }
+</script>
+
+{% endblock %}
