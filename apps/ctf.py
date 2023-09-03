@@ -354,11 +354,16 @@ def ctf(ctf_id):
     if not check_login():
         return redirect(url_for("login"))
 
+    user = user_utils.get_user_by_username(session["username"])
+
+    if user.team is None:
+        flash("You need to be part of a team to access this page.", "danger")
+        return render_template("/ctf/password.html", ctf_id=ctf_id)
+
     if (session.get('ctf_' + str(ctf_id) + '_authenticated') is None
             or session.get('ctf_' + str(ctf_id) + '_authenticated') is False):
         return render_template("/ctf/password.html", ctf_id=ctf_id)
 
-    user = user_utils.get_user_by_username(session["username"])
     ctfs = fetch_ctfs_from_database()
 
     ex = find_ctf_by_id(ctfs, ctf_id)
