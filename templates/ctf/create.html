@@ -47,16 +47,23 @@
           <div class="col-md-12">
             <div class="card border-0">
               <div class="card-header">
-                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="eye-button" onclick="toggleHTML()"><i id="title-icon" class="bi bi-filetype-html pe-none me-2" width="30" height="24"></i></span>
                 <span class="fs-5 fw-semibold">
-                            <input type="text" id="title" class="input-as-span" value="{% if ctf['title'] %}{{ ctf['title'] }}{% else %}Type your title here{% endif %}">
-                        </span>
+                  <input type="text" id="title" class="input-as-span" value="{% if ctf['title'] %}{{ ctf['title'] }}{% else %}Type your title here{% endif %}">
+                </span>
               </div>
-              <div class="card-body">
-                <p><textarea rows="4" id="description" class="input-as-span">{% if ctf['description'] %}{{ ctf['description'] }}{% else %}Type your description here{% endif %}</textarea></p>
-                <span class="badge difficulty {% if ctf['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
-                <span class="badge difficulty {% if ctf['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
-                <span class="badge difficulty {% if ctf['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+              <div class="card-body" style="padding: 0px !important;">
+                <form method="post" id="code-form">
+                  <div class="form-group code-container">
+                    <div id="editor-2">{% if ctf['description'] %}{{ ctf['description'] }}{% else %}Type your description here{% endif %}</div>
+                    <div id="preview-2" style="display: none; padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);"></div>
+                  </div>
+                </form>
+                <div style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);">
+                  <span class="badge difficulty {% if ctf['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
+                  <span class="badge difficulty {% if ctf['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
+                  <span class="badge difficulty {% if ctf['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+                </div>
               </div>
             </div>
             <div id="sample-sections">
@@ -151,7 +158,7 @@
               <div class="card-body" style="padding: 0px !important;">
                 <form method="post" id="code-form">
                   <div class="form-group code-container">
-                    <div id="editor">{{ ctf['code'] }}</div>
+                    <div id="editor-1">{{ ctf['code'] }}</div>
                   </div>
                 </form>
               </div>
@@ -185,6 +192,14 @@
     color: #dc3545;
   }
 
+  .eye-button {
+    cursor: pointer;
+  }
+
+  .eye-button:hover {
+    color: #dc3545;
+  }
+
   .input-as-span {
     border: none !important;
     padding: 0 !important;
@@ -202,11 +217,35 @@
 </style>
 <script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
-  var editor = ace.edit("editor");
+  var editor = ace.edit("editor-1");
   editor.session.setMode("ace/mode/python");
+  var descriptionEdit = ace.edit("editor-2");
+  descriptionEdit.session.setMode("ace/mode/html");
+
+  function toggleHTML() {
+    var preview = document.getElementById("preview-2");
+    var editor = document.getElementById("editor-2");
+    var titleIcon = document.getElementById("title-icon");
+    if (preview.style.display === "none") {
+      preview.style.display = "block";
+      editor.style.display = "none";
+      preview.innerHTML = descriptionEdit.getValue();
+      titleIcon.classList.remove("bi-filetype-html");
+      titleIcon.classList.add("bi-eye-fill");
+      editor.parentElement.classList.remove("code-container");
+    } else {
+      preview.style.display = "none";
+      editor.style.display = "block";
+      titleIcon.classList.remove("bi-eye-fill");
+      titleIcon.classList.add("bi-filetype-html");
+      editor.parentElement.classList.add("code-container");
+    }
+  }
+
   function runCode(action) {
     var filename = "0.py";
     var code = editor.getValue();
+    var description = descriptionEdit.getValue();
 
     var form = document.createElement("form");
     form.setAttribute("method", "post");
@@ -230,7 +269,7 @@
     var descriptionInput = document.createElement("input");
     descriptionInput.setAttribute("type", "hidden");
     descriptionInput.setAttribute("name", "description");
-    descriptionInput.setAttribute("value", document.getElementById("description").value);
+    descriptionInput.setAttribute("value", description);
 
     var difficultyInput = document.createElement("input");
     difficultyInput.setAttribute("type", "hidden");

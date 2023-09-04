@@ -72,7 +72,7 @@ def create_tables_and_triggers():
             CREATE TABLE IF NOT EXISTS ctfs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
-                description TEXT,
+                description BLOB,
                 solution TEXT,
                 password TEXT,
                 next_password TEXT,

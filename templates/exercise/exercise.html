@@ -160,7 +160,7 @@
           <div class="card-body" style="padding: 0px !important;">
             <form method="post" id="code-form">
               <div class="form-group code-container">
-                <div id="editor">{{ exercise['code'] }}</div>
+                <div id="editor-1">{{ exercise['code'] }}</div>
               </div>
             </form>
           </div>
@@ -220,7 +220,7 @@
 </style>
 <script src="/static/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
-  var editor = ace.edit("editor");
+  var editor = ace.edit("editor-1");
   editor.session.setMode("ace/mode/python");
   function saveCode() {
     var filename = "{{ exercise['id'] }}.py";

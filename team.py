@@ -115,6 +115,12 @@ def delete_team():
             cursor.execute(select_query, (user_id,))
             team_id = cursor.fetchone()[0]
 
+            delete_ctf_scores_query = """
+                DELETE FROM ctf_scores
+                WHERE team = ?;
+                """
+            cursor.execute(delete_ctf_scores_query, (team_id,))
+
             update_query = """
                 UPDATE users
                 SET team = NULL

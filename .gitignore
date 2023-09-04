@@ -2,7 +2,10 @@ __pycache__/
 *.pyc
 teams/**/
 users/**/
-static/challenges/**
+static/uploads/**
+static/ctf/**
+.DS_Store
+**/.DS_Store
 *.pyo
 *.pyd
 .idea/
