@@ -204,6 +204,22 @@ def get_user_team():
             flash("You are already part of a team.", "danger")
             return redirect(url_for("get_user_profile"))
 
+        team_name = request.form["team_name"]
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+
+            select_query = """
+                SELECT id
+                FROM teams
+                WHERE name = ?;
+                """
+            cursor.execute(select_query, (team_name,))
+            team_id = cursor.fetchone()
+
+            if team_id:
+                flash("Team name already taken. Please choose another one.", "danger")
+                return redirect(url_for("get_user_team"))
+
         team_crest = request.files.get("team_crest", None)
         if not team_crest:
             team_crest_b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACRElEQVRIiZ2V3W6jMBCFPxtooDRJo6KqN1Uu+v4P0seoepFGipREBUod7NmLlS2S5U9rKSLA+JyZ8TmDen9/F2YsEUHkb6hSCqXUnG3EU6DOOaIoIk1T7u7uADDG0DQNIoLW+v8InHPEcczz8zNFUZCmKVEUAWCtpa5rdrsdp9NplKSXwDnHZrNhu92yWCxCe/xPa81qtWK5XLLf7/n4+BgkGaRu25YkSRARlFKICG3bht5baxERXl5eWK/XOOfmV6C15nw+8/n5yevrK19fXxwOB9q2Jc9zttttIAd4fHzkdDr1Ewwxa63Z7/ecz2fKsgzKqaqKKIp4e3vDWgtAkiQ453qVFT89PV098C3x/0WE+/v7cO+cI8/zkL2IEMcxRVH0nkO82WxCj/26ve+SLxYL8jwPPfdxt4lOtqgPPMuyq+y11vz8/GCMGdw3arQxcKUUdV1T1/Xo3nioHV3wJEkCuFIK5xxlWfL7+zs5MmZVkGXZFWFZlhhjZs0jPZY9/G2FV4dSCmstl8tl9sAbn1SdrD2gc+5Kon0k3WfhDIayERGMMSHGj4uuV7rneIsTezeOraqqgu67LetL5p8KpmTmV5ZlpGlK0zRUVTXZf/9+UEW+bOccq9WKoigAWK/XHA4Hvr+/A0if1IMZh5i7bl0ul4FMRHh4eJj9ydS3gUMz6DbbbtyQ1JVS0z4QEY7HI23borXmcrlwPB57wbpXv3fSyUopmqZht9uRJAnGGKy1QapdT/RV00vQ9UZX/0Me6AP26w+R334wsxKa7gAAAABJRU5ErkJggg=="
@@ -214,7 +230,6 @@ def get_user_team():
             img.save(buffered, format="PNG")
             team_crest_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-        team_name = request.form["team_name"]
         team_password = request.form["team_password"]
 
         user = user_utils.get_user_by_username(user.username)

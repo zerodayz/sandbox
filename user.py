@@ -43,6 +43,12 @@ def get_user_profile():
 def create_user():
     if request.method == "POST":
         username = request.form["username"]
+
+        user = get_user_by_username(username)
+        if user:
+            flash("Username already taken. Please choose another one.", "danger")
+            return render_template("/user/create.html")
+
         password = request.form["password"]
         password_hash = generate_password_hash(password)
 
