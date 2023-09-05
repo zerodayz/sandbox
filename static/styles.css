@@ -129,7 +129,9 @@ span.fs-5 {
 
 
 
-
+img {
+    max-width: 100%;
+}
 
 #searchInput {
     border-radius: 16px;
