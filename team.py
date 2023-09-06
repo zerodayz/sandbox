@@ -118,11 +118,19 @@ def delete_team():
             cursor.execute(select_query, (user_id,))
             team_id = cursor.fetchone()[0]
 
+            team_name_query = """
+                SELECT name
+                FROM teams
+                WHERE owner = ?;
+                """
+            cursor.execute(team_name_query, (user_id,))
+            team_name = cursor.fetchone()[0]
+
             delete_ctf_scores_query = """
                 DELETE FROM ctf_scores
                 WHERE team = ?;
                 """
-            cursor.execute(delete_ctf_scores_query, (team_id,))
+            cursor.execute(delete_ctf_scores_query, (team_name,))
 
             update_query = """
                 UPDATE users
