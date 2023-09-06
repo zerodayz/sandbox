@@ -43,7 +43,11 @@
                                 <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">{{ exercise['description'] }}</p>
+                                <p class="description">
+                                    {{ exercise['description'] }}
+                                </p>
+                            </div>
+                            <div class="card-footer mx-auto">
                                 <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
                                 <span class="badge bg-secondary">{{ exercise['language'] }}</span>
                                 <br/>
