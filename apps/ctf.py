@@ -290,11 +290,20 @@ def get_all_top_scores():
         with sqlite3.connect(DB_NAME) as connection:
             cursor = connection.cursor()
             query = """
-                SELECT t.name AS team, t.logo, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created
-                FROM teams t
-                LEFT JOIN ctf_scores s ON t.name = s.team
-                GROUP BY t.name, t.logo
-                ORDER BY total_score DESC;
+                SELECT
+                        teams.name AS team,
+                        teams.logo AS team_logo,
+                        SUM(ctf_scores.total_score) AS total_score,
+                        MAX(ctf_scores.date_created) AS last_date_created
+                    FROM
+                        ctf_scores
+                    JOIN
+                        ctfs ON ctf_scores.ctf_id = ctfs.id
+                    JOIN
+                        teams ON ctf_scores.team = teams.name
+                    GROUP BY
+                        teams.name, teams.logo
+                    ORDER BY total_score DESC;
                 """
 
             cursor.execute(query)

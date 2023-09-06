@@ -42,22 +42,25 @@ def get_teams_dashboard():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         select_query = """
-            SELECT
-                t.name AS TeamName,
-                t.logo AS TeamLogo,
-                SUM(s.total_score) AS TeamScore,
-                MAX(s.date_created) AS LastScoreUpdateDate,
-                COUNT(DISTINCT u.username) AS NumberOfMembers
-            FROM
-                teams t
-            JOIN
-                users u ON t.id = u.team
-            LEFT JOIN
-                scores s ON u.username = s.username
-            GROUP BY
-                t.name, t.logo
-            ORDER BY TeamScore DESC
-            """
+                SELECT
+                    t.name AS TeamName,
+                    t.logo AS TeamLogo,
+                    SUM(s.total_score) AS TeamScore,
+                    MAX(s.date_created) AS LastScoreUpdateDate,
+                    COUNT(DISTINCT u.username) AS NumberOfMembers
+                FROM
+                    teams t
+                JOIN
+                    users u ON t.id = u.team
+                LEFT JOIN
+                    scores s ON u.username = s.username
+                GROUP BY
+                    t.name, t.logo
+                HAVING
+                    SUM(s.total_score) > 0
+                ORDER BY
+                    TeamScore DESC;
+                """
         cursor.execute(select_query)
         team_score = cursor.fetchall()
 
@@ -71,15 +74,14 @@ def get_teams_dashboard():
                         SUM(ctf_scores.total_score) AS total_score,
                         MAX(ctf_scores.date_created) AS last_date_created
                     FROM
-                        teams
-                    LEFT JOIN
-                        ctf_scores ON teams.name = ctf_scores.team
-                    LEFT JOIN
+                        ctf_scores
+                    JOIN
                         ctfs ON ctf_scores.ctf_id = ctfs.id
+                    JOIN
+                        teams ON ctf_scores.team = teams.name
                     GROUP BY
                         teams.name, teams.logo
-                    ORDER BY
-                        total_score DESC;
+                    ORDER BY total_score DESC
                     """
 
         cursor.execute(select_query)

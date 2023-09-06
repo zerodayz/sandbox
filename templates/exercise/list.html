@@ -58,6 +58,43 @@
                     <div class="card border-0 mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Score of the Day</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Score</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for score in top_daily_scores %}
+                                    <tr>
+                                        <td>
+                                            {% if score[3] %}
+                                            <img src="data:image/png;base64, {{ score[3] }}"/>
+                                            {% endif %}
+                                            {{ score[0] }}
+                                        </td>
+                                        <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                                        <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card border-0 mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Individual Top Scores</span>
                         </div>
                         <div class="card-body">

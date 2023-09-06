@@ -51,8 +51,9 @@ def exercise_app():
 
     exercises: list[dict[str, Any]] = fetch_exercises_from_database()
     top_scores = get_all_top_scores()
+    top_daily_scores = get_all_daily_top_scores()
 
-    return render_template("exercise/list.html", exercises=exercises, top_scores=top_scores)
+    return render_template("exercise/list.html", exercises=exercises, top_daily_scores=top_daily_scores, top_scores=top_scores)
 
 
 def add_exercise():
@@ -471,7 +472,7 @@ def get_top_scores(exercise_id):
     return top_scores
 
 
-def get_all_top_scores():
+def get_all_daily_top_scores():
     try:
         with sqlite3.connect(DB_NAME) as connection:
             cursor = connection.cursor()
@@ -481,7 +482,32 @@ def get_all_top_scores():
                 FROM users u
                 LEFT JOIN scores s ON u.username = s.username
                 LEFT JOIN teams t ON u.team = t.id
+                WHERE s.date_created >= date('now', '-1 day')
                 GROUP BY u.username, t.logo
+                ORDER BY total_score DESC;
+            """
+
+            cursor.execute(query)
+            top_scores = cursor.fetchall()
+
+            return top_scores
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return []
+
+
+def get_all_top_scores():
+    try:
+        with sqlite3.connect(DB_NAME) as connection:
+            cursor = connection.cursor()
+
+            query = """
+                SELECT s.username, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created, t.logo
+                FROM scores s
+                JOIN users u ON s.username = u.username
+                LEFT JOIN teams t ON u.team = t.id
+                GROUP BY s.username
                 ORDER BY total_score DESC;
             """
 
