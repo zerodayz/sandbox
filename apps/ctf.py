@@ -19,7 +19,7 @@ def fetch_ctfs_from_database(
     with sqlite3.connect(database_name) as conn:
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM ctfs")
+        cursor.execute("SELECT * FROM ctfs ORDER BY id DESC")
         ctf_rows = cursor.fetchall()
 
         ctfs = []
@@ -151,7 +151,7 @@ def save_team_code(team, ctf_id, user_code):
 
 def get_team_code(team, ctf_id):
     file_path = os.path.join("teams", team, f"{ctf_id}.py3")
-
+    print(file_path)
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             return file.read()
@@ -266,19 +266,25 @@ def get_top_scores(ctf_id):
 
         query = """
                 SELECT
-                    ctf_scores.team,
+                    teams.name AS team,
                     teams.logo AS team_logo,
-                    ctf_scores.total_score,
+                    ctf_scores.total_score AS total_score,
                     ctf_scores.date_created
                 FROM
-                    ctf_scores
-                JOIN
-                    ctfs ON ctf_scores.ctf_id = ctfs.id
-                JOIN
-                    teams ON ctf_scores.team = teams.name
-                WHERE
-                    ctfs.id = ?
-                ORDER BY ctf_scores.total_score DESC;"""
+                    teams
+                LEFT JOIN (
+                    SELECT
+                        team,
+                        total_score,
+                        date_created
+                    FROM
+                        ctf_scores
+                    WHERE
+                        ctf_id = ?
+                ) AS ctf_scores ON teams.name = ctf_scores.team
+                ORDER BY
+                    total_score DESC;
+                """
         cursor.execute(query, (ctf_id,))
         top_scores = cursor.fetchall()
 
@@ -289,23 +295,13 @@ def get_all_top_scores():
     try:
         with sqlite3.connect(DB_NAME) as connection:
             cursor = connection.cursor()
-
             query = """
-                    SELECT
-                        teams.name AS team,
-                        teams.logo AS team_logo,
-                        SUM(ctf_scores.total_score) AS total_score,
-                        MAX(ctf_scores.date_created) AS last_date_created
-                    FROM
-                        ctf_scores
-                    JOIN
-                        ctfs ON ctf_scores.ctf_id = ctfs.id
-                    JOIN
-                        teams ON ctf_scores.team = teams.name
-                    GROUP BY
-                        teams.name, teams.logo
-                    ORDER BY total_score DESC;
-            """
+                SELECT t.name AS team, t.logo, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created
+                FROM teams t
+                LEFT JOIN ctf_scores s ON t.name = s.team
+                GROUP BY t.name, t.logo
+                ORDER BY total_score DESC;
+                """
 
             cursor.execute(query)
             top_scores = cursor.fetchall()

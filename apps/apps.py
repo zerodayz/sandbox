@@ -19,7 +19,7 @@ def fetch_exercises_from_database(
     with sqlite3.connect(database_name) as conn:
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM exercises")
+        cursor.execute("SELECT * FROM exercises ORDER BY id DESC")
         exercise_rows = cursor.fetchall()
 
         exercises = []
@@ -177,7 +177,7 @@ def save_user_code(username, exercise_id, user_code):
 
 def get_user_code(username, exercise_id):
     file_path = os.path.join("users", username, f"{exercise_id}.py3")
-
+    print(file_path)
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             return file.read()
@@ -477,11 +477,11 @@ def get_all_top_scores():
             cursor = connection.cursor()
 
             query = """
-                SELECT s.username, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created, t.logo
-                FROM scores s
-                JOIN users u ON s.username = u.username
+                SELECT u.username, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created, t.logo
+                FROM users u
+                LEFT JOIN scores s ON u.username = s.username
                 LEFT JOIN teams t ON u.team = t.id
-                GROUP BY s.username
+                GROUP BY u.username, t.logo
                 ORDER BY total_score DESC;
             """
 

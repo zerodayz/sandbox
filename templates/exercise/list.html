@@ -79,8 +79,8 @@
                                             {% endif %}
                                             {{ score[0] }}
                                         </td>
-                                        <td>{{ score[1] }}</td>
-                                        <td>{{ score[2] }}</td>
+                                        <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                                        <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>
