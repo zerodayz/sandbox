@@ -272,16 +272,10 @@ def get_top_scores(ctf_id):
                     ctf_scores.date_created
                 FROM
                     teams
-                LEFT JOIN (
-                    SELECT
-                        team,
-                        total_score,
-                        date_created
-                    FROM
-                        ctf_scores
-                    WHERE
-                        ctf_id = ?
-                ) AS ctf_scores ON teams.name = ctf_scores.team
+                LEFT JOIN
+                    ctf_scores ON teams.name = ctf_scores.team
+                WHERE
+                    ctf_scores.ctf_id = ?
                 ORDER BY
                     total_score DESC;
                 """
