@@ -335,7 +335,8 @@ def get_ctf_password(ctf_id):
 
 def protected_ctf(ctf_id):
     ctf_password = get_ctf_password(ctf_id)
-    if ctf_password is None:
+    if ctf_password[0] is None:
+        session['ctf_' + str(ctf_id) + '_authenticated'] = True
         return redirect(url_for("ctf", ctf_id=ctf_id))
 
     if request.method == "POST":
@@ -345,8 +346,8 @@ def protected_ctf(ctf_id):
             return redirect(url_for("ctf", ctf_id=ctf_id))
         else:
             flash("Wrong password!", "danger")
-            return redirect(url_for("protected_ctf", ctf_id=ctf_id))
-    return redirect(url_for("ctf", ctf_id=ctf_id))
+            return render_template("/ctf/password.html", ctf_id=ctf_id)
+    return render_template("/ctf/password.html", ctf_id=ctf_id)
 
 
 def ctf(ctf_id):
@@ -361,7 +362,7 @@ def ctf(ctf_id):
 
     if (session.get('ctf_' + str(ctf_id) + '_authenticated') is None
             or session.get('ctf_' + str(ctf_id) + '_authenticated') is False):
-        return render_template("/ctf/password.html", ctf_id=ctf_id)
+        return redirect(url_for("protected_ctf", ctf_id=ctf_id))
 
     ctfs = fetch_ctfs_from_database()
 
