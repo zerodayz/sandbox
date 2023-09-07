@@ -19,7 +19,7 @@
                     <div class="modal-body">
                         <p>This will disband and delete the team
                             {% if user.team.logo %}
-                            <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
                             {% endif %}
                             {{ user.team.name }}.</p>
                     </div>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="modal-body">
                         <p>You will leave the team {% if user.team.logo %}
-                            <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
                             {% endif %}
                             {{ user.team.name }}, everyone else will remain.</p>
                     </div>
@@ -81,7 +81,7 @@
                     <div class="card-body">
                         <p class="card-text">Team:
                             {% if user.team.logo %}
-                            <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
                             {% endif %}
                                     {{ user.team.name if user.team else 'No Team' }}</p>
                     </div>
@@ -99,7 +99,7 @@
                                 <input type="text" class="form-control" id="team_name" name="team_name" required>
                             </div>
                             <div class="mb-3">
-                                <label for="team_crest" class="form-label">Team Crest <img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACRElEQVRIiZ2V3W6jMBCFPxtooDRJo6KqN1Uu+v4P0seoepFGipREBUod7NmLlS2S5U9rKSLA+JyZ8TmDen9/F2YsEUHkb6hSCqXUnG3EU6DOOaIoIk1T7u7uADDG0DQNIoLW+v8InHPEcczz8zNFUZCmKVEUAWCtpa5rdrsdp9NplKSXwDnHZrNhu92yWCxCe/xPa81qtWK5XLLf7/n4+BgkGaRu25YkSRARlFKICG3bht5baxERXl5eWK/XOOfmV6C15nw+8/n5yevrK19fXxwOB9q2Jc9zttttIAd4fHzkdDr1Ewwxa63Z7/ecz2fKsgzKqaqKKIp4e3vDWgtAkiQ453qVFT89PV098C3x/0WE+/v7cO+cI8/zkL2IEMcxRVH0nkO82WxCj/26ve+SLxYL8jwPPfdxt4lOtqgPPMuyq+y11vz8/GCMGdw3arQxcKUUdV1T1/Xo3nioHV3wJEkCuFIK5xxlWfL7+zs5MmZVkGXZFWFZlhhjZs0jPZY9/G2FV4dSCmstl8tl9sAbn1SdrD2gc+5Kon0k3WfhDIayERGMMSHGj4uuV7rneIsTezeOraqqgu67LetL5p8KpmTmV5ZlpGlK0zRUVTXZf/9+UEW+bOccq9WKoigAWK/XHA4Hvr+/A0if1IMZh5i7bl0ul4FMRHh4eJj9ydS3gUMz6DbbbtyQ1JVS0z4QEY7HI23borXmcrlwPB57wbpXv3fSyUopmqZht9uRJAnGGKy1QapdT/RV00vQ9UZX/0Me6AP26w+R334wsxKa7gAAAABJRU5ErkJggg=="/></label>
+                                <label for="team_crest" class="form-label">Team Crest <img width="24" height="24" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACRElEQVRIiZ2V3W6jMBCFPxtooDRJo6KqN1Uu+v4P0seoepFGipREBUod7NmLlS2S5U9rKSLA+JyZ8TmDen9/F2YsEUHkb6hSCqXUnG3EU6DOOaIoIk1T7u7uADDG0DQNIoLW+v8InHPEcczz8zNFUZCmKVEUAWCtpa5rdrsdp9NplKSXwDnHZrNhu92yWCxCe/xPa81qtWK5XLLf7/n4+BgkGaRu25YkSRARlFKICG3bht5baxERXl5eWK/XOOfmV6C15nw+8/n5yevrK19fXxwOB9q2Jc9zttttIAd4fHzkdDr1Ewwxa63Z7/ecz2fKsgzKqaqKKIp4e3vDWgtAkiQ453qVFT89PV098C3x/0WE+/v7cO+cI8/zkL2IEMcxRVH0nkO82WxCj/26ve+SLxYL8jwPPfdxt4lOtqgPPMuyq+y11vz8/GCMGdw3arQxcKUUdV1T1/Xo3nioHV3wJEkCuFIK5xxlWfL7+zs5MmZVkGXZFWFZlhhjZs0jPZY9/G2FV4dSCmstl8tl9sAbn1SdrD2gc+5Kon0k3WfhDIayERGMMSHGj4uuV7rneIsTezeOraqqgu67LetL5p8KpmTmV5ZlpGlK0zRUVTXZf/9+UEW+bOccq9WKoigAWK/XHA4Hvr+/A0if1IMZh5i7bl0ul4FMRHh4eJj9ydS3gUMz6DbbbtyQ1JVS0z4QEY7HI23borXmcrlwPB57wbpXv3fSyUopmqZht9uRJAnGGKy1QapdT/RV00vQ9UZX/0Me6AP26w+R334wsxKa7gAAAABJRU5ErkJggg=="/></label>
                                 <input class="form-control" type="file" id="team_crest" name="team_crest" accept="image/png">
                             </div>
                             <div class="mb-3">

@@ -26,7 +26,7 @@
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       You have been invited to join the team:
       {% if team_invitation.logo %}
-      <img src="data:image/png;base64, {{ team_invitation.logo if team_invitation.logo else '' }}"/>
+      <img width="24" height="24" src="data:image/png;base64, {{ team_invitation.logo if team_invitation.logo else '' }}"/>
       {% endif %}
       {{ team_invitation.name }}</p>
       <form method="post" action="/team/join">
@@ -59,7 +59,7 @@
           <div class="card-body">
             <p class="card-text">Team:
               {% if user.team.logo %}
-              <img src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+              <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
               {% endif %}
               {{ user.team.name if user.team else 'No Team' }}</p>
             <a href="/team" type="button" class="btn btn-primary">Team Management</a>

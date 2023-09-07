@@ -1,5 +1,6 @@
 Flask
 gunicorn
+gevent
 flake8
 mypy
 black
