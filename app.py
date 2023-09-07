@@ -7,8 +7,10 @@ from team import (delete_team, get_user_team, invite_user_to_team, join_team,
                   leave_team, get_teams_dashboard)
 from user import get_user_profile, create_user
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
+from apps.upload import upload_file, serve_uploaded_file
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Configure session settings
 app.secret_key = "your-secret-key"
@@ -16,6 +18,10 @@ app.secret_key = "your-secret-key"
 # Register the authentication routes
 app.route("/", methods=["GET", "POST"])(login)
 app.route("/logout", methods=["GET"])(logout)
+
+# Register the upload route
+app.route("/upload", methods=["POST"])(upload_file)
+app.route('/uploads/<filename>')(serve_uploaded_file)
 
 # Register the page routes
 app.route("/about", methods=["GET"])(lambda: render_template("about.html"))

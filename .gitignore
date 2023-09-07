@@ -3,7 +3,7 @@ __pycache__/
 certs
 teams/**/
 users/**/
-static/uploads/**
+uploads/
 static/ctf/**
 .DS_Store
 **/.DS_Store

@@ -66,6 +66,23 @@
                 </div>
               </div>
             </div>
+            <div class="card border-0 mt-4">
+              <div class="card-header">
+                <i id="title-icon" class="bi bi-box pe-none me-2" width="30" height="24"></i></span>
+                <span class="fs-5 fw-semibold">
+                  Upload File
+                </span>
+              </div>
+              <div class="card-body" style="padding: 0px !important;">
+                <div class="form-group" >
+                    <div class="input-group" style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);">
+                      <input type="file" class="form-control" id="fileUpload" name="fileUpload">
+                      <button type="button" class="btn btn-secondary" onclick="selectFile()">Upload</button>
+                    </div>
+                </div>
+                <div id="upload-status" style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);"></div>
+              </div>
+            </div>
             <div id="sample-sections">
               {% if ctf['solution'] %}
               <div><div class="card border-0 mt-4 output-section">
@@ -216,6 +233,38 @@
   }
 </style>
 <script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+  function selectFile() {
+    const fileInput = document.getElementById('fileUpload');
+    const file = fileInput.files[0];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/upload', true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          let response = JSON.parse(this.responseText);
+          if (response['success'] == true) {
+            document.getElementById('upload-status').innerHTML = response['message']
+                    + ' <a href="/uploads/'
+                    + response['filename']
+                    + '" target="_blank">View</a>';
+          } else {
+            document.getElementById('upload-status').innerHTML = 'File upload failed.';
+          }
+        } else {
+          document.getElementById('upload-status').innerHTML = 'File upload failed.';
+        }
+      };
+      xhr.send(formData);
+    }
+  }
+</script>
+
 <script>
   var editor = ace.edit("editor-1");
   editor.session.setMode("ace/mode/python");
