@@ -7,9 +7,6 @@ $custom-colors: (
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-
-
-
 body {
   font-family: Arial, sans-serif;
   background-color: var(--bs-light);
@@ -65,8 +62,8 @@ body {
 }
 
 .dropdown-item:hover {
-  background-color: var(--bs-primary);
-  color: var(--bs-light);
+  background-color: var(--bs-primary) !important;
+  color: var(--bs-light)!important;
 }
 
 #content {
@@ -138,8 +135,6 @@ span.fs-5 {
   display: inline-block;
   font-size: 30px;
 }
-
-
 
 img {
   max-width: 100%;
