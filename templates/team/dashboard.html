@@ -31,6 +31,13 @@
                 {% for score in top_scores %}
                 <tr>
                   <td>
+                    {% if loop.index0 == 0 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-warning" width="30" height="24"></i>
+                    {% elif loop.index0 == 1 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-light" width="30" height="24"></i>
+                    {% elif loop.index0 == 2 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-danger" width="30" height="24"></i>
+                    {% endif %}
                     {% if score[1] %}
                     <img width="24" height="24" src="data:image/png;base64, {{ score[1] }}"/>
                     {% endif %}
@@ -64,6 +71,13 @@
                 {% for score in ctf_top_scores %}
                 <tr>
                   <td>
+                    {% if loop.index0 == 0 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-warning" width="30" height="24"></i>
+                    {% elif loop.index0 == 1 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-light" width="30" height="24"></i>
+                    {% elif loop.index0 == 2 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-danger" width="30" height="24"></i>
+                    {% endif %}
                     {% if score[1] %}
                     <img width="24" height="24" src="data:image/png;base64, {{ score[1] }}"/>
                     {% endif %}
