@@ -3,6 +3,7 @@
 
 $custom-colors: (
   "primary": rgb(224, 102, 102),
+  "bronze": rgb(205, 127, 50)
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
