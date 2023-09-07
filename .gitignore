@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 certs
+static/.sass-cache/
 teams/**/
 users/**/
 uploads/

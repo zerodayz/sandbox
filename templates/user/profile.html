@@ -62,7 +62,7 @@
               <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
               {% endif %}
               {{ user.team.name if user.team else 'No Team' }}</p>
-            <a href="/team" type="button" class="btn btn-primary">Team Management</a>
+            <a href="/team" type="button" class="btn btn-primary text-white">Team Management</a>
           </div>
         </div>
         <!-- Change password -->
@@ -85,7 +85,7 @@
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
               </div>
-              <button type="submit" class="btn btn-primary">Change Password</button>
+              <button type="submit" class="btn btn-primary text-white">Change Password</button>
             </form>
           </div>
       </div>

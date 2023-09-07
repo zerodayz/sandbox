@@ -16,7 +16,7 @@
                 <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
                     <pre>{{ result['message'] }}</pre>
                     {% if result['full_score'] %}
-                    <a href="#" class="btn btn-primary mt-4" onclick="runCode('save')">Save Exercise</a>
+                    <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('save')">Save Exercise</a>
                     {% endif %}
                     {% if result['stdout'] %}
                     <div class="card border-0 mt-4">
@@ -226,8 +226,8 @@
                         </div>
                     {% endif %}
                 </div>
-                <button id="add-sample-button" type="button" class="btn btn-primary mt-4">Sample Input and Output</button>
-                <button id="add-output-button" type="button" class="btn btn-primary mt-4">Sample Output</button>
+                <button id="add-sample-button" type="button" class="btn btn-primary text-white mt-4">Sample Input and Output</button>
+                <button id="add-output-button" type="button" class="btn btn-primary text-white mt-4">Sample Output</button>
                 <div class="card border-0 mt-4">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
@@ -241,7 +241,7 @@
                         </form>
                     </div>
                 </div>
-                <a href="#" class="btn btn-primary mt-4" onclick="runCode('run')">Submit</a>
+                <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('run')">Submit</a>
             </div>
         </div>
     </div>
@@ -256,7 +256,7 @@
     }
 
     .badge.selected {
-        background-color: #007bff;
+        background-color: var(--bs-primary);
     }
 
     .trash-button {

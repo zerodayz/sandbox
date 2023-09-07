@@ -16,7 +16,7 @@
         <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
           <pre>{{ result['message'] }}</pre>
           {% if result['full_score'] %}
-          <a href="#" class="btn btn-primary mt-4" onclick="runCode('save')">Save Level</a>
+          <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('save')">Save Level</a>
           {% endif %}
           {% if result['next_text'] %}
           <div class="card border-0 mt-4">
@@ -163,10 +163,10 @@
               </div>
               {% endif %}
             </div>
-            <button id="add-output-button" type="button" class="btn btn-primary mt-4">Flag</button>
-            <button id="add-password-button" type="button" class="btn btn-primary mt-4">This Level Password</button>
-            <button id="add-next-password-button" type="button" class="btn btn-primary mt-4">Next Level Password</button>
-            <button id="add-next-output-button" type="button" class="btn btn-primary mt-4">Congratulation Message</button>
+            <button id="add-output-button" type="button" class="btn btn-primary text-white mt-4">Flag</button>
+            <button id="add-password-button" type="button" class="btn btn-primary text-white mt-4">This Level Password</button>
+            <button id="add-next-password-button" type="button" class="btn btn-primary text-white mt-4">Next Level Password</button>
+            <button id="add-next-output-button" type="button" class="btn btn-primary text-white mt-4">Congratulation Message</button>
             <div class="card border-0 mt-4">
               <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
@@ -180,7 +180,7 @@
                 </form>
               </div>
             </div>
-            <a href="#" class="btn btn-primary mt-4" onclick="runCode('run')">Submit</a>
+            <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('run')">Submit</a>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@
   }
 
   .badge.selected {
-    background-color: #007bff;
+    background-color: var(--bs-primary);
   }
 
   .trash-button {

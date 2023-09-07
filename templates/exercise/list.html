@@ -25,7 +25,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="input-group mb-4 mx-auto">
-                        <input type="text" id="searchInput" class="form-control border-light-subtle" placeholder="Search">
+                        <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                                 <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
                                 <span class="badge bg-secondary">{{ exercise['language'] }}</span>
                                 <br/>
-                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary mt-4">Open</a>
+                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary text-white mt-4">Open</a>
                             </div>
                         </div>
                     {% endfor %}

@@ -1,0 +1,213 @@
+@import "bootstrap-5.3.1/scss/functions";
+@import "bootstrap-5.3.1/scss/variables";
+
+$custom-colors: (
+  "primary": rgb(224, 102, 102),
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+
+
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--bs-light);
+  color: var(--bs-dark);
+}
+
+
+.navbar {
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
+  padding: 15px 0;
+  border-bottom: 2px solid var(--bs-primary);
+}
+
+.navbar-brand {
+  font-size: 24px;
+}
+
+.navbar i {
+  font-size: 30px;
+  vertical-align: middle;
+  margin-right: 5px;
+  color: var(--bs-primary);
+}
+
+
+.navbar-nav a.nav-link {
+  color: var(--bs-light);
+  font-size: 18px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-nav a.nav-link:hover {
+  color: var(--bs-primary);
+}
+
+
+#theme-toggler {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+.dropdown-menu {
+  background-color: var(--bs-dark);
+  border: none;
+}
+
+.dropdown-item {
+  color: var(--bs-light);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: var(--bs-primary);
+  color: var(--bs-light);
+}
+
+#content {
+  margin-top: 56px;
+  border-radius: 5px;
+}
+
+.card {
+  border: none;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: var(--bs-light);
+  color: var(--bs-primary);
+  padding: 15px;
+  border-bottom: 2px solid var(--bs-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-header i {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.description {
+  height: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+
+a {
+  color: var(--bs-primary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--bs-secondary);
+}
+
+
+span.fs-5 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+
+.exercise-add-card span {
+  display: inline-block;
+  font-size: 30px;
+}
+
+
+
+img {
+  max-width: 100%;
+}
+
+#searchInput {
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.card-footer {
+  background: transparent !important;
+  border-top: 0px !important;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"],
+input[type="password"]
+{ width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="submit"] {
+  padding: 10px 20px;
+  background-color: var(--bs-primary);;
+  color: var(--bs-light);;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#code-container:read-write:focus {
+  outline: none;
+}
+
+.code-container {
+  position: relative;
+  height: 350px;
+}
+
+#sample-output {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.code-wrapper {
+  position: relative;
+}
+
+*[id^='editor-'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  font-size: 1rem;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+
+
+
+@import "bootstrap-5.3.1/scss/bootstrap";
