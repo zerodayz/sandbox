@@ -60,11 +60,6 @@ app.route("/exercise/<int:exercise_id>/delete", methods=["POST"])(delete_exercis
 
 if __name__ == "__main__":
     with app.app_context():
-        # # delete DB file
-        import os
-        if os.path.exists('instance/sandbox_db.sqlite'):
-            os.remove('instance/sandbox_db.sqlite')
-            print("Database file deleted successfully.")
         db.create_all()
         print("Database tables created successfully.")
 
