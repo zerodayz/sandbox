@@ -22,7 +22,11 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        <div class="row justify-content-center">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="mt-4">Capture The Flag</h1>
+                <hr/>
+            </div>
             <div class="col-md-6">
                 <div class="input-group mb-4 mx-auto">
                     <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
@@ -31,13 +35,13 @@
         </div>
         <div class="row">
             <div class="col-md-12 ctf-list">
-                <a class="card border-0 btn btn-primary ctf-add-card" href="/ctf/create" class="btn">
+                <a class="card btn btn-primary ctf-add-card" href="/ctf/create" class="btn">
                     <div>
                         <span><i class="bi bi-plus-circle-fill"></i></span>
                     </div>
                 </a>
                 {% for ctf in ctfs %}
-                <div class="card ctf-card border-0 mb-3">
+                <div class="card ctf-card mb-3">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">{{ ctf['title'] }}</span>
@@ -52,12 +56,14 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
-                <div class="card border-0 mt-4">
+                <div class="card">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">Team Top Scores</span>
+                        <span class="fs-5 fw-semibold">Team Top 5 Scores</span>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

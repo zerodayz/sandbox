@@ -19,7 +19,7 @@
                     <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('save')">Save Exercise</a>
                     {% endif %}
                     {% if result['stdout'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Output</span>
@@ -30,7 +30,7 @@
                     </div>
                     {% endif %}
                     {% if result['stderr'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Error</span>
@@ -41,7 +41,7 @@
                     </div>
                     {% endif %}
                     {% if result['flake8'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Flake8</span>
@@ -52,7 +52,7 @@
                     </div>
                     {% endif %}
                     {% if result['mypy'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Mypy</span>
@@ -63,7 +63,7 @@
                     </div>
                     {% endif %}
                     {% if result['black'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Black</span>
@@ -74,7 +74,7 @@
                     </div>
                     {% endif %}
                     {% if result['pylint'] %}
-                    <div class="card border-0 mt-4">
+                    <div class="card mt-4">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Pylint</span>
@@ -89,7 +89,7 @@
                 {% endif %}
         <div class="row">
             <div class="col-md-12">
-                <div class="card border-0">
+                <div class="card">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">
@@ -107,7 +107,7 @@
                 <div id="sample-sections">
                     {% if exercise['sample_1_input'] and exercise['sample_1_output'] %}
                         <div>
-                            <div class="card border-0 mt-4 input-section">
+                            <div class="card mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
@@ -121,7 +121,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="card border-0 mt-4 output-section">
+                            <div class="card mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -139,7 +139,7 @@
                         </div>
                     {% elif exercise['sample_1_output'] %}
                         <div>
-                            <div class="card border-0 mt-4 output-section">
+                            <div class="card mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -159,7 +159,7 @@
                     {% endif %}
                     {% if exercise['sample_2_input'] and exercise['sample_2_output'] %}
                         <div>
-                            <div class="card border-0 mt-4 input-section">
+                            <div class="card mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
@@ -173,7 +173,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="card border-0 mt-4 output-section">
+                            <div class="card mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -193,7 +193,7 @@
                     {% endif %}
                     {% if exercise['sample_3_input'] and exercise['sample_3_output'] %}
                         <div>
-                            <div class="card border-0 mt-4 input-section">
+                            <div class="card mt-4 input-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Input</span>
@@ -207,7 +207,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="card border-0 mt-4 output-section">
+                            <div class="card mt-4 output-section">
                                 <div class="card-header">
                                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                                     <span class="fs-5 fw-semibold">Sample Output</span>
@@ -228,7 +228,7 @@
                 </div>
                 <button id="add-sample-button" type="button" class="btn btn-primary text-white mt-4">Sample Input and Output</button>
                 <button id="add-output-button" type="button" class="btn btn-primary text-white mt-4">Sample Output</button>
-                <div class="card border-0 mt-4">
+                <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Your Solution</span>
@@ -541,7 +541,7 @@
 
         const sampleSection = document.createElement('div');
         sampleSection.innerHTML = `
-            ${addInput ? `<div class="card border-0 mt-4 input-section">
+            ${addInput ? `<div class="card mt-4 input-section">
                 <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Sample Input</span>
@@ -557,7 +557,7 @@
             </div>
             ` : ''}
             ${addOutput ? `
-            <div class="card border-0 mt-4 output-section">
+            <div class="card mt-4 output-section">
                 <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Sample Output</span>

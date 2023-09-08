@@ -277,7 +277,8 @@ def get_top_scores(ctf_id):
                 WHERE
                     ctf_scores.ctf_id = ?
                 ORDER BY
-                    total_score DESC;
+                    total_score DESC
+                LIMIT 5;
                 """
         cursor.execute(query, (ctf_id,))
         top_scores = cursor.fetchall()
@@ -303,7 +304,8 @@ def get_all_top_scores():
                         teams ON ctf_scores.team = teams.name
                     GROUP BY
                         teams.name, teams.logo
-                    ORDER BY total_score DESC;
+                    ORDER BY total_score DESC
+                    LIMIT 5;
                 """
 
             cursor.execute(query)

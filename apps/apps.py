@@ -464,7 +464,8 @@ def get_top_scores(exercise_id):
             JOIN users u ON s.username = u.username
             LEFT JOIN teams t ON u.team = t.id
             WHERE s.exercise_id = ?
-            ORDER BY s.total_score DESC;
+            ORDER BY s.total_score DESC
+            LIMIT 5;
         """
         cursor.execute(query, (exercise_id,))
         top_scores = cursor.fetchall()
@@ -484,7 +485,8 @@ def get_all_daily_top_scores():
                 LEFT JOIN teams t ON u.team = t.id
                 WHERE s.date_created >= date('now', '-1 day')
                 GROUP BY u.username, t.logo
-                ORDER BY total_score DESC;
+                ORDER BY total_score DESC
+                LIMIT 5;
             """
 
             cursor.execute(query)
@@ -508,7 +510,8 @@ def get_all_top_scores():
                 JOIN users u ON s.username = u.username
                 LEFT JOIN teams t ON u.team = t.id
                 GROUP BY s.username
-                ORDER BY total_score DESC;
+                ORDER BY total_score DESC
+                LIMIT 5;
             """
 
             cursor.execute(query)

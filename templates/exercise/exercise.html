@@ -35,7 +35,7 @@
         <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
           <pre>{{ result['message'] }}</pre>
           {% if result['stdout'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Output</span>
@@ -46,7 +46,7 @@
           </div>
           {% endif %}
           {% if result['stderr'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Error</span>
@@ -57,7 +57,7 @@
           </div>
           {% endif %}
           {% if result['flake8'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Flake8</span>
@@ -68,7 +68,7 @@
           </div>
           {% endif %}
           {% if result['mypy'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Mypy</span>
@@ -79,7 +79,7 @@
           </div>
           {% endif %}
           {% if result['black'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Black</span>
@@ -90,7 +90,7 @@
           </div>
           {% endif %}
           {% if result['pylint'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Pylint</span>
@@ -103,7 +103,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
-        <div class="card border-0">
+        <div class="card">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
@@ -120,7 +120,7 @@
         {% set output_key = 'sample_' + sample_num|string + '_output' %}
 
         {% if exercise[input_key] %}
-        <div class="card border-0 mt-4">
+        <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Sample Input</span>
@@ -132,7 +132,7 @@
         {% endif %}
 
         {% if exercise[output_key] %}
-        <div class="card border-0 mt-4">
+        <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Sample Output</span>
@@ -146,7 +146,7 @@
         {% endif %}
         {% endfor %}
 
-        <div class="card border-0 mt-4">
+        <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Your Solution</span>
@@ -160,10 +160,10 @@
           </div>
         </div>
         <a href="#" class="btn btn-primary text-white mt-4" onclick="saveCode()">Submit</a>
-        <div class="card border-0 mt-4">
+        <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">Individual Top Scores</span>
+            <span class="fs-5 fw-semibold">Individual Top 5 Scores</span>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -201,7 +201,7 @@
           </div>
         </div>
         {% if exercise['added_by'] == user.username %}
-        <div class="card border-0 mt-4">
+        <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">Delete Exercise</span>

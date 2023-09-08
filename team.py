@@ -59,7 +59,8 @@ def get_teams_dashboard():
                 HAVING
                     SUM(s.total_score) > 0
                 ORDER BY
-                    TeamScore DESC;
+                    TeamScore DESC
+                LIMIT 5;
                 """
         cursor.execute(select_query)
         team_score = cursor.fetchall()
@@ -82,6 +83,7 @@ def get_teams_dashboard():
                     GROUP BY
                         teams.name, teams.logo
                     ORDER BY total_score DESC
+                    LIMIT 5;
                     """
 
         cursor.execute(select_query)

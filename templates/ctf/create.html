@@ -19,7 +19,7 @@
           <a href="#" class="btn btn-primary text-white mt-4" onclick="runCode('save')">Save Level</a>
           {% endif %}
           {% if result['next_text'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Congratulations</span>
@@ -30,7 +30,7 @@
           </div>
           {% endif %}
           {% if result['next_password'] %}
-          <div class="card border-0 mt-4">
+          <div class="card mt-4">
             <div class="card-header">
               <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
               <span class="fs-5 fw-semibold">Next Level Password</span>
@@ -45,7 +45,7 @@
         {% endif %}
         <div class="row">
           <div class="col-md-12">
-            <div class="card border-0">
+            <div class="card">
               <div class="card-header">
                 <span class="eye-button" onclick="toggleHTML()"><i id="title-icon" class="bi bi-filetype-html pe-none me-2" width="30" height="24"></i></span>
                 <span class="fs-5 fw-semibold">
@@ -66,7 +66,7 @@
                 </div>
               </div>
             </div>
-            <div class="card border-0 mt-4">
+            <div class="card mt-4">
               <div class="card-header">
                 <i id="title-icon" class="bi bi-box pe-none me-2" width="30" height="24"></i></span>
                 <span class="fs-5 fw-semibold">
@@ -85,7 +85,7 @@
             </div>
             <div id="sample-sections">
               {% if ctf['solution'] %}
-              <div><div class="card border-0 mt-4 output-section">
+              <div><div class="card mt-4 output-section">
                 <div class="card-header">
                   <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                   <span class="fs-5 fw-semibold">Flag</span>
@@ -104,7 +104,7 @@
               {% endif %}
               {% if ctf['password'] %}
               <div>
-                <div class="card border-0 mt-4 input-section">
+                <div class="card mt-4 input-section">
                   <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">This Level Password</span>
@@ -124,7 +124,7 @@
               {% endif %}
               {% if ctf['next_password'] %}
               <div>
-                <div class="card border-0 mt-4 input-section">
+                <div class="card mt-4 input-section">
                   <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Next Level Password</span>
@@ -144,7 +144,7 @@
               {% endif %}
               {% if ctf['next_text'] %}
               <div>
-                <div class="card border-0 mt-4 output-section">
+                <div class="card mt-4 output-section">
                   <div class="card-header">
                     <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                     <span class="fs-5 fw-semibold">Congratulations</span>
@@ -167,7 +167,7 @@
             <button id="add-password-button" type="button" class="btn btn-primary text-white mt-4">This Level Password</button>
             <button id="add-next-password-button" type="button" class="btn btn-primary text-white mt-4">Next Level Password</button>
             <button id="add-next-output-button" type="button" class="btn btn-primary text-white mt-4">Congratulation Message</button>
-            <div class="card border-0 mt-4">
+            <div class="card mt-4">
               <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">Your Flag</span>
@@ -523,7 +523,7 @@
     const outputKey = `solution`;
 
     const sampleSection = document.createElement('div');
-    sampleSection.innerHTML = `<div class="card border-0 mt-4 output-section">
+    sampleSection.innerHTML = `<div class="card mt-4 output-section">
             <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">Flag</span>
@@ -553,7 +553,7 @@
     const outputKey = `next_text`;
 
     const sampleSection = document.createElement('div');
-    sampleSection.innerHTML = `<div class="card border-0 mt-4 output-section">
+    sampleSection.innerHTML = `<div class="card mt-4 output-section">
             <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">Congratulations</span>
@@ -583,7 +583,7 @@
     const outputKey = `password`;
 
     const sampleSection = document.createElement('div');
-    sampleSection.innerHTML = `<div class="card border-0 mt-4 input-section">
+    sampleSection.innerHTML = `<div class="card mt-4 input-section">
             <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">This Level Password</span>
@@ -613,7 +613,7 @@
     const outputKey = `next_password`;
 
     const sampleSection = document.createElement('div');
-    sampleSection.innerHTML = `<div class="card border-0 mt-4 input-section">
+    sampleSection.innerHTML = `<div class="card mt-4 input-section">
             <div class="card-header">
                 <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">Next Level Password</span>

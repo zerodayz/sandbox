@@ -6,147 +6,143 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-        <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        <pre>{{ message }}</pre>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container-fluid">
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <pre>{{ message }}</pre>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="mt-4">Exercises</h1>
+                <hr/>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group mx-auto">
+                    <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
+                </div>
+            </div>
+            <div class="col-md-12 exercise-list">
+                <a class="card btn btn-primary exercise-add-card" href="/exercise/create" class="btn">
+                    <div>
+                        <span><i class="bi bi-plus-circle-fill"></i></span>
                     </div>
-                </div>
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="input-group mb-4 mx-auto">
-                        <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 exercise-list">
-                    <a class="card border-0 btn btn-primary exercise-add-card" href="/exercise/create" class="btn">
-                        <div>
-                            <span><i class="bi bi-plus-circle-fill"></i></span>
-                        </div>
-                    </a>
-                    {% for exercise in exercises %}
-                        <div class="card exercise-card border-0 mb-3">
-                            <div class="card-header">
-                                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                                <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
-                            </div>
-                            <div class="card-body">
-                                <p class="description">
-                                    {{ exercise['description'] }}
-                                </p>
-                            </div>
-                            <div class="card-footer mx-auto">
-                                <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
-                                <span class="badge bg-secondary">{{ exercise['language'] }}</span>
-                                <br/>
-                                <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary text-white mt-4">Open</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card border-0 mt-4">
+                </a>
+                {% for exercise in exercises %}
+                    <div class="card exercise-card mb-3">
                         <div class="card-header">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                            <span class="fs-5 fw-semibold">Score of the Day</span>
+                            <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Score</th>
-                                        <th>Date</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for score in top_daily_scores %}
-                                    <tr>
-                                        <td>
-                                            {% if loop.index0 == 0 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-warning" width="30" height="24"></i>
-                                            {% elif loop.index0 == 1 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-light" width="30" height="24"></i>
-                                            {% elif loop.index0 == 2 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-bronze" width="30" height="24"></i>
-                                            {% endif %}
-                                            {% if score[3] %}
-                                            <img width="24" height="24" src="data:image/png;base64, {{ score[3] }}"/>
-                                            {% endif %}
-                                            {{ score[0] }}
-                                        </td>
-                                        <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
-                                        <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <p class="description">
+                                {{ exercise['description'] }}
+                            </p>
                         </div>
+                        <div class="card-footer mx-auto">
+                            <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
+                            <span class="badge bg-secondary">{{ exercise['language'] }}</span>
+                            <br/>
+                            <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary text-white mt-4">Open</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-box pe-none me-2"></i>
+                    <span class="fs-5 fw-bold">Top 5 Scores of the Day</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for score in top_daily_scores %}
+                            <tr>
+                                <td>
+                                    {% if loop.index0 == 0 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-warning"></i>
+                                    {% elif loop.index0 == 1 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-light"></i>
+                                    {% elif loop.index0 == 2 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-bronze"></i>
+                                    {% endif %}
+                                    {{ score[0] }}
+                                </td>
+                                <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                                <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card border-0 mt-4">
-                        <div class="card-header">
-                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                            <span class="fs-5 fw-semibold">Individual Top Scores</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Score</th>
-                                        <th>Date</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for score in top_scores %}
-                                    <tr>
-                                        <td>
-                                            {% if loop.index0 == 0 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-warning" width="30" height="24"></i>
-                                            {% elif loop.index0 == 1 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-light" width="30" height="24"></i>
-                                            {% elif loop.index0 == 2 %}
-                                            <i class="bi bi-trophy-fill pe-none me-2 text-bronze" width="30" height="24"></i>
-                                            {% endif %}
-                                            {% if score[3] %}
-                                            <img width="24" height="24" src="data:image/png;base64, {{ score[3] }}"/>
-                                            {% endif %}
-                                            {{ score[0] }}
-                                        </td>
-                                        <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
-                                        <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-box pe-none me-2"></i>
+                    <span class="fs-5 fw-bold">Individual Top 5 Scores</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for score in top_scores %}
+                            <tr>
+                                <td>
+                                    {% if loop.index0 == 0 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-warning"></i>
+                                    {% elif loop.index0 == 1 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-light"></i>
+                                    {% elif loop.index0 == 2 %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-bronze"></i>
+                                    {% endif %}
+                                    {{ score[0] }}
+                                </td>
+                                <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                                <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 <style>
     .exercise-list {
         display: grid;
