@@ -31,7 +31,7 @@
       {{ team_invitation.name }}</p>
       <form method="post" action="/team/join">
         <input type="hidden" name="team_id" value="{{ team_invitation.id }}">
-        <input type="hidden" name="user_id" value="{{ user.username }}">
+        <input type="hidden" name="username" value="{{ user.username }}">
         <input type="password" class="form-control" id="team_password" name="team_password" placeholder="Team Password" required>
         <button type="submit" class="btn btn-success">Join</button>
       </form>

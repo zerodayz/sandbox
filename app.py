@@ -1,16 +1,20 @@
 from flask import (Flask, jsonify, redirect, render_template, request, session,
                    url_for)
 
+from models import db
+
 from apps.apps import add_exercise, delete_exercise, exercise, exercise_app
-from authentication import login, logout
-from team import (delete_team, get_user_team, invite_user_to_team, join_team,
+from apps.authentication import login, logout
+from apps.team import (delete_team, get_user_team, invite_user_to_team, join_team,
                   leave_team, get_teams_dashboard)
-from user import get_user_profile, create_user
+from apps.user import user_profile, create_user
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sandbox_db.sqlite'
 app.config['UPLOAD_FOLDER'] = 'uploads'
+db.init_app(app)
 
 # Configure session settings
 app.secret_key = "your-secret-key"
@@ -27,7 +31,7 @@ app.route('/uploads/<filename>')(serve_uploaded_file)
 app.route("/about", methods=["GET"])(lambda: render_template("about.html"))
 
 # Register the user routes
-app.route("/user/profile", methods=["GET", "POST"])(get_user_profile)
+app.route("/user/profile", methods=["GET", "POST"])(user_profile)
 app.route("/user/create", methods=["GET", "POST"])(create_user)
 
 # Register the team routes
@@ -55,4 +59,13 @@ app.route("/exercise/create", methods=["GET", "POST"])(add_exercise)
 app.route("/exercise/<int:exercise_id>/delete", methods=["POST"])(delete_exercise)
 
 if __name__ == "__main__":
+    with app.app_context():
+        # # delete DB file
+        import os
+        if os.path.exists('instance/sandbox_db.sqlite'):
+            os.remove('instance/sandbox_db.sqlite')
+            print("Database file deleted successfully.")
+        db.create_all()
+        print("Database tables created successfully.")
+
     app.run(debug=True, port=5001)

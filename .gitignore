@@ -5,6 +5,7 @@ static/.sass-cache/
 teams/**/
 users/**/
 uploads/
+instance/
 static/ctf/**
 .DS_Store
 **/.DS_Store

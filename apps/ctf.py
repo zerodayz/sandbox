@@ -1,53 +1,49 @@
 import os
-import sqlite3
-import subprocess
-from threading import Timer
-from typing import Any
 
 from flask import (flash, jsonify, redirect, render_template, request, session,
                    url_for)
 
-import user as user_utils
+import apps.user as user_utils
 import utils.constants as constants
+
+from models import db
+from models import Ctf, CtfScore, Team
+
+from apps.apps import decode_team_logo
 
 DB_NAME = constants.DB_NAME
 
 
-def fetch_ctfs_from_database(
-        database_name: str = DB_NAME,
-) -> list[dict[str, Any]]:
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
+def fetch_ctfs_from_database():
+    ctfs = Ctf.query.order_by(Ctf.id.desc()).all()
 
-        cursor.execute("SELECT * FROM ctfs ORDER BY id DESC")
-        ctf_rows = cursor.fetchall()
+    ctfs_list = []
+    for ctf in ctfs:
+        ctf_dict = {
+            "id": ctf.id,
+            "title": ctf.title,
+            "description": ctf.description.decode("utf-8"),
+            "solution": ctf.solution,
+            "password": ctf.password,
+            "next_password": ctf.next_password,
+            "next_text": ctf.next_text,
+            "code": ctf.code,
+            "difficulty": ctf.difficulty,
+            "added_by": ctf.added_by,
+            "score": ctf.score,
+        }
+        ctfs_list.append(ctf_dict)
 
-        ctfs = []
-        for row in ctf_rows:
-            ctf = {
-                "id": row[0],
-                "title": row[1],
-                "description": row[2],
-                "solution": row[3],
-                "password": row[4],
-                "next_password": row[5],
-                "next_text": row[6],
-                "code": row[7],
-                "difficulty": row[8],
-                "added_by": row[9],
-                "score": row[10],
-            }
-            ctfs.append(ctf)
-
-    return ctfs
+    return ctfs_list
 
 
 def ctf_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
-    ctfs: list[dict[str, Any]] = fetch_ctfs_from_database()
+    ctfs = fetch_ctfs_from_database()
     top_scores = get_all_top_scores()
+    top_scores = decode_team_logo(top_scores)
 
     return render_template("ctf/list.html", ctfs=ctfs, top_scores=top_scores)
 
@@ -92,37 +88,23 @@ def add_ctf():
         }
 
         if action == "save":
-            code = "# Write your code here"
-            conn = sqlite3.connect(DB_NAME)
-            cursor = conn.cursor()
-
-            insert_data = (
-                title,
-                description,
-                solution,
-                password,
-                next_password,
-                next_text,
-                code,
-                difficulty,
-                added_by,
-                score,
+            ctf = Ctf(
+                title=title,
+                description=description.encode("utf-8"),
+                password=password,
+                next_password=next_password,
+                next_text=next_text,
+                solution=solution,
+                code="# Write your code here",
+                difficulty=difficulty,
+                added_by=added_by,
+                score=score,
             )
 
-            insert_query = """
-                INSERT INTO ctfs (
-                    title, description, solution, password, 
-                    next_password, next_text,
-                    code, difficulty, added_by, score
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
+            db.session.add(ctf)
+            db.session.commit()
 
-            cursor.execute(insert_query, insert_data)
-            ctf_id = cursor.lastrowid
-            conn.commit()
-            conn.close()
-
-            return redirect(url_for("ctf", ctf_id=ctf_id))
+            return redirect(url_for("ctf", ctf_id=ctf.id))
 
         elif action == "run":
             code = request.form["code"]
@@ -177,19 +159,17 @@ def execute_and_validate(ex, user_code):
 def delete_ctf(ctf_id):
     if request.method == "POST":
         user_id = session["username"]
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
 
-            cursor.execute(
-                "DELETE FROM ctfs WHERE id = ? AND added_by = ?",
-                (ctf_id, user_id),
-            )
+        ctf = Ctf.query.filter_by(id=ctf_id, added_by=user_id).first()
+        if ctf:
+            db.session.delete(ctf)
+            CtfScore.query.filter_by(ctf_id=ctf_id).delete()
 
-            cursor.execute("DELETE FROM ctf_scores WHERE ctf_id = ?", (ctf_id,))
+            db.session.commit()
 
-            conn.commit()
-
-        flash("Successfully deleted.", "success")
+            flash("Successfully deleted.", "success")
+        else:
+            flash("Permission denied.", "danger")
 
     return redirect(url_for("ctf_app"))
 
@@ -212,138 +192,86 @@ def run_ctf(ex, ctf_id, user_code):
 
     if ctf_id != 0:
         total_score, result = update_team_score(
-            user.team.name, ctf_id, total_score, result
+            user.team.id, ctf_id, total_score, result
         )
 
     result["message"] += f' Your team have earned {total_score} points!'
     top_scores = get_top_scores(ctf_id)
+    top_scores = decode_team_logo(top_scores)
 
     return result, top_scores
 
 
-def update_team_score(team, ctf_id, total_score, result):
-    with sqlite3.connect(DB_NAME) as connection:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            """
-            SELECT total_score
-            FROM ctf_scores
-            WHERE team=? AND ctf_id=?
-            """,
-            (team, ctf_id),
-        )
-        score = cursor.fetchone()
-
-        if score:
-            if total_score > score[0]:
-                result["message"] += " New record!"
-                cursor.execute(
-                    """
-                    UPDATE ctf_scores
-                    SET total_score=?
-                    WHERE team=? AND ctf_id=?
-                    """,
-                    (total_score, team, ctf_id),
-                )
-        else:
-            cursor.execute(
-                """
-                INSERT INTO ctf_scores (team, ctf_id, total_score)
-                VALUES (?, ?, ?)
-                """,
-                (team, ctf_id, total_score),
-            )
-
-        connection.commit()
+def update_team_score(team_id, ctf_id, total_score, result):
+    ctf_score = CtfScore.query.filter_by(team_id=team_id, ctf_id=ctf_id).first()
+    if ctf_score:
+        if total_score > ctf_score.total_score:
+            ctf_score.total_score = total_score
+            db.session.commit()
+    else:
+        ctf_score = CtfScore(team_id=team_id, ctf_id=ctf_id, total_score=total_score)
+        db.session.add(ctf_score)
+        db.session.commit()
 
     return total_score, result
 
 
 def get_top_scores(ctf_id):
-    with sqlite3.connect(DB_NAME) as connection:
-        cursor = connection.cursor()
-
-        query = """
-                SELECT
-                    teams.name AS team,
-                    teams.logo AS team_logo,
-                    ctf_scores.total_score AS total_score,
-                    ctf_scores.date_created
-                FROM
-                    teams
-                LEFT JOIN
-                    ctf_scores ON teams.name = ctf_scores.team
-                WHERE
-                    ctf_scores.ctf_id = ?
-                ORDER BY
-                    total_score DESC
-                LIMIT 5;
-                """
-        cursor.execute(query, (ctf_id,))
-        top_scores = cursor.fetchall()
+    top_scores = (
+        db.session.query(Team.name.label('team'),
+                         CtfScore.total_score.label('total_score'),
+                         CtfScore.date_created,
+                         Team.logo.label('team_logo'),)
+        .join(CtfScore, Team.id == CtfScore.team_id)
+        .filter(CtfScore.ctf_id == ctf_id)
+        .order_by(CtfScore.total_score.desc())
+        .limit(5)
+        .all()
+    )
 
     return top_scores
 
 
 def get_all_top_scores():
     try:
-        with sqlite3.connect(DB_NAME) as connection:
-            cursor = connection.cursor()
-            query = """
-                SELECT
-                        teams.name AS team,
-                        teams.logo AS team_logo,
-                        SUM(ctf_scores.total_score) AS total_score,
-                        MAX(ctf_scores.date_created) AS last_date_created
-                    FROM
-                        ctf_scores
-                    JOIN
-                        ctfs ON ctf_scores.ctf_id = ctfs.id
-                    JOIN
-                        teams ON ctf_scores.team = teams.name
-                    GROUP BY
-                        teams.name, teams.logo
-                    ORDER BY total_score DESC
-                    LIMIT 5;
-                """
+        top_scores = (
+            db.session.query(Team.name.label('team'),
+                             db.func.sum(CtfScore.total_score).label('total_score'),
+                             db.func.max(CtfScore.date_created).label('last_date_created'),
+                             Team.logo.label('team_logo'))
+            .join(CtfScore, Team.id == CtfScore.team_id)
+            .join(Ctf, CtfScore.ctf_id == Ctf.id)
+            .group_by(Team.name, Team.logo)
+            .order_by(db.func.sum(CtfScore.total_score).desc())
+            .limit(5)
+            .all()
+        )
 
-            cursor.execute(query)
-            top_scores = cursor.fetchall()
+        return top_scores
 
-            return top_scores
-
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Database error: {e}")
         return []
 
 
 def get_ctf_password(ctf_id):
-    with sqlite3.connect(DB_NAME) as connection:
-        cursor = connection.cursor()
+    ctf = Ctf.query.get(ctf_id)
 
-        query = """
-                SELECT
-                    password
-                FROM
-                    ctfs
-                WHERE
-                    id = ?;"""
-        cursor.execute(query, (ctf_id,))
-        password = cursor.fetchone()
-
-    return password
+    if ctf:
+        return ctf.password
+    else:
+        return None
 
 
 def protected_ctf(ctf_id):
     ctf_password = get_ctf_password(ctf_id)
-    if ctf_password[0] is None:
+    if ctf_password is None:
         session['ctf_' + str(ctf_id) + '_authenticated'] = True
         return redirect(url_for("ctf", ctf_id=ctf_id))
 
     if request.method == "POST":
         user_input_password = request.form.get("password")
-        if user_input_password == ctf_password[0]:
+        if user_input_password == ctf_password:
             session['ctf_' + str(ctf_id) + '_authenticated'] = True
             return redirect(url_for("ctf", ctf_id=ctf_id))
         else:
@@ -394,7 +322,7 @@ def ctf(ctf_id):
         print(team_code)
 
     top_scores = get_top_scores(ctf_id)
-    print(top_scores)
+    top_scores = decode_team_logo(top_scores)
 
     return render_template(
         "/ctf/ctf.html",

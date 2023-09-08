@@ -109,13 +109,13 @@
                                         {% elif loop.index0 == 2 %}
                                         <i class="bi bi-trophy-fill pe-none me-2 text-bronze" width="30" height="24"></i>
                                         {% endif %}
-                                        {% if score[1] %}
-                                        <img width="24" height="24" src="data:image/png;base64, {{ score[1] }}"/>
+                                        {% if score[3] %}
+                                        <img width="24" height="24" src="data:image/png;base64, {{ score[3] }}"/>
                                         {% endif %}
                                         {{ score[0] }}
                                     </td>
-                                    <td>{% if score[2] %}{{ score[2] }}{% else %}0{% endif %}</td>
-                                    <td>{% if score[3] %}{{ score[3] }}{% else %}-{% endif %}</td>
+                                    <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                                    <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>

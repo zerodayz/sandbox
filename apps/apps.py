@@ -1,59 +1,77 @@
 import os
-import sqlite3
+
 import subprocess
 from threading import Timer
-from typing import Any
 
 from flask import (flash, jsonify, redirect, render_template, request, session,
                    url_for)
 
-import user as user_utils
+import apps.user as user_utils
 import utils.constants as constants
+
+from models import Exercise, ExerciseScore, Team, User
+from models import db
 
 DB_NAME = constants.DB_NAME
 
 
-def fetch_exercises_from_database(
-    database_name: str = DB_NAME,
-) -> list[dict[str, Any]]:
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
+def fetch_exercises_from_database():
+    exercises = Exercise.query.order_by(Exercise.id.desc()).all()
 
-        cursor.execute("SELECT * FROM exercises ORDER BY id DESC")
-        exercise_rows = cursor.fetchall()
+    exercise_dicts = []
+    for exercise in exercises:
+        exercise_dict = {
+            "id": exercise.id,
+            "title": exercise.title,
+            "description": exercise.description,
+            "sample_1_input": exercise.sample_1_input,
+            "sample_1_output": exercise.sample_1_output,
+            "sample_2_input": exercise.sample_2_input,
+            "sample_2_output": exercise.sample_2_output,
+            "sample_3_input": exercise.sample_3_input,
+            "sample_3_output": exercise.sample_3_output,
+            "code": exercise.code,
+            "language": exercise.language,
+            "difficulty": exercise.difficulty,
+            "added_by": exercise.added_by,
+            "score": exercise.score,
+        }
 
-        exercises = []
-        for row in exercise_rows:
-            exercise = {
-                "id": row[0],
-                "title": row[1],
-                "description": row[2],
-                "sample_1_input": row[3],
-                "sample_1_output": row[4],
-                "sample_2_input": row[5],
-                "sample_2_output": row[6],
-                "sample_3_input": row[7],
-                "sample_3_output": row[8],
-                "code": row[9],
-                "language": row[10],
-                "difficulty": row[11],
-                "added_by": row[12],
-                "score": row[13],
-            }
-            exercises.append(exercise)
+        for i in range(1, 4):
+            if exercise_dict[f"sample_{i}_output"]:
+                exercise_dict[f"sample_{i}_output"] = (exercise_dict[f"sample_{i}_output"]
+                                                       .decode("utf-8"))
 
-    return exercises
+        exercise_dicts.append(exercise_dict)
+
+    return exercise_dicts
+
+
+def decode_team_logo(top_scores):
+    decoded_scores = []
+    for score in top_scores:
+        if score[3]:
+            score = list(score)
+            score[3] = score[3].decode("utf-8")
+            decoded_scores.append(tuple(score))
+        else:
+            decoded_scores.append(score)
+    return decoded_scores
 
 
 def exercise_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
-    exercises: list[dict[str, Any]] = fetch_exercises_from_database()
-    top_scores = get_all_top_scores()
-    top_daily_scores = get_all_daily_top_scores()
+    exercises = fetch_exercises_from_database()
 
-    return render_template("exercise/list.html", exercises=exercises, top_daily_scores=top_daily_scores, top_scores=top_scores)
+    top_scores = get_all_top_scores()
+    decoded_top_scores = decode_team_logo(top_scores)
+
+    top_daily_scores = get_all_daily_top_scores()
+    decoded_daily_scores = decode_team_logo(top_daily_scores)
+
+    return render_template("exercise/list.html", exercises=exercises, top_daily_scores=decoded_daily_scores, top_scores=decoded_top_scores)
 
 
 def add_exercise():
@@ -115,39 +133,32 @@ def add_exercise():
 
         if action == "save":
             code = "# Write your code here"
-            conn = sqlite3.connect(DB_NAME)
-            cursor = conn.cursor()
 
-            insert_data = (
-                title,
-                description,
-                ex.get("sample_1_input", None),
-                ex.get("sample_1_output", None),
-                ex.get("sample_2_input", None),
-                ex.get("sample_2_output", None),
-                ex.get("sample_3_input", None),
-                ex.get("sample_3_output", None),
-                code,
-                language,
-                difficulty,
-                added_by,
-                score,
+            new_exercise = Exercise(
+                title=title,
+                description=description,
+                sample_1_input=ex.get("sample_1_input", None),
+                sample_1_output=ex.get("sample_1_output", None),
+                sample_2_input=ex.get("sample_2_input", None),
+                sample_2_output=ex.get("sample_2_output", None),
+                sample_3_input=ex.get("sample_3_input", None),
+                sample_3_output=ex.get("sample_3_output", None),
+                code=code,
+                language=language,
+                difficulty=difficulty,
+                added_by=added_by,
+                score=score,
             )
 
-            insert_query = """
-                INSERT INTO exercises (
-                    title, description, sample_1_input, sample_1_output,
-                    sample_2_input, sample_2_output, sample_3_input, sample_3_output,
-                    code, language, difficulty, added_by, score
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
+            for i in range(1, 4):
+                if new_exercise.__dict__[f"sample_{i}_output"]:
+                    new_exercise.__dict__[f"sample_{i}_output"] = (new_exercise.__dict__[f"sample_{i}_output"]
+                                                                   .encode("utf-8"))
 
-            cursor.execute(insert_query, insert_data)
-            exercise_id = cursor.lastrowid
-            conn.commit()
-            conn.close()
+            db.session.add(new_exercise)
+            db.session.commit()
 
-            return redirect(url_for("exercise", exercise_id=exercise_id))
+            return redirect(url_for("exercise", exercise_id=new_exercise.id))
 
         elif action == "run":
             code = request.form["code"]
@@ -293,19 +304,16 @@ def execute_and_validate(ex, file_path, user_code):
 def delete_exercise(exercise_id):
     if request.method == "POST":
         user_id = session["username"]
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
 
-            cursor.execute(
-                "DELETE FROM exercises WHERE id = ? AND added_by = ?",
-                (exercise_id, user_id),
-            )
+        exercise = Exercise.query.filter_by(id=exercise_id, added_by=user_id).first()
 
-            cursor.execute("DELETE FROM scores WHERE exercise_id = ?", (exercise_id,))
+        if exercise:
+            db.session.delete(exercise)
+            db.session.commit()
 
-            conn.commit()
+            ExerciseScore.query.filter_by(exercise_id=exercise_id).delete()
 
-        flash("Successfully deleted.", "success")
+            flash("Successfully deleted.", "success")
 
     return redirect(url_for("exercise_app"))
 
@@ -314,6 +322,7 @@ def run_exercise(ex, exercise_id, user_code):
     username = session["username"]
     file_path = save_user_code(username, exercise_id, user_code)
     top_scores = get_top_scores(exercise_id)
+    top_scores = decode_team_logo(top_scores)
 
     mypy_error_count, stdout_mypy = run_command(["mypy", "--strict", file_path])
 
@@ -345,10 +354,7 @@ def run_exercise(ex, exercise_id, user_code):
         stdout_black,
         stdout_pylint,
         stdout_flake8,
-        ex["score"],
-        ex,
-        username,
-        exercise_id,
+        ex["score"]
     )
 
     if total_score < ex["score"]:
@@ -358,9 +364,11 @@ def run_exercise(ex, exercise_id, user_code):
 
     result["message"] = "That is correct!"
 
+    user = User.query.filter_by(username=username).first()
+
     if exercise_id != 0:
         total_score, result = update_user_score(
-            username, exercise_id, total_score, ex["score"], result
+            user, exercise_id, total_score, result
         )
 
     if total_score == ex["score"]:
@@ -368,6 +376,7 @@ def run_exercise(ex, exercise_id, user_code):
 
     result["message"] += f' You have earned {total_score}/{ex["score"]} points!'
     top_scores = get_top_scores(exercise_id)
+    top_scores = decode_team_logo(top_scores)
 
     return result, top_scores
 
@@ -389,10 +398,7 @@ def adjust_score_and_results(
     stdout_black,
     stdout_pylint,
     stdout_flake8,
-    ex_score,
-    ex,
-    username,
-    exercise_id,
+    ex_score
 ):
     if mypy_error_count > 0:
         total_score -= mypy_error_count
@@ -415,111 +421,86 @@ def adjust_score_and_results(
     return total_score, result
 
 
-def update_user_score(username, exercise_id, total_score, ex_score, result):
-    with sqlite3.connect(DB_NAME) as connection:
-        cursor = connection.cursor()
+def update_user_score(user, exercise_id, total_score, result):
+    score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise_id).first()
 
-        cursor.execute(
-            """
-            SELECT total_score
-            FROM scores
-            WHERE username=? AND exercise_id=?
-            """,
-            (username, exercise_id),
-        )
-        score = cursor.fetchone()
+    if score:
+        if total_score > score.total_score:
+            result["message"] += " New record!"
 
-        if score:
-            if total_score > score[0]:
-                result["message"] += " New record!"
-                cursor.execute(
-                    """
-                    UPDATE scores
-                    SET total_score=?
-                    WHERE username=? AND exercise_id=?
-                    """,
-                    (total_score, username, exercise_id),
-                )
-        else:
-            cursor.execute(
-                """
-                INSERT INTO scores (username, exercise_id, total_score)
-                VALUES (?, ?, ?)
-                """,
-                (username, exercise_id, total_score),
-            )
+        score.total_score = total_score
+    else:
+        score = ExerciseScore(user_id=user.id, exercise_id=exercise_id, total_score=total_score)
 
-        connection.commit()
+    db.session.add(score)
+    db.session.commit()
 
     return total_score, result
 
 
 def get_top_scores(exercise_id):
-    with sqlite3.connect(DB_NAME) as connection:
-        cursor = connection.cursor()
+    try:
+        top_scores = (
+            db.session.query(
+                User.username.label("username"),
+                db.func.sum(ExerciseScore.total_score).label("total_score"),
+                db.func.max(ExerciseScore.date_created).label("date_created"),
+                Team.logo.label("logo"),
+            )
+            .join(ExerciseScore, User.id == ExerciseScore.user_id)
+            .outerjoin(Team, User.team_id == Team.id)
+            .filter(ExerciseScore.exercise_id == exercise_id)
+            .group_by(User.username, Team.logo)
+            .order_by(db.desc("total_score"))
+            .limit(5)
+            .all()
+        )
 
-        query = """
-            SELECT s.username, s.total_score, s.date_created, t.logo
-            FROM scores s
-            JOIN users u ON s.username = u.username
-            LEFT JOIN teams t ON u.team = t.id
-            WHERE s.exercise_id = ?
-            ORDER BY s.total_score DESC
-            LIMIT 5;
-        """
-        cursor.execute(query, (exercise_id,))
-        top_scores = cursor.fetchall()
+        return top_scores
 
-    return top_scores
+    except Exception as e:
+        print(f"Database error: {e}")
+        return []
 
 
 def get_all_daily_top_scores():
     try:
-        with sqlite3.connect(DB_NAME) as connection:
-            cursor = connection.cursor()
+        top_scores = (
+            db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
+                             db.func.max(ExerciseScore.date_created).label('date_created'), Team.logo)
+            .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
+            .outerjoin(Team, User.team_id == Team.id)
+            .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
+            .group_by(User.username, Team.logo)
+            .order_by(db.desc('total_score'))
+            .limit(5)
+            .all()
+        )
 
-            query = """
-                SELECT u.username, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created, t.logo
-                FROM users u
-                LEFT JOIN scores s ON u.username = s.username
-                LEFT JOIN teams t ON u.team = t.id
-                WHERE s.date_created >= date('now', '-1 day')
-                GROUP BY u.username, t.logo
-                ORDER BY total_score DESC
-                LIMIT 5;
-            """
+        return top_scores
 
-            cursor.execute(query)
-            top_scores = cursor.fetchall()
-
-            return top_scores
-
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Database error: {e}")
         return []
 
 
 def get_all_top_scores():
     try:
-        with sqlite3.connect(DB_NAME) as connection:
-            cursor = connection.cursor()
+        top_scores = (
+            db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
+                             db.func.max(ExerciseScore.date_created).label('last_date_created'), Team.logo)
+            .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
+            .outerjoin(Team, User.team_id == Team.id)
+            .group_by(User.username, Team.logo)
+            .order_by(db.desc('total_score'))
+            .having(db.func.sum(ExerciseScore.total_score) > 0)
+            .limit(5)
+            .all()
+        )
 
-            query = """
-                SELECT s.username, SUM(s.total_score) AS total_score, MAX(s.date_created) AS date_created, t.logo
-                FROM scores s
-                JOIN users u ON s.username = u.username
-                LEFT JOIN teams t ON u.team = t.id
-                GROUP BY s.username
-                ORDER BY total_score DESC
-                LIMIT 5;
-            """
+        return top_scores
 
-            cursor.execute(query)
-            top_scores = cursor.fetchall()
-
-            return top_scores
-
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Database error: {e}")
         return []
 
@@ -557,6 +538,8 @@ def exercise(exercise_id):
         print(user_code)
 
     top_scores = get_top_scores(exercise_id)
+    top_scores = decode_team_logo(top_scores)
+
     return render_template(
         "/exercise/exercise.html",
         exercise=ex,

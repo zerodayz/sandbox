@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if user.team and user.team.owner == user.username %}
+                {% if user.team and user.team.owner_id == user.id %}
                 <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
