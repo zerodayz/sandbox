@@ -13,7 +13,7 @@ def login():
         password = request.form["password"]
 
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
+        if user and check_password_hash(user.hashed_password, password):
             session["username"] = username
 
             user.last_login = datetime.utcnow()

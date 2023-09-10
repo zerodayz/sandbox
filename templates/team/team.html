@@ -18,10 +18,10 @@
                     </div>
                     <div class="modal-body">
                         <p>This will disband and delete the team
-                            {% if user.team.logo %}
-                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                            {% if team.logo %}
+                            <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
-                            {{ user.team.name }}.</p>
+                            {{ team.name }}.</p>
                     </div>
                     <div class="modal-footer">
                         <form method="post" action="/team/delete">
@@ -41,10 +41,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>You will leave the team {% if user.team.logo %}
-                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                        <p>You will leave the team {% if team.logo %}
+                            <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
-                            {{ user.team.name }}, everyone else will remain.</p>
+                            {{ team.name }}, everyone else will remain.</p>
                     </div>
                     <div class="modal-footer">
                         <form method="post" action="/team/leave">
@@ -80,13 +80,13 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">Team:
-                            {% if user.team.logo %}
-                            <img width="24" height="24" src="data:image/png;base64, {{ user.team.logo if user.team.logo else '' }}"/>
+                            {% if team.logo %}
+                            <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
-                                    {{ user.team.name if user.team else 'No Team' }}</p>
+                            {{ team.name if team else 'No Team' }}</p>
                     </div>
                 </div>
-                {% if not user.team %}
+                {% if not team %}
                 <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if user.team and user.team.owner_id == user.id %}
+                {% if team and team.owner_id == user.id %}
                 <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
@@ -126,7 +126,7 @@
                             <form method="post" action="/team/invite">
                                 <label for="invite_member" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="invite_member" name="invite_member" required>
-                                <input type="hidden" id="team_id" name="team_id" value="{{ user.team.id }}">
+                                <input type="hidden" id="team_id" name="team_id" value="{{ team.id }}">
                                 <br/>
                                 <button type="submit" class="btn btn-success">Send Invitation</button>
                             </form>
@@ -145,7 +145,7 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if user.team %}
+                {% if team %}
                 <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>

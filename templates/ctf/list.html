@@ -27,8 +27,8 @@
                 <h1 class="mt-4">Capture The Flag</h1>
                 <hr/>
             </div>
-            <div class="col-md-6">
-                <div class="input-group mb-4 mx-auto">
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="input-group mx-auto">
                     <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
                 </div>
             </div>
@@ -57,6 +57,35 @@
             </div>
         </div>
     </div>
+    {% if ctfs.has_prev or ctfs.has_next %}
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-12 center-pagination">
+                    <div class="pagination-container">
+                        <ul class="pagination">
+                            {% if ctfs.has_prev %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('ctf_app', page=ctfs.prev_num) }}">Previous</a></li>
+                            {% endif %}
+
+                            {% for page_num in ctfs.iter_pages() %}
+                            {% if page_num %}
+                            <li class="page-item{% if page_num == ctfs.page %} active{% endif %}">
+                                <a class="page-link" href="{{ url_for('ctf_app', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if ctfs.has_next %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('ctf_app', page=ctfs.next_num) }}">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">

@@ -103,6 +103,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
+        <h1 class="mt-4">Exercise</h1>
+        <hr/>
         <div class="card">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
@@ -110,11 +112,10 @@
           </div>
           <div class="card-body">
             <p class="card-text">{{ exercise['description'] }}</p>
-            <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
+            <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
             <span class="badge bg-secondary">{{ exercise['language'] }}</span>
           </div>
         </div>
-
         {% for sample_num in range(1, 4) %}
         {% set input_key = 'sample_' + sample_num|string + '_input' %}
         {% set output_key = 'sample_' + sample_num|string + '_output' %}
@@ -200,7 +201,7 @@
             </div>
           </div>
         </div>
-        {% if exercise['added_by'] == user.username %}
+        {% if exercise['added_by_user_id'] == user.id %}
         <div class="card mt-4">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>

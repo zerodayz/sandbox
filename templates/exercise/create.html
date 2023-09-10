@@ -98,9 +98,9 @@
                     </div>
                     <div class="card-body">
                         <p><textarea rows="4" id="description" class="input-as-span">{% if exercise['description'] %}{{ exercise['description'] }}{% else %}Type your description here{% endif %}</textarea></p>
-                        <span class="badge difficulty {% if exercise['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
-                        <span class="badge difficulty {% if exercise['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
-                        <span class="badge difficulty {% if exercise['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+                        <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Easy</span>
+                        <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Medium</span>
+                        <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Hard</span>
                         <span class="badge language {% if exercise['language'] == 'python3' %}selected{% else %}{% endif %}"  onclick="selectLanguageBadge(this)">python3</span>
                     </div>
                 </div>

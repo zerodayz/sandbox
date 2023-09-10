@@ -60,9 +60,9 @@
                   </div>
                 </form>
                 <div style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);">
-                  <span class="badge difficulty {% if ctf['difficulty'] == 'easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">easy</span>
-                  <span class="badge difficulty {% if ctf['difficulty'] == 'medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">medium</span>
-                  <span class="badge difficulty {% if ctf['difficulty'] == 'hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">hard</span>
+                  <span class="badge difficulty {% if ctf['ctf_difficulty'] == 'Easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Easy</span>
+                  <span class="badge difficulty {% if ctf['ctf_difficulty'] == 'Medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Medium</span>
+                  <span class="badge difficulty {% if ctf['ctf_difficulty'] == 'Hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Hard</span>
                 </div>
               </div>
             </div>

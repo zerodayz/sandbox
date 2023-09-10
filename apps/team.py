@@ -13,10 +13,9 @@ import apps.user as user_utils
 from apps.apps import decode_team_logo
 
 from models import db
-from models import User, Team, Ctf, CtfScore, Exercise, ExerciseScore
+from models import User, Team, Ctf, CtfScore, Exercise, ExerciseScore, TeamInvitation
 
 from sqlalchemy import func, desc
-from sqlalchemy.sql import distinct
 
 
 def invite_user_to_team():
@@ -43,7 +42,7 @@ def get_teams_dashboard():
                 func.max(ExerciseScore.date_created).label('LastScoreUpdateDate'),
                 Team.logo.label('TeamLogo'),
             )
-            .join(User, User.team_id == Team.id)
+            .join(User.team)
             .join(ExerciseScore, ExerciseScore.user_id == User.id)
             .group_by(Team.name, Team.logo)
             .having(func.sum(ExerciseScore.total_score) > 0)
@@ -78,12 +77,13 @@ def get_teams_dashboard():
 def update_user_invitation(username, team_id):
     try:
         user = User.query.filter_by(username=username).first()
-
-        if user:
-            user.team_invitation = team_id
+        team = Team.query.get(team_id)
+        if user and team:
+            new_invitation = TeamInvitation(team_id=team_id, user_id=user.id)
+            db.session.add(new_invitation)
             db.session.commit()
         else:
-            flash("User not found.", "danger")
+            flash("User or Team not found.", "danger")
     except Exception as e:
         flash(f"Error: {e}", "danger")
 
@@ -97,8 +97,7 @@ def delete_team():
             team = Team.query.filter_by(owner_id=user.id).first()
             if team:
                 CtfScore.query.filter_by(team_id=team.id).delete()
-                User.query.filter_by(team_id=team.id).update({User.team_id: None})
-                User.query.filter_by(team_invitation=team.id).update({User.team_invitation: None})
+                TeamInvitation.query.filter_by(team_id=team.id).delete()
 
                 db.session.delete(team)
                 db.session.commit()
@@ -114,11 +113,7 @@ def delete_team():
 def leave_team():
     if request.method == "POST":
         username = session["username"]
-        members = (User.query.filter_by(team_id=Team.query
-                   .filter_by(owner_id=User.query.filter_by(username=username)
-                   .first().id)
-                   .first().id)
-                   .all())
+        members = User.query.filter_by(username=username).first().team
         if len(members) == 1:
             flash("You are the last member of the team. Please delete the team instead.", "danger")
             return redirect(url_for("get_user_team"))
@@ -142,40 +137,62 @@ def join_team():
         team_id = request.form["team_id"]
         username = request.form["username"]
         team_password = request.form["team_password"]
+        mode = request.form["mode"]
 
-        team = Team.query.get(team_id)
-
-        if team:
-            if check_password_hash(team.password, team_password):
-                try:
-                    user = User.query.filter_by(username=username).first()
-                    user.team = team
-                    user.team_invitation = None
-
+        if mode == "reject":
+            try:
+                user = User.query.filter_by(username=username).first()
+                team = Team.query.get(team_id)
+                if user and team:
+                    TeamInvitation.query.filter_by(team_id=team_id, user_id=user.id).delete()
                     db.session.commit()
+                else:
+                    flash("User or Team not found.", "danger")
+            except Exception as e:
+                flash(f"Error: {e}", "danger")
+            return redirect(url_for("user_profile"))
 
-                    flash(
-                        f"Successfully joined team '{team.name}'. Congratulations!",
-                        "success",
-                    )
-                except IntegrityError:
-                    db.session.rollback()
-                    flash("User already belongs to a team.", "danger")
+        if mode == "accept":
+            members = User.query.filter_by(username=username).first().team
+            if members:
+                flash("You are already member of a team. Please leave the team first.", "danger")
+                return redirect(url_for("get_user_team"))
+
+            team = Team.query.get(team_id)
+            if team:
+                if check_password_hash(team.hashed_password, team_password):
+                    try:
+                        user = User.query.filter_by(username=username).first()
+                        user.team = team
+                        user.team_invitation = None
+
+                        db.session.commit()
+
+                        flash(
+                            f"Successfully joined team '{team.name}'. Congratulations!",
+                            "success",
+                        )
+                    except IntegrityError:
+                        db.session.rollback()
+                        flash("User already belongs to a team.", "danger")
+                else:
+                    flash("Invalid team password.", "danger")
             else:
-                flash("Invalid team password.", "danger")
-        else:
-            flash(f"Team with ID {team_id} does not exist.", "danger")
+                flash(f"Team with ID {team_id} does not exist.", "danger")
 
-        return redirect(url_for("get_user_team"))
+            return redirect(url_for("get_user_team"))
 
 
 def get_user_team():
     username = session["username"]
     if request.method == "GET":
         user = User.query.filter_by(username=username).first()
-        if user.team:
-            user.team.logo = user.team.logo.decode("utf-8")
-        return render_template("/team/team.html", user=user)
+        user_team = []
+        if len(user.team):
+            team_id = user.team[0].id
+            user_team = Team.query.get(team_id)
+
+        return render_template("/team/team.html", user=user, team=user_team)
 
     try:
         user = User.query.filter_by(username=username).first()
@@ -206,7 +223,7 @@ def get_user_team():
         new_password_hash = generate_password_hash(team_password)
 
         team_crest_b64 = team_crest_b64.encode("utf-8")
-        new_team = Team(name=team_name, owner_id=user.id, password=new_password_hash, logo=team_crest_b64)
+        new_team = Team(name=team_name, owner_id=user.id, hashed_password=new_password_hash, logo=team_crest_b64)
         db.session.add(new_team)
         db.session.commit()
 

@@ -10,6 +10,7 @@ import apps.user as user_utils
 import utils.constants as constants
 
 from models import Exercise, ExerciseScore, Team, User
+from models import DifficultyEnum
 from models import db
 
 DB_NAME = constants.DB_NAME
@@ -32,8 +33,8 @@ def fetch_exercises_from_database():
             "sample_3_output": exercise.sample_3_output,
             "code": exercise.code,
             "language": exercise.language,
-            "difficulty": exercise.difficulty,
-            "added_by": exercise.added_by,
+            "exercise_difficulty": exercise.exercise_difficulty,
+            "added_by_user_id": exercise.added_by_user_id,
             "score": exercise.score,
         }
 
@@ -63,7 +64,14 @@ def exercise_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
-    exercises = fetch_exercises_from_database()
+    page = request.args.get('page', 1, type=int)
+    items_per_page = 10
+
+    exercises = Exercise.query.order_by(Exercise.id.desc()).paginate(page=page,
+                                                                     per_page=items_per_page,
+                                                                     error_out=False)
+
+    # exercises = fetch_exercises_from_database()
 
     top_scores = get_all_top_scores()
     decoded_top_scores = decode_team_logo(top_scores)
@@ -98,22 +106,26 @@ def add_exercise():
             )
 
         language = request.form["language"]
-        difficulty = request.form["difficulty"]
-        added_by = session.get("username", None)
+        exercise_difficulty = request.form["difficulty"]
+        username = session.get("username", None)
+        user_id = User.query.filter_by(username=username).first().id
 
-        if difficulty == "easy":
+        if exercise_difficulty == "Easy":
+            insert_difficulty = DifficultyEnum.Easy
             score = 10
-        elif difficulty == "medium":
+        elif exercise_difficulty == "Medium":
+            insert_difficulty = DifficultyEnum.Medium
             score = 20
-        elif difficulty == "hard":
+        elif exercise_difficulty == "Hard":
+            insert_difficulty = DifficultyEnum.Hard
             score = 30
 
         ex = {
             "title": title,
             "description": description,
             "language": language,
-            "difficulty": difficulty,
-            "added_by": added_by,
+            "exercise_difficulty": exercise_difficulty,
+            "added_by_user_id": user_id,
             "score": score,
         }
 
@@ -145,8 +157,8 @@ def add_exercise():
                 sample_3_output=ex.get("sample_3_output", None),
                 code=code,
                 language=language,
-                difficulty=difficulty,
-                added_by=added_by,
+                exercise_difficulty=insert_difficulty,
+                added_by_user_id=user_id,
                 score=score,
             )
 
@@ -303,15 +315,19 @@ def execute_and_validate(ex, file_path, user_code):
 
 def delete_exercise(exercise_id):
     if request.method == "POST":
-        user_id = session["username"]
+        username = session["username"]
+        user_id = User.query.filter_by(username=username).first().id
 
-        exercise = Exercise.query.filter_by(id=exercise_id, added_by=user_id).first()
+        exercise = Exercise.query.filter_by(id=exercise_id, added_by_user_id=user_id).first()
 
         if exercise:
             db.session.delete(exercise)
             db.session.commit()
 
-            ExerciseScore.query.filter_by(exercise_id=exercise_id).delete()
+            scores = ExerciseScore.query.filter_by(exercise_id=exercise_id).all()
+            for score in scores:
+                db.session.delete(score)
+                db.session.commit()
 
             flash("Successfully deleted.", "success")
 
@@ -448,7 +464,7 @@ def get_top_scores(exercise_id):
                 Team.logo.label("logo"),
             )
             .join(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(Team, User.team_id == Team.id)
+            .outerjoin(User.team)
             .filter(ExerciseScore.exercise_id == exercise_id)
             .group_by(User.username, Team.logo)
             .order_by(db.desc("total_score"))
@@ -469,7 +485,7 @@ def get_all_daily_top_scores():
             db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
                              db.func.max(ExerciseScore.date_created).label('date_created'), Team.logo)
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(Team, User.team_id == Team.id)
+            .outerjoin(User.team)
             .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'))
@@ -490,7 +506,7 @@ def get_all_top_scores():
             db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
                              db.func.max(ExerciseScore.date_created).label('last_date_created'), Team.logo)
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(Team, User.team_id == Team.id)
+            .outerjoin(User.team)
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'))
             .having(db.func.sum(ExerciseScore.total_score) > 0)

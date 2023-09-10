@@ -11,10 +11,23 @@ from apps.user import user_profile, create_user
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
 
+from flask_migrate import Migrate
+
+# import logging
+# logger = logging.getLogger('sqlalchemy')
+# logger.setLevel(logging.DEBUG)
+# handler = logging.StreamHandler()
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sandbox_db.sqlite'
+# app.config['SQLALCHEMY_ECHO'] = True
 app.config['UPLOAD_FOLDER'] = 'uploads'
+
 db.init_app(app)
+migrate = Migrate(app, db)
 
 # Configure session settings
 app.secret_key = "your-secret-key"
@@ -61,6 +74,5 @@ app.route("/exercise/<int:exercise_id>/delete", methods=["POST"])(delete_exercis
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        print("Database tables created successfully.")
 
     app.run(debug=True, port=5001)

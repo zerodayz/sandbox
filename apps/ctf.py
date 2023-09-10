@@ -7,7 +7,8 @@ import apps.user as user_utils
 import utils.constants as constants
 
 from models import db
-from models import Ctf, CtfScore, Team
+from models import User, Ctf, CtfScore, Team
+from models import DifficultyEnum
 
 from apps.apps import decode_team_logo
 
@@ -24,12 +25,12 @@ def fetch_ctfs_from_database():
             "title": ctf.title,
             "description": ctf.description.decode("utf-8"),
             "solution": ctf.solution,
-            "password": ctf.password,
+            "password": ctf.ctf_password,
             "next_password": ctf.next_password,
             "next_text": ctf.next_text,
             "code": ctf.code,
-            "difficulty": ctf.difficulty,
-            "added_by": ctf.added_by,
+            "ctf_difficulty": ctf.ctf_difficulty,
+            "added_by_user_id": ctf.added_by_user_id,
             "score": ctf.score,
         }
         ctfs_list.append(ctf_dict)
@@ -41,7 +42,14 @@ def ctf_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
-    ctfs = fetch_ctfs_from_database()
+    page = request.args.get('page', 1, type=int)
+    items_per_page = 10
+
+    ctfs = Ctf.query.order_by(Ctf.id.desc()).paginate(page=page,
+                                                      per_page=items_per_page,
+                                                      error_out=False)
+    # ctfs = fetch_ctfs_from_database()
+
     top_scores = get_all_top_scores()
     top_scores = decode_team_logo(top_scores)
 
@@ -65,25 +73,29 @@ def add_ctf():
         next_text = request.form.get("next_text", None)
         solution = request.form["solution"]
 
-        difficulty = request.form["difficulty"]
-        added_by = session.get("username", None)
+        ctf_difficulty = request.form["difficulty"]
+        username = session.get("username", None)
+        added_by_user_id = User.query.filter_by(username=username).first().id
 
-        if difficulty == "easy":
+        if ctf_difficulty == "Easy":
+            insert_difficulty = DifficultyEnum.Easy
             score = 10
-        elif difficulty == "medium":
+        elif ctf_difficulty == "Medium":
+            insert_difficulty = DifficultyEnum.Medium
             score = 20
-        elif difficulty == "hard":
+        elif ctf_difficulty == "Hard":
+            insert_difficulty = DifficultyEnum.Hard
             score = 30
 
         ex = {
             "title": title,
             "description": description,
-            "difficulty": difficulty,
-            "password": password,
+            "ctf_difficulty": ctf_difficulty,
+            "ctf_password": password,
             "solution": solution,
             "next_password": next_password,
             "next_text": next_text,
-            "added_by": added_by,
+            "added_by_user_id": added_by_user_id,
             "score": score,
         }
 
@@ -91,13 +103,13 @@ def add_ctf():
             ctf = Ctf(
                 title=title,
                 description=description.encode("utf-8"),
-                password=password,
+                ctf_password=password,
                 next_password=next_password,
                 next_text=next_text,
                 solution=solution,
                 code="# Write your code here",
-                difficulty=difficulty,
-                added_by=added_by,
+                ctf_difficulty=insert_difficulty,
+                added_by_user_id=added_by_user_id,
                 score=score,
             )
 
@@ -158,9 +170,10 @@ def execute_and_validate(ex, user_code):
 
 def delete_ctf(ctf_id):
     if request.method == "POST":
-        user_id = session["username"]
+        username = session["username"]
+        user_id = User.query.filter_by(username=username).first().id
 
-        ctf = Ctf.query.filter_by(id=ctf_id, added_by=user_id).first()
+        ctf = Ctf.query.filter_by(id=ctf_id, added_by_user_id=user_id).first()
         if ctf:
             db.session.delete(ctf)
             CtfScore.query.filter_by(ctf_id=ctf_id).delete()
@@ -176,7 +189,10 @@ def delete_ctf(ctf_id):
 
 def run_ctf(ex, ctf_id, user_code):
     user = user_utils.get_user_by_username(session["username"])
-    save_team_code(user.team.name, ctf_id, user_code)
+    team_id = user.team[0].id
+    user_team = Team.query.get(team_id)
+    save_team_code(user_team.name, ctf_id, user_code)
+
     top_scores = get_top_scores(ctf_id)
     result = execute_and_validate(ex, user_code)
 
@@ -192,7 +208,7 @@ def run_ctf(ex, ctf_id, user_code):
 
     if ctf_id != 0:
         total_score, result = update_team_score(
-            user.team.id, ctf_id, total_score, result
+            user_team.id, ctf_id, total_score, result
         )
 
     result["message"] += f' Your team have earned {total_score} points!'
@@ -258,7 +274,7 @@ def get_ctf_password(ctf_id):
     ctf = Ctf.query.get(ctf_id)
 
     if ctf:
-        return ctf.password
+        return ctf.ctf_password
     else:
         return None
 
@@ -286,7 +302,7 @@ def ctf(ctf_id):
 
     user = user_utils.get_user_by_username(session["username"])
 
-    if user.team is None:
+    if len(user.team) == 0:
         flash("You need to be part of a team to access this page.", "danger")
         return render_template("/ctf/password.html", ctf_id=ctf_id)
 
@@ -314,8 +330,11 @@ def ctf(ctf_id):
             top_scores=top_scores,
         )
 
+    team_id = user.team[0].id
+    user_team = Team.query.get(team_id)
+
     print(f"{user.username} is opening... {ctf_id}")
-    team_code = get_team_code(user.team.name, ctf_id)
+    team_code = get_team_code(user_team.name, ctf_id)
 
     if team_code:
         ex["code"] = team_code

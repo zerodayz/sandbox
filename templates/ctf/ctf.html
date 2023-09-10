@@ -59,6 +59,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endif %}
+                <h1 class="mt-4">Capture The Flag</h1>
+                <hr/>
                 <div class="card">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
@@ -66,7 +68,7 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">{{ ctf['description'] | safe }}</p>
-                        <span class="badge bg-secondary">{{ ctf['difficulty'] }}</span>
+                        <span class="badge bg-secondary">{{ ctf['ctf_difficulty'] }}</span>
                     </div>
                 </div>
                 <div class="card mt-4">
@@ -123,7 +125,7 @@
                         </div>
                     </div>
                 </div>
-                {% if ctf['added_by'] == user.username %}
+                {% if ctf['added_by_user_id'] == user.id %}
                 <div class="card mt-4">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>

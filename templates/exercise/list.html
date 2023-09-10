@@ -27,7 +27,7 @@
                 <h1 class="mt-4">Exercises</h1>
                 <hr/>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 d-flex align-items-center">
                 <div class="input-group mx-auto">
                     <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
                 </div>
@@ -50,7 +50,7 @@
                             </p>
                         </div>
                         <div class="card-footer mx-auto">
-                            <span class="badge bg-secondary">{{ exercise['difficulty'] }}</span>
+                            <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
                             <span class="badge bg-secondary">{{ exercise['language'] }}</span>
                             <br/>
                             <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary text-white mt-4">Open</a>
@@ -60,6 +60,33 @@
             </div>
         </div>
     </div>
+    {% if exercises.has_prev or exercises.has_next %}
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-12 center-pagination">
+                    <ul class="pagination">
+                        {% if exercises.has_prev %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('exercise_app', page=exercises.prev_num) }}">Previous</a></li>
+                        {% endif %}
+
+                        {% for page_num in exercises.iter_pages() %}
+                        {% if page_num %}
+                        <li class="page-item{% if page_num == exercises.page %} active{% endif %}">
+                            <a class="page-link" href="{{ url_for('exercise_app', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if exercises.has_next %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('exercise_app', page=exercises.next_num) }}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </div>
 <div class="container mt-4">
     <div class="row">
