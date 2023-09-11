@@ -12,6 +12,11 @@
       <div class="col-md-12">
         <h1 class="mt-4">Add Level</h1>
         <hr/>
+        <div class="row">
+          <div class="col-md-12 mb-4">
+            <a href="/ctf">CTF</a> &rarr; <a href="{{ url_for('add_ctf') }}">Add Level</a>
+          </div>
+        </div>
         {% if result['type'] %}
         <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
           <pre>{{ result['message'] }}</pre>
@@ -49,7 +54,7 @@
               <div class="card-header">
                 <span class="eye-button" onclick="toggleHTML()"><i id="title-icon" class="bi bi-filetype-html pe-none me-2" width="30" height="24"></i></span>
                 <span class="fs-5 fw-semibold">
-                  <input type="text" id="title" class="input-as-span" value="{% if ctf['title'] %}{{ ctf['title'] }}{% else %}Type your title here{% endif %}">
+                  <input type="text" id="title" class="input-as-span" value="{% if ctf['title'] %}{{ ctf['title'] }}{% endif %}" placeholder="{% if ctf['title'] %}{{ ctf['title'] }}{% else %}Type your title here{% endif %}">
                 </span>
               </div>
               <div class="card-body" style="padding: 0px !important;">

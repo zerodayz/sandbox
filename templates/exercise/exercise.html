@@ -105,6 +105,11 @@
         {% endif %}
         <h1 class="mt-4">Exercise</h1>
         <hr/>
+        <div class="row">
+          <div class="col-md-12 mb-4">
+            <a href="/exercises">Exercises</a> &rarr; <a href="{{ url_for('exercise', exercise_id=exercise.id) }}">{{ exercise.title }}</a>
+          </div>
+        </div>
         <div class="card">
           <div class="card-header">
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>

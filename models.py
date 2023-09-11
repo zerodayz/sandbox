@@ -39,6 +39,13 @@ class User(db.Model):
 
     team = db.relationship('Team', back_populates='members')
 
+    exercises = db.relationship('Exercise', back_populates='user')
+    ctfs = db.relationship('Ctf', back_populates='user')
+
+    forum_posts = db.relationship('ForumPost', back_populates='user')
+    forum_comments = db.relationship('ForumComment', back_populates='user')
+    forum_categories = db.relationship('ForumCategory', back_populates='user')
+
     def __repr__(self):
         return str(self.__dict__)
 
@@ -98,6 +105,8 @@ class Ctf(db.Model):
     score = db.Column(db.Integer)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
+    user = db.relationship('User', back_populates='ctfs')
+
 
 class CtfScore(db.Model):
     __tablename__ = 'ctf_scores'
@@ -128,6 +137,8 @@ class Exercise(db.Model):
     score = db.Column(db.Integer)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
+    user = db.relationship('User', back_populates='exercises')
+
     __table_args__ = (
         Index('idx_exercise_id', 'id'),
     )
@@ -141,3 +152,57 @@ class ExerciseScore(db.Model):
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
+
+
+class ForumPost(db.Model):
+    __tablename__ = 'forum_posts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.BLOB, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('forum_categories.id'), nullable=False)
+
+    date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
+    date_updated = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(),
+                             onupdate=db.func.current_timestamp(), nullable=False)
+
+    user = db.relationship('User', back_populates='forum_posts')
+    comments = db.relationship('ForumComment', back_populates='post', lazy=True)
+    category = db.relationship('ForumCategory', back_populates='post')
+
+    def __repr__(self):
+        return f'<ForumPost {self.id}: {self.title}>'
+
+
+class ForumComment(db.Model):
+    __tablename__ = 'forum_comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_posts.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
+
+    user = db.relationship('User', back_populates='forum_comments')
+    post = db.relationship('ForumPost', back_populates='comments')
+
+    def __repr__(self):
+        return f'<ForumComment {self.id} on ForumPost {self.post_id}>'
+
+
+class ForumCategory(db.Model):
+    __tablename__ = 'forum_categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_description = db.Column(db.Text, nullable=False)
+    category_color = db.Column(db.String(255), nullable=False)
+    date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
+
+    user = db.relationship('User', back_populates='forum_categories')
+    post = db.relationship('ForumPost', back_populates='category')
+
+    def __repr__(self):
+        return f'<Category {self.name}>'

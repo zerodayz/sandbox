@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Category{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <pre>{{ message }}</pre>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mt-4">Add Category</h1>
+            <hr/>
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('create_category') }}">Add Category</a>
+                </div>
+            </div>
+            <div class="card">
+                <form method="POST" action="{{ url_for('create_category') }}">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">
+                            <input type="text" id="CategoryName" class="input-as-span" name="name" placeholder="Type your category name" required>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <textarea rows="4" id="CategoryDescription" class="input-as-span" name="description" placeholder="Type your category description" required></textarea>
+                        <div class="mb-3">
+                            <label for="CategoryColor" class="form-label">Category Color:</label>
+                            <input type="color" class="form-control form-control-color" id="CategoryColor" value="#CCCCCC" name="color" title="Choose a color">
+                        </div>
+                        <button type="submit" class="btn btn-primary text-white">Create Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .input-as-span {
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 0px !important;
+        border-radius: 0px !important;
+        background-color: transparent;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        width: calc(100% - 44px) !important;
+    }
+</style>
+{% endblock %}

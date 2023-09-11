@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block title %}Forum Board{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <pre>{{ message }}</pre>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <h1 class="mt-4">Forums</h1>
+        <hr/>
+        <div class="col-md-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="/forum">Forum</a>
+                </div>
+                <div>
+                    <a href="/forum/post/create" class="btn btn-sm btn-primary text-white me-2">
+                        New Post
+                    </a>
+                    <a href="/forum/category/create" class="btn btn-sm btn-primary text-white">
+                        New Category
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% if categories %}
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Categories</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td>
+                                <i class="bi bi-box-fill pe-none me-2" style="color: {{ category.category_color }}" width="30" height="24"></i>
+                                <span class="fs-5 fw-semibold">
+                                    <a href="{{ url_for('view_category', category_id=category.id) }}">{{ category.name }}</a>
+                                </span>
+                                <br/>
+                                <small>{{ category.category_description }} | Posts: {{ category.post | length }}</small> |
+                                <small>Created by
+                                    {% if category.user.team %}
+                                    <img width="24" height="24" src="data:image/png;base64, {{ category.user.team[0].logo.decode('utf-8') }}"/>
+                                    {% endif %}
+                                    {{ category.user.username }}</small>
+                            </td>
+                        </tr>
+                        {% set last_5_posts = get_last_5_posts_by_category(category.id) %}
+                        {% if last_5_posts %}
+                        {% for post in last_5_posts %}
+                        <tr>
+                            <td style="padding-left: 44px">
+                                <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                                <br>
+                                <small>Posted by
+                                    {% if post.user.team %}
+                                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
+                                    {% endif %}
+                                    {{ post.user.username }} on {{ post.date_created }}</small>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<style>
+    .options-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+    }
+    .card-body {
+        padding: 0px !important;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .table>tbody>tr>td {
+        padding: 16px;
+    }
+</style>
+{% endblock %}

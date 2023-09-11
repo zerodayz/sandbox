@@ -10,8 +10,6 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="mt-4">Add Exercise</h1>
-                <hr/>
                 {% if result['type'] %}
                 <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
                     <pre>{{ result['message'] }}</pre>
@@ -87,13 +85,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endif %}
+                <h1 class="mt-4">Add Exercise</h1>
+                <hr/>
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <a href="/exercises">Exercises</a> &rarr; <a href="{{ url_for('add_exercise') }}">Add Exercise</a>
+                    </div>
+                </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">
-                            <input type="text" id="title" class="input-as-span" value="{% if exercise['title'] %}{{ exercise['title'] }}{% else %}Type your title here{% endif %}">
+                            <input type="text" id="title" class="input-as-span" value="{% if exercise['title'] %}{{ exercise['title'] }}{% endif %}" placeholder="{% if exercise['title'] %}{{ exercise['title'] }}{% else %}Type your title here{% endif %}">
                         </span>
                     </div>
                     <div class="card-body">

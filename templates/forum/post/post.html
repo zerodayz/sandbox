@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}View Post{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container mt-4">
+        <h1 class="mt-4">Post</h1>
+        <hr/>
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('view_category', category_id=post.category.id) }}">{{ post.category.name }}</a>
+                &rarr; <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">{{ post.title }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p>Posted by
+                    {% if post.user.team %}
+                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
+                    {% endif %}
+                    {{ post.user.username }} on {{ post.date_created }}</p>
+                <p>{{ post.content.decode('utf-8') }}</p>
+            </div>
+        </div>
+    </div>
+    {% if post.comments|length > 0 %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-chat-right-dots pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Comments</span>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for comment in post.comments %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="comment-details">
+                            <p>{{ comment.content }}</p>
+                            <p class="text-muted small">
+                                Commented by <span class="comment-username">
+                                {% if comment.user.team %}
+                                            <img width="24" height="24" src="data:image/png;base64, {{ comment.user.team[0].logo.decode('utf-8') }}"/>
+                                            {% endif %}
+                                {{ comment.user.username }}</span> on
+                                <span class="comment-date">{{ comment.date_created }}</span>
+                            </p>
+                        </div>
+                        <div class="comment-actions">
+                            {% if comment.user.id == user.id %}
+                            <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-chat-right pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Add a Comment
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <textarea class="form-control" name="content" rows="3" required></textarea>
+                    </div>
+                    <br/>
+                    <button type="submit" class="btn btn-primary text-white">Comment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .list-group {
+        padding: 0px !important;
+        margin: 0px !important;
+    }
+</style>
+{% endblock %}

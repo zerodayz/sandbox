@@ -23,42 +23,68 @@
         {% endif %}
         {% endwith %}
         <div class="row">
-            <div class="col-md-6">
-                <h1 class="mt-4">Exercises</h1>
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="mt-4">Exercises</h1>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="input-group mx-auto">
+                            <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
+                        </div>
+                    </div>
+                </div>
                 <hr/>
             </div>
-            <div class="col-md-6 d-flex align-items-center">
-                <div class="input-group mx-auto">
-                    <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="/exercises">Exercises</a>
+                    </div>
+                    <div>
+                        <a href="/exercise/create" class="btn btn-sm btn-primary text-white me-2">
+                            Add Exercise
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-12 exercise-list">
-                <a class="card btn btn-primary exercise-add-card" href="/exercise/create" class="btn">
-                    <div>
-                        <span><i class="bi bi-plus-circle-fill"></i></span>
+        </div>
+        {% if exercises.items | length != 0 %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-box-fill pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">
+                            Exercises
+                        </span>
                     </div>
-                </a>
-                {% for exercise in exercises %}
-                    <div class="card exercise-card mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                            <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
-                        </div>
-                        <div class="card-body">
-                            <p class="description">
-                                {{ exercise['description'] }}
-                            </p>
-                        </div>
-                        <div class="card-footer mx-auto">
-                            <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
-                            <span class="badge bg-secondary">{{ exercise['language'] }}</span>
-                            <br/>
-                            <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}" class="btn btn-primary text-white mt-4">Open</a>
-                        </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for exercise in exercises %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}">{{ exercise.title }}</a>
+                                    <br>
+                                    <small>{{ exercise.description }} | Created by
+                                        {% if exercise.user.team %}
+                                        <img width="24" height="24" src="data:image/png;base64, {{ exercise.user.team[0].logo.decode('utf-8') }}"/>
+                                        {% endif %}{{ exercise.user.username }} on {{ exercise.date_created }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge bg-primary">{{ exercise.exercise_difficulty }}</span>
+                                    <span class="badge bg-primary">{{ exercise.language }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
+        {% endif %}
     </div>
     {% if exercises.has_prev or exercises.has_next %}
         <div class="container mt-4">
@@ -195,6 +221,15 @@
     .exercise-add-card span {
         display: inline-block;
         font-size: 30px;
+    }
+    .card-body {
+        padding: 0px !important;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .table>tbody>tr>td {
+        padding: 16px;
     }
 </style>
 <script>
