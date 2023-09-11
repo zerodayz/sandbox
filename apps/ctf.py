@@ -60,6 +60,11 @@ def add_ctf():
     if "username" not in session:
         return redirect(url_for("login"))
 
+    user = user_utils.get_user_by_username(session["username"])
+    if len(user.team) == 0:
+        flash("You need to be part of a team to access this page.", "danger")
+        return redirect(url_for("ctf_app"))
+
     result = {}
     ex = {}
 
