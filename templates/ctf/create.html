@@ -107,7 +107,7 @@
                 </div>
               </div></div>
               {% endif %}
-              {% if ctf['password'] %}
+              {% if ctf['ctf_password'] %}
               <div>
                 <div class="card mt-4 input-section">
                   <div class="card-header">
@@ -119,7 +119,7 @@
                     <div class="card-body">
                       <span id="password">
                           <p id="sample-input">
-                              <input type="text" class="password-input" value="{{ ctf['password'] }}">
+                              <input type="text" class="password-input" value="{{ ctf['ctf_password'] }}">
                           </p>
                       </span>
                     </div>
