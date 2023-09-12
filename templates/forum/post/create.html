@@ -151,6 +151,11 @@
     titleInput.setAttribute("name", "title");
     titleInput.setAttribute("value", title);
 
+    if (titleInput.value == "") {
+      alert("Title cannot be empty");
+      return;
+    }
+
     var categoryInput = document.createElement("input");
     categoryInput.setAttribute("type", "hidden");
     categoryInput.setAttribute("name", "category_id");
@@ -160,6 +165,11 @@
     contentInput.setAttribute("type", "hidden");
     contentInput.setAttribute("name", "content");
     contentInput.setAttribute("value", content);
+
+    if (contentInput.value == "") {
+      alert("Content cannot be empty");
+      return;
+    }
 
     form.appendChild(titleInput);
     form.appendChild(categoryInput);

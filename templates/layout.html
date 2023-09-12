@@ -109,6 +109,9 @@
         if (typeof descriptionEdit !== "undefined") {
             descriptionEdit.setTheme("ace/theme/textmate");
         }
+        if (typeof post_editor != "undefined") {
+            post_editor.setTheme("ace/theme/textmate");
+        }
     }
 
     function disableDarkTheme() {
@@ -120,6 +123,9 @@
         }
         if (typeof descriptionEdit !== "undefined") {
             descriptionEdit.setTheme("ace/theme/dracula");
+        }
+        if (typeof post_editor != "undefined") {
+            post_editor.setTheme("ace/theme/dracula");
         }
     }
 </script>
