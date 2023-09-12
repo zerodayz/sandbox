@@ -28,7 +28,7 @@
                     <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
                     {% endif %}
                     {{ post.user.username }} on {{ post.date_created }}</p>
-                <p>{{ post.content.decode('utf-8') }}</p>
+                <div id="markdown-content"></div>
             </div>
         </div>
     </div>
@@ -93,4 +93,13 @@
         margin: 0px !important;
     }
 </style>
+<script src="/static/marked/marked.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    const markdownText = {{ markdown_content|tojson|safe }};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const markdownContent = document.getElementById('markdown-content');
+        markdownContent.innerHTML = marked.parse(markdownText);
+    });
+</script>
 {% endblock %}

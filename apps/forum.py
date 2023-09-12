@@ -74,7 +74,7 @@ def view_post(post_id):
 
     user = user_utils.get_user_by_username(session["username"])
     post = ForumPost.query.get_or_404(post_id)
-
+    markdown_content = post.content.decode("utf-8")
     if request.method == "POST":
         content = request.form["content"]
 
@@ -86,7 +86,7 @@ def view_post(post_id):
 
         return redirect(url_for("view_post", post_id=post_id))
 
-    return render_template("/forum/post/post.html", user=user, post=post)
+    return render_template("/forum/post/post.html", user=user, post=post, markdown_content=markdown_content)
 
 
 def delete_post(post_id):
