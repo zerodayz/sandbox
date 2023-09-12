@@ -27,9 +27,16 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="mt-4">Exercises</h1>
                     <div class="col-md-4 d-flex align-items-center">
-                        <div class="input-group mx-auto">
-                            <input type="text" id="searchInput" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
-                        </div>
+                        <form id="searchForm" method="GET" action="{{ url_for('exercise_app') }}" class="mx-auto">
+                            <div class="input-group">
+                                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
+                                <div class="input-group-append">
+                                    <button id="searchInputBtn" type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <hr/>
@@ -234,33 +241,4 @@
         padding: 16px;
     }
 </style>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById("searchInput");
-        const exerciseCards = document.querySelectorAll(".exercise-card");
-
-        searchInput.addEventListener("input", function () {
-            const searchText = searchInput.value.trim().toLowerCase();
-
-            exerciseCards.forEach(function (card) {
-                const cardText = card.textContent.toLowerCase();
-                const tags = card.querySelectorAll(".badge");
-                let found = false;
-
-                tags.forEach(function (tag) {
-                    if (tag.textContent.toLowerCase().includes(searchText)) {
-                        found = true;
-                    }
-                });
-
-                if (cardText.includes(searchText) || found) {
-                    card.style.display = "block";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-        });
-    });
-</script>
-
 {% endblock %}

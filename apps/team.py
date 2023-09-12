@@ -163,7 +163,7 @@ def join_team():
                 if check_password_hash(team.hashed_password, team_password):
                     try:
                         user = User.query.filter_by(username=username).first()
-                        user.team = team
+                        user.team = [team]
                         user.team_invitation = None
 
                         db.session.commit()

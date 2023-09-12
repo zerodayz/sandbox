@@ -10,6 +10,8 @@ from models import db
 from models import User, Ctf, CtfScore, Team
 from models import DifficultyEnum
 
+from sqlalchemy import or_
+
 from apps.apps import decode_team_logo
 
 DB_NAME = constants.DB_NAME
@@ -45,9 +47,18 @@ def ctf_app():
     page = request.args.get('page', 1, type=int)
     items_per_page = 10
 
-    ctfs = Ctf.query.order_by(Ctf.id.desc()).paginate(page=page,
-                                                      per_page=items_per_page,
-                                                      error_out=False)
+    search_query = request.args.get('query', '')
+
+    ctfs = Ctf.query.filter(
+        or_(
+            Ctf.title.ilike(f"%{search_query}%"),
+        )
+    ).order_by(Ctf.id.desc()).paginate(
+        page=page,
+        per_page=items_per_page,
+        error_out=False
+    )
+
     # ctfs = fetch_ctfs_from_database()
 
     top_scores = get_all_top_scores()

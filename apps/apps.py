@@ -9,6 +9,8 @@ from flask import (flash, jsonify, redirect, render_template, request, session,
 import apps.user as user_utils
 import utils.constants as constants
 
+from sqlalchemy import or_
+
 from models import Exercise, ExerciseScore, Team, User
 from models import DifficultyEnum
 from models import db
@@ -67,9 +69,18 @@ def exercise_app():
     page = request.args.get('page', 1, type=int)
     items_per_page = 10
 
-    exercises = Exercise.query.order_by(Exercise.id.desc()).paginate(page=page,
-                                                                     per_page=items_per_page,
-                                                                     error_out=False)
+    search_query = request.args.get('query', '')
+
+    exercises = Exercise.query.filter(
+        or_(
+            Exercise.title.ilike(f"%{search_query}%"),
+            Exercise.description.ilike(f"%{search_query}%")
+        )
+    ).order_by(Exercise.id.desc()).paginate(
+        page=page,
+        per_page=items_per_page,
+        error_out=False
+    )
 
     # exercises = fetch_exercises_from_database()
 
