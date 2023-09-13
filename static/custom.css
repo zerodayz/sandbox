@@ -175,6 +175,15 @@ input[type=submit] {
   height: 350px;
 }
 
+#post-container:read-write:focus {
+  outline: none;
+}
+
+.post-container {
+  position: relative;
+  height: 100vh;
+}
+
 #sample-output {
   font-family: "Courier New", Courier, monospace;
 }
