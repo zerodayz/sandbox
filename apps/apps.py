@@ -541,10 +541,11 @@ def update_user_score(user, exercise_id, total_score, result, benchmark_time):
     score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise_id).first()
 
     if score:
-        if total_score > score.total_score:
+        if total_score > score.total_score or benchmark_time < score.execution_time:
             result["message"] += " New record!"
 
         score.total_score = total_score
+        score.execution_time = benchmark_time
     else:
         score = ExerciseScore(user_id=user.id, exercise_id=exercise_id, total_score=total_score,
                               execution_time=benchmark_time)
@@ -563,12 +564,13 @@ def get_top_scores(exercise_id):
                 db.func.sum(ExerciseScore.total_score).label("total_score"),
                 db.func.max(ExerciseScore.date_created).label("date_created"),
                 Team.logo.label("logo"),
+                ExerciseScore.execution_time.label("execution_time"),
             )
             .join(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(User.team)
             .filter(ExerciseScore.exercise_id == exercise_id)
             .group_by(User.username, Team.logo)
-            .order_by(db.desc("total_score"))
+            .order_by(db.desc("total_score"), "execution_time")
             .limit(5)
             .all()
         )
@@ -584,12 +586,13 @@ def get_all_daily_top_scores():
     try:
         top_scores = (
             db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
-                             db.func.max(ExerciseScore.date_created).label('date_created'), Team.logo)
+                             db.func.max(ExerciseScore.date_created).label('date_created'), Team.logo,
+                             ExerciseScore.execution_time)
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(User.team)
             .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
             .group_by(User.username, Team.logo)
-            .order_by(db.desc('total_score'))
+            .order_by(db.desc('total_score'), 'execution_time')
             .limit(5)
             .all()
         )
