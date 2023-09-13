@@ -13,7 +13,6 @@
     const LOCAL_STORAGE_KEY = "toggle-bootstrap-theme";
 
     const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    const THEME_TOGGLER = document.getElementById("theme-toggler");
 
     let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
 
@@ -21,16 +20,6 @@
         enableDarkTheme();
     } else {
         disableDarkTheme();
-    }
-    function toggleTheme() {
-        isDark = !isDark;
-        if (isDark) {
-            enableDarkTheme();
-        } else {
-            disableDarkTheme();
-        }
-        const META = { isDark };
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(META));
     }
 
     function enableDarkTheme() {
@@ -127,5 +116,19 @@
 
 <!-- Add Bootstrap JS and Ace -->
 <script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
+<script>
+    const THEME_TOGGLER = document.getElementById("theme-toggler");
+    function toggleTheme() {
+        isDark = !isDark;
+        if (isDark) {
+            enableDarkTheme();
+        } else {
+            disableDarkTheme();
+        }
+        const META = { isDark };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(META));
+    }
+
+</script>
 </body>
 </html>
