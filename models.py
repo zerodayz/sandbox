@@ -114,7 +114,6 @@ class CtfScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
     ctf_id = db.Column(db.Integer, db.ForeignKey('ctfs.id'), nullable=False)
-    execution_time = db.Column(db.Float, nullable=True)
     total_score = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
@@ -152,6 +151,7 @@ class ExerciseScore(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
+    execution_time = db.Column(db.Float, nullable=True)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
 

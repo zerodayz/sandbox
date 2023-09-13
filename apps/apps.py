@@ -229,6 +229,56 @@ def get_user_code(username, exercise_id):
     return None
 
 
+def execute_benchmark_inside_container(language, file_path, stdin=None):
+    current_dir = os.getcwd()
+    container_file_path = os.path.join("/", os.path.basename(file_path))
+    host_file_path = os.path.join(current_dir, file_path)
+
+    if language == "python3":
+        image_name = "python:3.11"
+        benchmark_file_path = os.path.join("/", "benchmark.py")
+        host_benchmark_file_path = os.path.join(current_dir, "benchmark.py")
+    else:
+        raise ValueError("Unsupported language")
+
+    command = [
+        "podman",
+        "run",
+        "--rm",
+        "-v",
+        f"{host_benchmark_file_path}:{benchmark_file_path}",
+        "-v",
+        f"{host_file_path}:{container_file_path}",
+        "-i",
+        image_name,
+        language,
+        benchmark_file_path,
+        container_file_path,
+    ]
+
+    try:
+        if stdin:
+            bytes_stdin = stdin.encode("utf-8")
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            stdout, stderr = process.communicate(input=bytes_stdin, timeout=10)
+        else:
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            stdout, stderr = process.communicate(timeout=10)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        stdout = b""
+        stderr = b"Timeout expired"
+
+    return stdout.decode("utf-8"), stderr.decode("utf-8")
+
+
 def execute_inside_container(language, file_path, stdin=None):
     current_dir = os.getcwd()
     container_file_path = os.path.join("/", os.path.basename(file_path))
@@ -295,6 +345,33 @@ def execute_subprocess(command, cwd=None, stdin=None, timeout=10):
         return None, str(e)
     finally:
         timer.cancel()
+
+
+def execute_benchmark_and_validate(ex, file_path, user_code):
+    sample_inputs = ["sample_1_input", "sample_2_input", "sample_3_input"]
+    sample_outputs = ["sample_1_output", "sample_2_output", "sample_3_output"]
+    execution_time = []
+    for input_key, output_key in zip(sample_inputs, sample_outputs):
+        if input_key in ex and output_key in ex:
+            if ex[input_key] is not None and ex[output_key] is not None:
+                stdin = ex[input_key]
+                expected_output = ex[output_key]
+                stdout, stderr = execute_benchmark_inside_container(
+                    ex["language"], file_path, stdin=stdin
+                )
+                execution_time.append(float(stdout))
+            elif ex[output_key] is not None:
+                expected_output = ex[output_key]
+                stdout, stderr = execute_benchmark_inside_container(ex["language"], file_path)
+                execution_time.append(float(stdout))
+        elif output_key in ex:
+            if ex[output_key] is not None:
+                expected_output = ex[output_key]
+                stdout, stderr = execute_benchmark_inside_container(ex["language"], file_path)
+                execution_time.append(float(stdout))
+
+    average_execution_time = sum(execution_time) / len(execution_time)
+    return average_execution_time
 
 
 def execute_and_validate(ex, file_path, user_code):
@@ -376,6 +453,9 @@ def run_exercise(ex, exercise_id, user_code):
     if result["type"] == "danger":
         return result, top_scores
 
+    benchmark_time = execute_benchmark_and_validate(ex, file_path, user_code)
+    benchmark_time = round(benchmark_time, 4)
+
     ex["code"] = user_code
 
     total_score = ex["score"]
@@ -404,7 +484,7 @@ def run_exercise(ex, exercise_id, user_code):
 
     if exercise_id != 0:
         total_score, result = update_user_score(
-            user, exercise_id, total_score, result
+            user, exercise_id, total_score, result, benchmark_time
         )
 
     if total_score == ex["score"]:
@@ -457,7 +537,7 @@ def adjust_score_and_results(
     return total_score, result
 
 
-def update_user_score(user, exercise_id, total_score, result):
+def update_user_score(user, exercise_id, total_score, result, benchmark_time):
     score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise_id).first()
 
     if score:
@@ -466,7 +546,8 @@ def update_user_score(user, exercise_id, total_score, result):
 
         score.total_score = total_score
     else:
-        score = ExerciseScore(user_id=user.id, exercise_id=exercise_id, total_score=total_score)
+        score = ExerciseScore(user_id=user.id, exercise_id=exercise_id, total_score=total_score,
+                              execution_time=benchmark_time)
 
     db.session.add(score)
     db.session.commit()
