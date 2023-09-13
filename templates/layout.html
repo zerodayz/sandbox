@@ -14,9 +14,9 @@
 
     const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
 
-    let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
+    let isADark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
 
-    if (isDark) {
+    if (isADark) {
         document.documentElement.setAttribute("data-bs-theme", "light");
     } else {
         document.documentElement.setAttribute("data-bs-theme", "dark");
@@ -87,8 +87,8 @@
     const THEME_TOGGLER = document.getElementById("theme-toggler");
     const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
 
-    let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
-    if (isDark) {
+    let isBDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
+    if (isBDark) {
         if (typeof editor !== "undefined") {
             editor.setTheme("ace/theme/dracula");
         }
@@ -117,14 +117,17 @@
 <script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
 <script>
     const THEME_TOGGLER = document.getElementById("theme-toggler");
+    const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+
+    let isCDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
     function toggleTheme() {
-        isDark = !isDark;
-        if (isDark) {
+        isCDark = !isCDark;
+        if (isCDark) {
             enableDarkTheme();
         } else {
             disableDarkTheme();
         }
-        const META = { isDark };
+        const META = { isCDark };
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(META));
     }
 
