@@ -3,12 +3,21 @@
 <head>
     {% block head %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="preload" type="text/css" href="{{ url_for('static', filename='custom.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
         <link rel="stylesheet" href="/static/bootstrap-icons-1.10.5/font/bootstrap-icons.css">
         <title>{% block title %}{% endblock %} - Sandbox</title>
     {% endblock %}
 </head>
 <body>
+<script>
+    const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
+    if (isDark) {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+    } else {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+    }
+</script>
 <header>
     {% block navbar %}
         <nav class="navbar bg-dark navbar-expand-lg fixed-top">
