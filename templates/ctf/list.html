@@ -26,10 +26,10 @@
             <div class="col-md-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="mt-4">Capture The Flag</h1>
-                    <div class="col-md-4 d-flex align-items-center">
+                    <div class="col-md-3 d-flex align-items-center">
                         <form id="searchForm" method="GET" action="{{ url_for('ctf_app') }}" class="mx-auto">
                             <div class="input-group">
-                                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" placeholder="Search">
+                                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" placeholder="{% if query %}{{ query }}{% else %}Search{% endif %}" aria-label="Search" aria-describedby="searchInputBtn">
                                 <div class="input-group-append">
                                     <button id="searchInputBtn" type="submit" class="btn btn-primary">
                                         <i class="bi bi-search"></i>

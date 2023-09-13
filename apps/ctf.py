@@ -64,7 +64,7 @@ def ctf_app():
     top_scores = get_all_top_scores()
     top_scores = decode_team_logo(top_scores)
 
-    return render_template("ctf/list.html", ctfs=ctfs, top_scores=top_scores)
+    return render_template("ctf/list.html", query=search_query, ctfs=ctfs, top_scores=top_scores)
 
 
 def add_ctf():
