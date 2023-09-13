@@ -7,6 +7,27 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Modal deletePostModal -->
+    <div class="modal fade" id="deletePostModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You are about to delete <b>'{{ post['title'] }}'</b> Post.
+                    <p>This will remove the Post and all associated Comments.</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="/forum/post/{{ post['id'] }}/delete">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container mt-4">
         <h1 class="mt-4">Post</h1>
         <hr/>
@@ -31,6 +52,19 @@
                 <div id="markdown-content"></div>
             </div>
         </div>
+        {% if post['user_id'] == user.id %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Delete Post</span>
+            </div>
+            <div class="card-body">
+                <span>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePostModal">Delete</button>
+                </span>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% if post.comments|length > 0 %}
     <div class="container mt-4">
