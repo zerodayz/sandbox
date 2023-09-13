@@ -29,25 +29,26 @@
         <div>
           <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('create_post') }}">Add Post</a>
         </div>
-        <div class="d-flex align-items-center">
-          <a href="#" onclick="savePost()" class="btn btn-sm btn-primary text-white">Create Post</a>
+        <div>
+          <select class="form-select me-2" id="category" name="category_id">
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
         </div>
       </div>
     </div>
       <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-filetype-md pe-none me-2" width="30" height="24"></i></span>
+        <div class="card-header d-flex align-items-center">
+          <div class="flex-grow-1">
+            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
             <span class="fs-5 fw-semibold">
-              <input type="text" id="PostTitle" class="input-as-span" name="title" placeholder="Type your title here" required>
+                <input type="text" id="PostTitle" class="input-as-span" name="title" placeholder="Type your title here" required>
             </span>
           </div>
           <div>
-            <select class="form-select me-2" id="category" name="category_id">
-              {% for category in categories %}
-              <option value="{{ category.id }}">{{ category.name }}</option>
-              {% endfor %}
-            </select>
+            <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-code-slash pe-none me-2" width="30" height="24"></i></span>
+            <a href="#" onclick="savePost()" class="btn btn-sm btn-primary text-white">Create Post</a>
           </div>
         </div>
         <div class="card-body" style="padding: 0px !important;">
@@ -92,13 +93,20 @@
     font-size: inherit;
     font-weight: inherit;
     color: inherit;
-    width: calc(100% - 44px) !important;
   }
   .eye-button {
     cursor: pointer;
   }
   .eye-button:hover {
     color: #dc3545;
+  }
+  /* Style for the main container */
+  .markdown-container {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 800px; /* Adjust the maximum width as needed */
+    margin: 0 auto;
   }
 
 </style>
@@ -188,14 +196,14 @@
       preview.style.display = "block";
       editor.style.display = "none";
       preview.innerHTML = marked.parse(post_editor.getValue());
-      titleIcon.classList.remove("bi-filetype-md");
+      titleIcon.classList.remove("bi-code-slash");
       titleIcon.classList.add("bi-eye-fill");
       editor.parentElement.classList.remove("code-container");
     } else {
       preview.style.display = "none";
       editor.style.display = "block";
       titleIcon.classList.remove("bi-eye-fill");
-      titleIcon.classList.add("bi-filetype-md");
+      titleIcon.classList.add("bi-code-slash");
       editor.parentElement.classList.add("code-container");
     }
   }

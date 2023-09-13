@@ -12,6 +12,7 @@ $navbar-dark-toggler-border-color: rgba(255, 255, 255, 0.15);
 $navbar-light-toggler-border-color: rgba(255, 255, 255, 0.15);
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+
 body {
   font-family: Arial, sans-serif;
   background-color: var(--bs-light);
@@ -251,5 +252,49 @@ input[type="submit"] {
   color: #fff;
   text-decoration: none;
 }
+
+
+pre {
+  background-color: rgba(var(--bs-body-color-rgb), 0.03);
+  color: var(--bs-body-color);
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+code {
+  font-family: Monaco, monospace;
+}
+
+blockquote {
+  border-left: 3px solid #ccc;
+  margin: 10px 0;
+  padding-left: 10px;
+}
+
+.inline-code {
+  background-color: var(--bs-body-bg);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: Monaco, monospace;
+}
+
+table {
+  width: 100%;
+  border-radius: 5px !important;
+  margin-bottom: 20px;
+}
+
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: rgba(var(--bs-body-color-rgb), 0.03);
+  color: var(--bs-body-color);
+}
+
 
 @import "bootstrap-5.3.1/scss/bootstrap";
