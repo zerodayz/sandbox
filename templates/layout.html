@@ -83,11 +83,11 @@
         <p class="text-center text-body-secondary">With love <span style="color:#FF0089FF">♥</span> from Robin Černín 2023</p>
     {% endblock %}
 </footer>
-
-<!-- Add Bootstrap JS and Ace -->
-<script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
 <script>
     const THEME_TOGGLER = document.getElementById("theme-toggler");
+    const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+
+    let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
     if (isDark) {
         if (typeof editor !== "undefined") {
             editor.setTheme("ace/theme/dracula");
@@ -113,6 +113,10 @@
         THEME_TOGGLER.classList.remove("bi-moon-stars-fill");
         THEME_TOGGLER.classList.add("bi-brightness-high-fill");
     }
+</script>
+<script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
+<script>
+    const THEME_TOGGLER = document.getElementById("theme-toggler");
     function toggleTheme() {
         isDark = !isDark;
         if (isDark) {
