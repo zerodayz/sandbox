@@ -10,7 +10,7 @@ from apps.team import (delete_team, get_user_team, invite_user_to_team, join_tea
 from apps.user import user_profile, create_user
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
-from apps.forum import (create_post, delete_comment, delete_post, forum_board,
+from apps.forum import (create_post, delete_comment, delete_post, forum_board, forum_search,
                         view_post, create_category, edit_category, delete_category, view_category)
 from flask_migrate import Migrate
 
@@ -74,6 +74,7 @@ app.route("/exercise/<int:exercise_id>/delete", methods=["POST"])(delete_exercis
 
 # Register the forum routes
 app.route("/forum", methods=["GET"])(forum_board)
+app.route("/forum/search", methods=["GET", "POST"])(forum_search)
 app.route("/forum/post/create", methods=["GET", "POST"])(create_post)
 app.route("/forum/post/<int:post_id>", methods=["POST", "GET"])(view_post)
 app.route("/forum/post/<int:post_id>/delete", methods=["POST"])(delete_post)

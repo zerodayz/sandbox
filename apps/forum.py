@@ -7,6 +7,8 @@ from apps.apps import check_login
 from models import db
 from models import ForumPost, ForumComment, ForumCategory
 
+import re
+
 
 def get_last_5_posts_by_category(category_id):
     last_5_posts = (ForumPost.query.filter_by(category_id=category_id)
@@ -15,6 +17,45 @@ def get_last_5_posts_by_category(category_id):
                     .all())
 
     return last_5_posts
+
+
+def forum_search():
+    search_query = request.args.get('query', '')
+    page = request.args.get("page", 1, type=int)
+    items_per_page = 10
+
+    if not search_query:
+        return redirect(url_for("forum_board"))
+    search_query_bytes = search_query.encode("utf-8")
+
+    posts = (ForumPost.query.filter(ForumPost.title.contains(search_query) | ForumPost.content
+                                    .contains(search_query_bytes))
+             .order_by(ForumPost.date_created.desc())
+             .paginate(page=page, per_page=items_per_page))
+
+    for post in posts.items:
+        post.search = []
+        search_indexes = []
+        post.tmp = post.content.decode("utf-8").split()
+
+        for i, word in enumerate(post.tmp):
+            if re.search(search_query, word, re.IGNORECASE):
+                search_indexes.append(i)
+
+        for i in search_indexes:
+            if i - 5 < 0:
+                post.search.extend(post.tmp[0:i + 5])
+            else:
+                post.search.extend(post.tmp[i - 5:i + 5])
+
+    try:
+        post.search = " ".join(post.search)
+        post.search = re.sub(search_query, "<mark>" + search_query + "</mark>", post.search, flags=re.IGNORECASE)
+    except:
+        pass
+
+    return render_template("/forum/search.html", posts=posts, query=search_query, page=page,
+                           items_per_page=items_per_page)
 
 
 def forum_board():

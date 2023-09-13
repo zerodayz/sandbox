@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block title %}Search{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          <pre>{{ message }}</pre>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="mt-4">Forums</h1>
+          <div class="col-md-3 d-flex align-items-center">
+            <form id="searchForm" method="GET" action="{{ url_for('forum_search') }}" class="mx-auto">
+              <div class="input-group">
+                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" value="{% if query %}{{ query }}{% endif %}" placeholder="{% if query %}{{ query }}{% else %}Search{% endif %}" aria-label="Search" aria-describedby="searchInputBtn">
+                <div class="input-group-append">
+                  <button id="searchInputBtn" type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <hr/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('forum_search') }}">Search</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-box-fill pe-none me-2" width="30" height="24"></i>
+            <span class="fs-5 fw-semibold">
+                Search Results
+            </span>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <td class="text-center py-3">
+                  Searching for <strong>{{ query }}</strong>
+                </td>
+              </tr>
+              </thead>
+              <tbody>
+              {% for post in posts %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                  <br>
+                    <small>{{ post.search | safe }}</small>
+                  <br>
+                  <small>Posted by
+                    {% if post.user.team %}
+                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
+                    {% endif %}
+                    {{ post.user.username }} on {{ post.date_created }}</small>
+                </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if posts.has_prev or posts.has_next %}
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12 center-pagination">
+        <ul class="pagination">
+          {% if posts.has_prev %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('forum_search', page=posts.prev_num, query=query) }}">Previous</a></li>
+          {% endif %}
+
+          {% for page_num in posts.iter_pages() %}
+          {% if page_num %}
+          <li class="page-item{% if page_num == posts.page %} active{% endif %}">
+            <a class="page-link" href="{{ url_for('forum_search', page=page_num, query=query) }}">{{ page_num }}</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+          {% endfor %}
+
+          {% if posts.has_next %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('forum_search', page=posts.next_num, query=query) }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+<style>
+  .options-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+  .card-body {
+    padding: 0px !important;
+  }
+  .table {
+    margin-bottom: 0;
+  }
+  .table>tbody>tr>td {
+    padding: 16px;
+  }
+</style>
+{% endblock %}
