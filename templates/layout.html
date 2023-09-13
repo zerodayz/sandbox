@@ -10,9 +10,11 @@
 </head>
 <body>
 <script>
+    const LOCAL_STORAGE_KEY = "toggle-bootstrap-theme";
+
     const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
-    if (isDark) {
+    let isADark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
+    if (isADark) {
         document.documentElement.setAttribute("data-bs-theme", "light");
     } else {
         document.documentElement.setAttribute("data-bs-theme", "dark");
@@ -83,7 +85,6 @@
 <!-- Add Bootstrap JS and Ace -->
 <script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
 <script>
-    // you can use app's unique identifier here
     const LOCAL_STORAGE_KEY = "toggle-bootstrap-theme";
 
     const LOCAL_META_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
@@ -91,7 +92,6 @@
 
     let isDark = LOCAL_META_DATA && LOCAL_META_DATA.isDark;
 
-    // check if user has already selected dark theme earlier
     if (isDark) {
         enableDarkTheme();
     } else {
