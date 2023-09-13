@@ -9,6 +9,14 @@
     {% endblock %}
 </head>
 <body>
+<script>
+THEME = JSON.parse(localStorage.getItem("toggle-bootstrap-theme"));
+if (THEME && THEME.isDark) {
+    document.documentElement.setAttribute("data-bs-theme", "dark");
+} else {
+    document.documentElement.setAttribute("data-bs-theme", "light");
+}
+</script>
 <header>
     {% block navbar %}
         <nav class="navbar bg-dark navbar-expand-lg fixed-top">
