@@ -26,7 +26,16 @@
         <hr/>
         <div class="row">
             <div class="col-md-12 mb-4">
-                <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('view_category', category_id=category.id) }}">{{ category.name }}</a>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('view_category', category_id=category.id) }}">{{ category.name }}</a>
+                    </div>
+                    <div>
+                        <a href="/forum/post/create?category_id={{category.id}}" class="btn btn-sm btn-primary text-white me-2">
+                            New Post
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">

@@ -29,6 +29,7 @@ def create_post():
         return redirect(url_for("login"))
 
     user = user_utils.get_user_by_username(session["username"])
+    category_id = request.args.get('category_id', 1, type=int)
 
     if request.method == "POST":
         title = request.form["title"]
@@ -49,7 +50,7 @@ def create_post():
         return redirect(url_for("forum_board"))
 
     categories = ForumCategory.query.all()
-    return render_template("/forum/post/create.html", categories=categories)
+    return render_template("/forum/post/create.html", categories=categories, category_id=category_id)
 
 
 def view_category(category_id):
