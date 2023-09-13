@@ -18,26 +18,8 @@
 
     if (isDark) {
         document.documentElement.setAttribute("data-bs-theme", "light");
-        if (typeof editor !== "undefined") {
-            editor.setTheme("ace/theme/textmate");
-        }
-        if (typeof descriptionEdit !== "undefined") {
-            descriptionEdit.setTheme("ace/theme/textmate");
-        }
-        if (typeof post_editor != "undefined") {
-            post_editor.setTheme("ace/theme/textmate");
-        }
     } else {
         document.documentElement.setAttribute("data-bs-theme", "dark");
-        if (typeof editor !== "undefined") {
-            editor.setTheme("ace/theme/textmate");
-        }
-        if (typeof descriptionEdit !== "undefined") {
-            descriptionEdit.setTheme("ace/theme/textmate");
-        }
-        if (typeof post_editor != "undefined") {
-            post_editor.setTheme("ace/theme/textmate");
-        }
     }
 </script>
 <header>
@@ -106,6 +88,31 @@
 <script src="/static/bootstrap-5.3.1/dist/js/bootstrap.bundle.js"></script>
 <script>
     const THEME_TOGGLER = document.getElementById("theme-toggler");
+    if (isDark) {
+        if (typeof editor !== "undefined") {
+            editor.setTheme("ace/theme/dracula");
+        }
+        if (typeof descriptionEdit !== "undefined") {
+            descriptionEdit.setTheme("ace/theme/dracula");
+        }
+        if (typeof post_editor != "undefined") {
+            post_editor.setTheme("ace/theme/dracula");
+        }
+        THEME_TOGGLER.classList.remove("bi-brightness-high-fill");
+        THEME_TOGGLER.classList.add("bi-moon-stars-fill");
+    } else {
+        if (typeof editor !== "undefined") {
+            editor.setTheme("ace/theme/textmate");
+        }
+        if (typeof descriptionEdit !== "undefined") {
+            descriptionEdit.setTheme("ace/theme/textmate");
+        }
+        if (typeof post_editor != "undefined") {
+            post_editor.setTheme("ace/theme/textmate");
+        }
+        THEME_TOGGLER.classList.remove("bi-moon-stars-fill");
+        THEME_TOGGLER.classList.add("bi-brightness-high-fill");
+    }
     function toggleTheme() {
         isDark = !isDark;
         if (isDark) {
