@@ -29,7 +29,7 @@
                     <div class="col-md-3 d-flex align-items-center">
                         <form id="searchForm" method="GET" action="{{ url_for('exercise_app') }}" class="mx-auto">
                             <div class="input-group">
-                                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" value="{% if query %}{{ query }}{% endif %}" placeholder="{% if query %}{{ query }}{% else %}Search{% endif %}" aria-label="Search" aria-describedby="searchInputBtn">
+                                <input type="search" id="searchInput" name="query" class="form-control border-light-subtle bg-light-subtle" value="{% if query %}{{ query }}{% endif %}" placeholder="Search" aria-label="Search" aria-describedby="searchInputBtn">
                                 <div class="input-group-append">
                                     <button id="searchInputBtn" type="submit" class="btn btn-primary">
                                         <i class="bi bi-search"></i>
@@ -72,9 +72,9 @@
                             {% for exercise in exercises %}
                             <tr>
                                 <td>
-                                    <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}">{{ exercise.title }}</a>
+                                    <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}">{{ exercise.title | safe }}</a>
                                     <br/>
-                                    <small>{{ exercise.description }}</small>
+                                    <small>{{ exercise.description | safe }}</small>
                                     <br/>
                                     <small>Created by
                                         {% if exercise.user.team %}

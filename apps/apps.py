@@ -15,6 +15,8 @@ from models import Exercise, ExerciseScore, Team, User
 from models import DifficultyEnum
 from models import db
 
+import re
+
 DB_NAME = constants.DB_NAME
 
 
@@ -81,6 +83,13 @@ def exercise_app():
         per_page=items_per_page,
         error_out=False
     )
+
+    if search_query:
+        for ex in exercises.items:
+            ex.title = re.sub(search_query, "<mark>" + search_query + "</mark>",
+                              ex.title, flags=re.IGNORECASE)
+            ex.description = re.sub(search_query, "<mark>" + search_query + "</mark>",
+                                    ex.description, flags=re.IGNORECASE)
 
     # exercises = fetch_exercises_from_database()
 

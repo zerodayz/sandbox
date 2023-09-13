@@ -14,6 +14,8 @@ from sqlalchemy import or_
 
 from apps.apps import decode_team_logo
 
+import re
+
 DB_NAME = constants.DB_NAME
 
 
@@ -58,6 +60,11 @@ def ctf_app():
         per_page=items_per_page,
         error_out=False
     )
+
+    if search_query:
+        for ctf in ctfs.items:
+            ctf.title = re.sub(search_query, "<mark>" + search_query + "</mark>",
+                               ctf.title, flags=re.IGNORECASE)
 
     # ctfs = fetch_ctfs_from_database()
 

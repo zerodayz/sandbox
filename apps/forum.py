@@ -38,6 +38,9 @@ def forum_search():
         search_indexes = []
         post.tmp = post.content.decode("utf-8").split()
 
+        post.title = re.sub(search_query, "<mark>" + search_query + "</mark>",
+                            post.title, flags=re.IGNORECASE)
+
         for i, word in enumerate(post.tmp):
             if re.search(search_query, word, re.IGNORECASE):
                 search_indexes.append(i)

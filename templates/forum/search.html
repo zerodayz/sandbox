@@ -73,9 +73,11 @@
               {% for post in posts %}
               <tr>
                 <td>
-                  <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                  <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title | safe }}</a>
+                  {% if post.search %}
                   <br>
                     <small>{{ post.search | safe }}</small>
+                  {% endif %}
                   <br>
                   <small>Posted by
                     {% if post.user.team %}
