@@ -101,6 +101,7 @@ def view_category(category_id):
     if not check_login():
         return redirect(url_for("login"))
 
+    user = user_utils.get_user_by_username(session["username"])
     category = ForumCategory.query.get_or_404(category_id)
 
     page = request.args.get("page", 1, type=int)
@@ -110,7 +111,7 @@ def view_category(category_id):
              .order_by(ForumPost.date_created.desc())
              .paginate(page=page, per_page=items_per_page))
 
-    return render_template("/forum/category/view.html", category=category, posts=posts)
+    return render_template("/forum/category/view.html", user=user, category=category, posts=posts)
 
 
 def view_post(post_id):
@@ -208,10 +209,13 @@ def delete_category(category_id):
 
     category = ForumCategory.query.get_or_404(category_id)
 
-    for post in category.posts:
-        post.categories.remove(category)
+    posts = ForumPost.query.filter_by(category_id=category_id).all()
+    for post in posts:
+        ForumComment.query.filter_by(post_id=post.id).delete()
+        db.session.delete(post)
 
     db.session.delete(category)
     db.session.commit()
+
     flash("Category deleted successfully", "success")
     return redirect(url_for("forum_board"))

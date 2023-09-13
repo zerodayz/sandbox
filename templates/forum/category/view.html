@@ -7,6 +7,27 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Modal deleteCategoryModal -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You are about to delete <b>'{{ category['name'] }}'</b> Category.
+                    <p>This will remove the Category and all associated Posts</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="/forum/category/delete/{{ category['id'] }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -74,6 +95,19 @@
                         </table>
                     </div>
                 </div>
+                {% if category['user_id'] == user.id %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Delete Category</span>
+                    </div>
+                    <div class="card-body" style="padding: 20px !important;">
+                        <span>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">Delete</button>
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
