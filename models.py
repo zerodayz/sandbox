@@ -114,6 +114,7 @@ class CtfScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
     ctf_id = db.Column(db.Integer, db.ForeignKey('ctfs.id'), nullable=False)
+    execution_time = db.Column(db.Float, nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
