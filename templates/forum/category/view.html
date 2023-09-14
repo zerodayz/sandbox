@@ -81,6 +81,7 @@
                             {% for post in posts %}
                             <tr>
                                 <td>
+                                    <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>
                                     <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
                                     <br>
                                     <small>Posted by
