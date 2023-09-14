@@ -135,6 +135,40 @@ def view_post(post_id):
     return render_template("/forum/post/post.html", user=user, post=post, markdown_content=markdown_content)
 
 
+def edit_post(post_id):
+    if not check_login():
+        return redirect(url_for("login"))
+
+    user = user_utils.get_user_by_username(session["username"])
+    post = ForumPost.query.get_or_404(post_id)
+    categories = ForumCategory.query.all()
+
+    if post.user_id != user.id:
+        return redirect(url_for("view_post", post_id=post_id))
+
+    if request.method == "POST":
+        title = request.form["title"]
+        content = request.form["content"]
+        category_id = request.form.get("category_id")
+        encoded_content = content.encode("utf-8")
+        user_id = user.id
+
+        post.title = title
+        post.content = encoded_content
+        post.user_id = user_id
+
+        category = ForumCategory.query.get(category_id)
+        if category:
+            post.categories = category
+
+        db.session.commit()
+        return redirect(url_for("view_post", post_id=post_id))
+
+    markdown_content = post.content.decode("utf-8")
+
+    return render_template("/forum/post/edit.html", categories=categories, user=user, post=post, markdown_content=markdown_content)
+
+
 def delete_post(post_id):
     if not check_login():
         return redirect(url_for("login"))
