@@ -608,11 +608,12 @@ def get_all_top_scores():
     try:
         top_scores = (
             db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
-                             db.func.max(ExerciseScore.date_created).label('last_date_created'), Team.logo)
+                             db.func.max(ExerciseScore.date_created).label('last_date_created'), Team.logo,
+                             db.func.sum(ExerciseScore.execution_time).label('execution_time'))
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(User.team)
             .group_by(User.username, Team.logo)
-            .order_by(db.desc('total_score'))
+            .order_by(db.desc('total_score'), 'execution_time')
             .having(db.func.sum(ExerciseScore.total_score) > 0)
             .limit(5)
             .all()
