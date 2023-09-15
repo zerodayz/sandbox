@@ -1,0 +1,213 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Post{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="container mt-4">
+    <h1 class="mt-4">Add Post</h1>
+    <hr/>
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a href="/forum">Forum</a> &rarr; <a href="{{ url_for('create_post') }}">Add Post</a>
+          </div>
+          <div>
+            <select class="form-select me-2" id="category" name="category_id">
+              {% for category in categories %}
+              {% if post.category.id == category.id %}
+              <option value="{{ category.id }}" selected>{{ category.name }}</option>
+              {% else %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header d-flex align-items-center">
+        <div class="flex-grow-1">
+          <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>
+          <span class="fs-5 fw-semibold">
+                <input type="text" id="PostTitle" class="input-as-span" name="title" value="{% if post['title'] %}{{ post['title'] }}{% endif %}" placeholder="Type your title here" required>
+            </span>
+        </div>
+        <div>
+          <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-code-slash pe-none me-2" width="30" height="24"></i></span>
+          <a href="#" onclick="savePost()" class="btn btn-sm btn-primary text-white">Create Post</a>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 0px !important;">
+        <form method="post" id="code-form">
+          <div class="form-group post-container">
+            <div id="editor-4"></div>
+            <div id="preview-4" style="display: none; padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card mt-4">
+      <div class="card-header">
+        <i id="title-icon" class="bi bi-box pe-none me-2" width="30" height="24"></i></span>
+        <span class="fs-5 fw-semibold">
+                    Upload File
+                  </span>
+      </div>
+      <div class="card-body" style="padding: 0px !important;">
+        <div class="form-group" >
+          <div class="input-group" style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);">
+            <input type="file" class="form-control" id="fileUpload" name="fileUpload">
+            <button type="button" class="btn btn-secondary" onclick="selectFile()">Upload</button>
+          </div>
+        </div>
+        <div id="upload-status" style="padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .list-group {
+    padding: 0px !important;
+    margin: 0px !important;
+  }
+  .input-as-span {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 0px !important;
+    border-radius: 0px !important;
+    background-color: transparent;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
+  .eye-button {
+    cursor: pointer;
+  }
+  .eye-button:hover {
+    color: #dc3545;
+  }
+  /* Style for the main container */
+  .markdown-container {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 800px; /* Adjust the maximum width as needed */
+    margin: 0 auto;
+  }
+</style>
+<script src="/static/marked/marked.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+  const markdownText = {{ markdown_content|tojson|safe }};
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    markdownContent.innerHTML = marked.parse(markdownText);
+  });
+
+  var post_editor = ace.edit("editor-4");
+  post_editor.session.setMode("ace/mode/markdown");
+  post_editor.setValue(markdownText);
+
+  function selectFile() {
+    const fileInput = document.getElementById('fileUpload');
+    const file = fileInput.files[0];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/upload', true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          let response = JSON.parse(this.responseText);
+          if (response['success'] == true) {
+            document.getElementById('upload-status').innerHTML = response['message']
+                    + ' <a href="/uploads/'
+                    + response['filename']
+                    + '" target="_blank">View</a>';
+          } else {
+            document.getElementById('upload-status').innerHTML = 'File upload failed.';
+          }
+        } else {
+          document.getElementById('upload-status').innerHTML = 'File upload failed.';
+        }
+      };
+      xhr.send(formData);
+    }
+  }
+
+  function savePost() {
+    var title = document.getElementById("PostTitle").value;
+    var category = document.getElementById("category").value;
+    var content = post_editor.getValue();
+
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", "");
+
+    var titleInput = document.createElement("input");
+    titleInput.setAttribute("type", "hidden");
+    titleInput.setAttribute("name", "title");
+    titleInput.setAttribute("value", title);
+
+    if (titleInput.value == "") {
+      alert("Title cannot be empty");
+      return;
+    }
+
+    var categoryInput = document.createElement("input");
+    categoryInput.setAttribute("type", "hidden");
+    categoryInput.setAttribute("name", "category_id");
+    categoryInput.setAttribute("value", category);
+
+    var contentInput = document.createElement("input");
+    contentInput.setAttribute("type", "hidden");
+    contentInput.setAttribute("name", "content");
+    contentInput.setAttribute("value", content);
+
+    if (contentInput.value == "") {
+      alert("Content cannot be empty");
+      return;
+    }
+
+    form.appendChild(titleInput);
+    form.appendChild(categoryInput);
+    form.appendChild(contentInput);
+
+    document.body.appendChild(form);
+
+    form.submit();
+  }
+
+  function toggleMD() {
+    var preview = document.getElementById("preview-4");
+    var editor = document.getElementById("editor-4");
+    var titleIcon = document.getElementById("title-md-icon");
+    if (preview.style.display === "none") {
+      preview.style.display = "block";
+      editor.style.display = "none";
+      preview.innerHTML = marked.parse(post_editor.getValue());
+      titleIcon.classList.remove("bi-code-slash");
+      titleIcon.classList.add("bi-eye-fill");
+      editor.parentElement.classList.remove("post-container");
+    } else {
+      preview.style.display = "none";
+      editor.style.display = "block";
+      titleIcon.classList.remove("bi-eye-fill");
+      titleIcon.classList.add("bi-code-slash");
+      editor.parentElement.classList.add("post-container");
+    }
+  }
+</script>
+{% endblock %}

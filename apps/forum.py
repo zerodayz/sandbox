@@ -68,6 +68,37 @@ def forum_board():
                            get_last_5_posts_by_category=get_last_5_posts_by_category)
 
 
+def create_new_as_template(post_id):
+    if not check_login():
+        return redirect(url_for("login"))
+
+    user = user_utils.get_user_by_username(session["username"])
+    post = ForumPost.query.get_or_404(post_id)
+    categories = ForumCategory.query.all()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        content = request.form["content"]
+        category_id = request.form.get("category_id")
+        encoded_content = content.encode("utf-8")
+        user_id = user.id
+
+        new_post = ForumPost(title=title, content=encoded_content, user_id=user_id, category_id=category_id)
+        db.session.add(new_post)
+
+        category = ForumCategory.query.get(category_id)
+        if category:
+            new_post.categories = category
+
+        db.session.commit()
+
+        return redirect(url_for("forum_board"))
+
+    markdown_content = post.content.decode("utf-8")
+
+    return render_template("/forum/post/template.html", categories=categories, post=post, markdown_content=markdown_content)
+
+
 def create_post():
     if not check_login():
         return redirect(url_for("login"))
