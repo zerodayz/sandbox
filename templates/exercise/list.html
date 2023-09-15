@@ -72,6 +72,15 @@
                             {% for exercise in exercises %}
                             <tr>
                                 <td>
+                                    {% for score in exercise.rank %}
+                                    {% if loop.index0 == 0 and score == session['username'] %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-warning"></i>
+                                    {% elif loop.index0 == 1 and score == session['username'] %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-light"></i>
+                                    {% elif loop.index0 == 2 and score == session['username'] %}
+                                    <i class="bi bi-trophy-fill pe-none me-2 text-bronze"></i>
+                                    {% endif %}
+                                    {% endfor %}
                                     <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}">{{ exercise.title | safe }}</a>
                                     <br/>
                                     <small>{{ exercise.description | safe }}</small>

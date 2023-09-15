@@ -93,6 +93,14 @@ def exercise_app():
 
     # exercises = fetch_exercises_from_database()
 
+    for exercise in exercises.items:
+        tmp = get_top_scores(exercise.id)
+        rank = []
+        for score in tmp:
+            if score[0]:
+                rank.append(score[0])
+        exercise.rank = rank
+
     top_scores = get_all_top_scores()
     decoded_top_scores = decode_team_logo(top_scores)
 
@@ -559,13 +567,11 @@ def update_user_score(user, exercise_id, total_score, result, benchmark_time):
 def get_top_scores(exercise_id):
     try:
         top_scores = (
-            db.session.query(
-                User.username.label("username"),
-                db.func.sum(ExerciseScore.total_score).label("total_score"),
-                db.func.max(ExerciseScore.date_created).label("date_created"),
-                Team.logo.label("logo"),
-                db.func.sum(ExerciseScore.execution_time).label("execution_time"),
-            )
+            db.session.query(User.username.label("username"),
+                             db.func.sum(ExerciseScore.total_score).label("total_score"),
+                             db.func.max(ExerciseScore.date_created).label("date_created"),
+                             Team.logo.label("logo"),
+                             db.func.sum(ExerciseScore.execution_time).label("execution_time"))
             .join(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(User.team)
             .filter(ExerciseScore.exercise_id == exercise_id)
