@@ -98,7 +98,6 @@ body {
   margin-right: 5px;
   font-size: 1.25rem;
 }
-
 .card-body {
   padding: 20px;
 }
@@ -199,7 +198,8 @@ input[type="submit"] {
 }
 .post-container {
   position: relative;
-  height: 100vh;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
 }
 
 #sample-output {

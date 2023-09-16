@@ -154,6 +154,7 @@
   var post_editor = ace.edit("editor-4");
   post_editor.session.setMode("ace/mode/markdown");
   post_editor.setValue(markdownText);
+  post_editor.selection.clearSelection();
 
   function selectFile() {
     const fileInput = document.getElementById('fileUpload');

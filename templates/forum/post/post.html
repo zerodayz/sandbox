@@ -44,19 +44,23 @@
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>
-                <span class="fs-5 fw-semibold">{{ post.title }}
+        <div class="card"  id="editor-card">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>
+                    <span class="fs-5 fw-semibold">{{ post.title }}
                 </span>
+                </div>
+                <div>
+                    <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-eye-fill pe-none me-3" width="30" height="24"></i></span>
+                    <span class="eye-button" onclick="fullScreen()"><i id="fullscreen-icon" class="bi bi-fullscreen pe-none me-3" width="30" height="24"></i></span>
+                </div>
             </div>
-            <div class="card-body">
-                <p>Posted by
-                    {% if post.user.team %}
-                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
-                    {% endif %}
-                    {{ post.user.username }} on {{ post.date_created }}</p>
-                <div id="markdown-content"></div>
+            <div class="card-body" style="padding: 0px !important;">
+                <div class="post-container">
+                    <div id="editor-4" style="display: none;"></div>
+                    <div id="preview-4" style="display: block; padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);"></div>
+                </div>
             </div>
         </div>
         {% if post['user_id'] == user.id %}
@@ -134,14 +138,67 @@
         padding: 0px !important;
         margin: 0px !important;
     }
+    .eye-button {
+        cursor: pointer;
+    }
+    .eye-button:hover {
+        color: #dc3545;
+    }
+    .fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index:9999;
+    }
 </style>
 <script src="/static/marked/marked.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
 <script>
     const markdownText = {{ markdown_content|tojson|safe }};
+    var post_editor = ace.edit("editor-4");
+    post_editor.session.setMode("ace/mode/markdown");
+    post_editor.setValue(markdownText);
+    post_editor.setReadOnly(true);
+    post_editor.selection.clearSelection();
 
     document.addEventListener('DOMContentLoaded', function() {
-        const markdownContent = document.getElementById('markdown-content');
+        const markdownContent = document.getElementById('preview-4');
         markdownContent.innerHTML = marked.parse(markdownText);
     });
+    function fullScreen() {
+        var titleIcon = document.getElementById("fullscreen-icon");
+        var editorCard = document.getElementById("editor-card");
+        if (titleIcon.classList.contains("bi-fullscreen")) {
+            titleIcon.classList.remove("bi-fullscreen");
+            titleIcon.classList.add("bi-fullscreen-exit");
+            editorCard.classList.add("fullscreen");
+        } else {
+            titleIcon.classList.remove("bi-fullscreen-exit");
+            titleIcon.classList.add("bi-fullscreen");
+            editorCard.classList.remove("fullscreen");
+        }
+    }
+
+
+    function toggleMD() {
+        var preview = document.getElementById("preview-4");
+        var editor = document.getElementById("editor-4");
+        var titleIcon = document.getElementById("title-md-icon");
+        if (preview.style.display === "none") {
+            preview.style.display = "block";
+            editor.style.display = "none";
+            preview.innerHTML = marked.parse(post_editor.getValue());
+            titleIcon.classList.remove("bi-code-slash");
+            titleIcon.classList.add("bi-eye-fill");
+        } else {
+            preview.style.display = "none";
+            editor.style.display = "block";
+            titleIcon.classList.remove("bi-eye-fill");
+            titleIcon.classList.add("bi-code-slash");
+        }
+    }
 </script>
 {% endblock %}
