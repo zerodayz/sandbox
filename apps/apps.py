@@ -1,10 +1,10 @@
 import os
-
+import tarfile
 import subprocess
 from threading import Timer
 
 from flask import (flash, jsonify, redirect, render_template, request, session,
-                   url_for)
+                   url_for, send_from_directory)
 
 import apps.user as user_utils
 import utils.constants as constants
@@ -62,6 +62,31 @@ def decode_team_logo(top_scores):
         else:
             decoded_scores.append(score)
     return decoded_scores
+
+
+def download_exercises():
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    user_directory = os.path.join("users", username)
+
+    if os.path.exists(user_directory):
+        try:
+            archive_name = f"{username}.tar.gz"
+            with tarfile.open(archive_name, "w:gz") as tar:
+                tar.add(user_directory, arcname=username)
+
+            response = send_from_directory(".", archive_name, as_attachment=True)
+            os.remove(archive_name)
+
+            return response
+        except Exception as e:
+            flash(f"Failed to create, send, or delete archive: {str(e)}", "danger")
+    else:
+        flash("You have not submitted any solutions yet.", "warning")
+
+    return redirect(url_for("user_profile"))
 
 
 def exercise_app():

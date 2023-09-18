@@ -3,7 +3,7 @@ from flask import (Flask, jsonify, redirect, render_template, request, session,
 
 from models import db
 
-from apps.apps import add_exercise, delete_exercise, exercise, exercise_app
+from apps.apps import add_exercise, delete_exercise, exercise, exercise_app, download_exercises
 from apps.authentication import login, logout
 from apps.team import (delete_team, get_user_team, invite_user_to_team, join_team,
                        leave_team, get_teams_dashboard)
@@ -69,6 +69,7 @@ app.route("/ctf/<int:ctf_id>/delete", methods=["POST"])(delete_ctf)
 
 # Register the exercises routes
 app.route("/exercises", methods=["GET"])(exercise_app)
+app.route("/exercises/download", methods=["GET"])(download_exercises)
 app.route("/exercise/<int:exercise_id>", methods=["GET", "POST"])(exercise)
 app.route("/exercise/create", methods=["GET", "POST"])(add_exercise)
 app.route("/exercise/<int:exercise_id>/delete", methods=["POST"])(delete_exercise)
