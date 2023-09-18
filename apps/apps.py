@@ -132,7 +132,9 @@ def exercise_app():
     top_daily_scores = get_all_daily_top_scores()
     decoded_daily_scores = decode_team_logo(top_daily_scores)
 
-    return render_template("exercise/list.html", query=search_query, exercises=exercises, top_daily_scores=decoded_daily_scores, top_scores=decoded_top_scores)
+    return render_template("exercise/list.html", query=search_query,
+                           exercises=exercises, top_daily_scores=decoded_daily_scores,
+                           top_scores=decoded_top_scores)
 
 
 def add_exercise():

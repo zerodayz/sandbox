@@ -88,7 +88,7 @@
                                     <small>Created by
                                         {% if exercise.user.team %}
                                         <img width="24" height="24" src="data:image/png;base64, {{ exercise.user.team[0].logo.decode('utf-8') }}"/>
-                                        {% endif %}{{ exercise.user.username }} on {{ exercise.date_created }}</small>
+                                        {% endif %}{{ exercise.user.username }} on {{ exercise.date_created | to_user_timezone }}</small>
                                 </td>
                                 <td class="text-end">
                                     <span class="badge bg-primary">{{ exercise.exercise_difficulty }}</span>

@@ -1,5 +1,6 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+import pytz
 
 import utils.constants as constants
 
@@ -39,7 +40,7 @@ def user_profile():
         user_team = Team.query.get(team_id)
 
     team_invitations = TeamInvitation.query.filter_by(user_id=user.id).all()
-    timezones = constants.TIMEZONES
+    timezones = pytz.all_timezones
 
     if team_invitations:
         teams = []

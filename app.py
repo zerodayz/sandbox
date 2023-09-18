@@ -2,6 +2,8 @@ from flask import (Flask, jsonify, redirect, render_template, request, session,
                    url_for)
 
 from models import db
+from models import User
+import pytz
 
 from apps.apps import add_exercise, delete_exercise, exercise, exercise_app, download_exercises
 from apps.authentication import login, logout
@@ -27,6 +29,20 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sandbox_db.sqlite'
 # app.config['SQLALCHEMY_ECHO'] = True
 app.config['UPLOAD_FOLDER'] = 'uploads'
+
+
+def convert_to_user_timezone(date):
+    username = session["username"]
+    user = User.query.filter_by(username=username).first()
+    if user:
+        timezone = user.timezone
+        if timezone:
+            timezone = pytz.timezone(timezone)
+            date = date.astimezone(timezone)
+    return date
+
+
+app.jinja_env.filters['to_user_timezone'] = convert_to_user_timezone
 
 db.init_app(app)
 migrate = Migrate(app, db)
