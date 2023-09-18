@@ -81,12 +81,15 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.card-header {
-  background-color: var(--bs-tertiary-bg) !important;
-  color: var(--bs-primary);
-  padding: 15px;
+.sticky {
   position: sticky;
   top: 64px;
+}
+
+.card-header {
+  color: var(--bs-primary);
+  padding: 15px;
+  background-color: var(--bs-tertiary-bg) !important;
   border-bottom: 2px solid var(--bs-primary);
   white-space: nowrap;
   overflow: hidden;

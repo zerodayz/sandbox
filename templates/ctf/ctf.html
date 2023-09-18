@@ -36,7 +36,7 @@
                     <pre>{{ result['message'] }}</pre>
                     {% if result['next_text'] %}
                     <div class="card mt-4">
-                        <div class="card-header">
+                        <div class="card-header sticky">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Congratulations</span>
                         </div>
@@ -47,7 +47,7 @@
                     {% endif %}
                     {% if result['next_password'] %}
                     <div class="card mt-4">
-                        <div class="card-header">
+                        <div class="card-header sticky">
                             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                             <span class="fs-5 fw-semibold">Next Level Password</span>
                         </div>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">{{ ctf['title'] }}</span>
                     </div>
@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Your Flag</span>
                     </div>
@@ -91,7 +91,7 @@
                 </div>
                 <a href="#" class="btn btn-primary text-white mt-4" onclick="saveCode()">Submit</a>
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Team Top 5 Scores</span>
                     </div>
@@ -132,7 +132,7 @@
                 </div>
                 {% if ctf['added_by_user_id'] == user.id %}
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Delete Level</span>
                     </div>

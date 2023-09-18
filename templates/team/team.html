@@ -74,7 +74,7 @@
                 <h1 class="mt-4">Team</h1>
                 <hr/>
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Team</span>
                     </div>
@@ -88,7 +88,7 @@
                 </div>
                 {% if not team %}
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Create New</span>
                     </div>
@@ -117,7 +117,7 @@
                 {% endif %}
                 {% if team and team.owner_id == user.id %}
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Invite Member</span>
                     </div>
@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Delete Team</span>
                     </div>
@@ -147,7 +147,7 @@
                 {% endif %}
                 {% if team %}
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Leave Team</span>
                     </div>
