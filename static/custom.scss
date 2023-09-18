@@ -84,6 +84,7 @@ body {
 .sticky {
   position: sticky;
   top: 64px;
+  z-index: 999;
 }
 
 .card-header {
