@@ -63,6 +63,21 @@
           </div>
           <div class="card-body">
             <p class="card-text">Username: {{ user.username }}</p>
+            <form method="post" action="/user/profile">
+              <div class="mb-3">
+                <label for="timezone" class="form-label">Timezone</label>
+                <select class="form-select" id="timezone" name="timezone">
+                  {% for tz in timezones %}
+                  {% if user.timezone == tz %}
+                  <option value="{{ tz }}" selected>{{ tz }}</option>
+                  {% else %}
+                  <option value="{{ tz }}">{{ tz }}</option>
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success text-white">Update</button>
+            </form>
           </div>
         </div>
         <div class="card mt-4">

@@ -36,6 +36,7 @@ class User(db.Model):
     last_login = db.Column(db.TIMESTAMP, default=datetime.utcnow)
     last_login_ip = db.Column(db.String)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
+    timezone = db.Column(db.String(255), nullable=False, server_default='UTC±00:00')
 
     team = db.relationship('Team', back_populates='members')
 

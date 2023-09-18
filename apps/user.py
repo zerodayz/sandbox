@@ -18,29 +18,37 @@ def user_profile():
 
     user = User.query.filter_by(username=username).first()
     if request.method == "POST":
-        old_password = request.form["old_password"]
-        new_password = request.form["new_password"]
+        old_password = request.form.get("old_password", None)
+        new_password = request.form.get("new_password", None)
 
-        if user and check_password_hash(user.hashed_password, old_password):
-            user.hashed_password = generate_password_hash(new_password)
+        if old_password and new_password:
+            if user and check_password_hash(user.hashed_password, old_password):
+                user.hashed_password = generate_password_hash(new_password)
+                db.session.commit()
+                flash("Password changed successfully", "success")
+            else:
+                flash("Invalid old password", "danger")
+
+        if request.form.get("timezone", None):
+            user.timezone = request.form.get("timezone", None)
             db.session.commit()
-            flash("Password changed successfully", "success")
-        else:
-            flash("Invalid old password", "danger")
+            flash("Timezone changed successfully", "success")
 
     if len(user.team):
         team_id = user.team[0].id
         user_team = Team.query.get(team_id)
 
     team_invitations = TeamInvitation.query.filter_by(user_id=user.id).all()
+    timezones = constants.TIMEZONES
+
     if team_invitations:
         teams = []
         for invitation in team_invitations:
             team = Team.query.get(invitation.team_id)
             teams.append(team)
-        return render_template("user/profile.html", user=user, team=user_team, team_invitations=teams)
+        return render_template("user/profile.html", timezones=timezones, user=user, team=user_team, team_invitations=teams)
     else:
-        return render_template("user/profile.html", user=user, team=user_team)
+        return render_template("user/profile.html", timezones=timezones, user=user, team=user_team)
 
 
 def create_user():
