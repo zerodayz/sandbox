@@ -200,7 +200,7 @@
                   </td>
                   <td>{{ score[1] }}</td>
                   <td>{{ score[4] }}</td>
-                  <td>{{ score[2] }}</td>
+                  <td>{{ score[2] | to_user_timezone }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>

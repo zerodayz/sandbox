@@ -79,7 +79,7 @@
                                     <small>Created by
                                         {% if ctf.user.team %}
                                         <img width="24" height="24" src="data:image/png;base64, {{ ctf.user.team[0].logo.decode('utf-8') }}"/>
-                                        {% endif %}{{ ctf.user.username }} on {{ ctf.date_created }}</small>
+                                        {% endif %}{{ ctf.user.username }} on {{ ctf.date_created | to_user_timezone }}</small>
                                 </td>
                                 <td class="text-end">
                                     <span class="badge bg-primary">{{ ctf.difficulty }}</span>
@@ -158,7 +158,7 @@
                                         {{ score[0] }}
                                     </td>
                                     <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
-                                    <td>{% if score[2] %}{{ score[2] }}{% else %}-{% endif %}</td>
+                                    <td>{% if score[2] %}{{ score[2] | to_user_timezone }}{% else %}-{% endif %}</td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>

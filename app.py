@@ -37,8 +37,11 @@ def convert_to_user_timezone(date):
     if user:
         timezone = user.timezone
         if timezone:
-            timezone = pytz.timezone(timezone)
-            date = date.astimezone(timezone)
+            utc = pytz.timezone('UTC')
+            utc_date = utc.localize(date)
+            user_timezone = pytz.timezone(timezone)
+            date = utc_date.astimezone(user_timezone)
+            date = date.replace(tzinfo=None)
     return date
 
 
