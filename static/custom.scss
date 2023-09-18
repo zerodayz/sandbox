@@ -12,7 +12,6 @@ $navbar-dark-toggler-border-color: rgba(255, 255, 255, 0.15);
 $navbar-light-toggler-border-color: rgba(255, 255, 255, 0.15);
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-
 body {
   font-family: Arial, sans-serif;
   background-color: var(--bs-light);
@@ -77,16 +76,17 @@ body {
 }
 
 .card {
-  border: none;
-  overflow: hidden;
+  border: none;;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-  background-color: var(--bs-light);
+  background-color: var(--bs-tertiary-bg) !important;
   color: var(--bs-primary);
   padding: 15px;
+  position: sticky;
+  top: 64px;
   border-bottom: 2px solid var(--bs-primary);
   white-space: nowrap;
   overflow: hidden;
