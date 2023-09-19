@@ -116,7 +116,7 @@
             <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
           </div>
           <div class="card-body">
-            <p class="card-text">{{ exercise['description'] }}</p>
+            <p class="card-text">{{ exercise['description'] | safe }}</p>
             <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
             <span class="badge bg-secondary">{{ exercise['language'] }}</span>
           </div>

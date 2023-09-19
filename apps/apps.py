@@ -119,6 +119,9 @@ def exercise_app():
     # exercises = fetch_exercises_from_database()
 
     for exercise in exercises.items:
+        exercise.description = exercise.description.replace("\n", "<br>")
+        exercise.description = exercise.description.split("<br>")[0]
+
         tmp = get_top_scores(exercise.id)
         rank = []
         for score in tmp:
@@ -669,6 +672,8 @@ def exercise(exercise_id):
     ex = find_exercise_by_id(exercises, exercise_id)
     if ex is None:
         return render_template("/exercise/404.html", user=user)
+
+    ex["description"] = ex["description"].replace("\n", "<br>")
 
     num_of_exercises = len(exercises)
 
