@@ -607,7 +607,6 @@ def get_top_scores(exercise_id):
             .filter(ExerciseScore.exercise_id == exercise_id)
             .group_by(User.username, Team.logo)
             .order_by(db.desc("total_score"), "execution_time")
-            .limit(5)
             .all()
         )
 
@@ -629,7 +628,6 @@ def get_all_daily_top_scores():
             .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
-            .limit(5)
             .all()
         )
 
@@ -651,7 +649,6 @@ def get_all_top_scores():
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
             .having(db.func.sum(ExerciseScore.total_score) > 0)
-            .limit(5)
             .all()
         )
 
