@@ -264,7 +264,6 @@ def get_top_scores(ctf_id):
         .join(CtfScore, Team.id == CtfScore.team_id)
         .filter(CtfScore.ctf_id == ctf_id)
         .order_by(CtfScore.total_score.desc())
-        .limit(5)
         .all()
     )
 
@@ -282,7 +281,6 @@ def get_all_top_scores():
             .join(Ctf, CtfScore.ctf_id == Ctf.id)
             .group_by(Team.name, Team.logo)
             .order_by(db.func.sum(CtfScore.total_score).desc())
-            .limit(5)
             .all()
         )
 
