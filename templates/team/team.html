@@ -86,13 +86,14 @@
                             {{ team.name if team else 'No Team' }}</p>
                     </div>
                 </div>
-                {% if team and team.owner_id == user.id %}
+                {% if team %}
                 <div class="card mt-4">
                     <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Manage Team</span>
                     </div>
                     <div class="card-body">
+                        {% if team.owner_id == user.id %}
                         <form method="post" action="/team/update" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="team_name" class="form-label">Team Name</label>
@@ -104,12 +105,13 @@
                                     {% endif %}</label>
                                 <input class="form-control" type="file" id="team_crest" name="team_crest" accept="image/png">
                             </div>
-                            <button type="submit" class="btn btn-success text-white me-3">Update</button>
-                            <span>
-                                <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">Delete</button>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
-                            </span>
+                            <button type="submit" class="btn btn-success text-white me-2">Update</button>
+                            <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">Delete</button>
+                            {% if user.team %}
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
+                            {% endif %}
                         </form>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}
