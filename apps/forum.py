@@ -187,6 +187,7 @@ def edit_post(post_id):
         post.title = title
         post.content = encoded_content
         post.user_id = user_id
+        post.category_id = category_id
 
         category = ForumCategory.query.get(category_id)
         if category:
