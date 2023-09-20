@@ -181,6 +181,57 @@ def join_team():
             return redirect(url_for("get_user_team"))
 
 
+def update_user_team():
+    username = session["username"]
+
+    try:
+        user = User.query.filter_by(username=username).first()
+        if not user.team and user.team.owner_id != user.id:
+            flash("You are not the owner of this team.", "danger")
+            return redirect(url_for("user_profile"))
+
+        new_team_name = request.form.get("team_name", None)
+
+        existing_team = Team.query.filter_by(name=new_team_name).first()
+        if existing_team:
+            flash("Team name already taken. Please choose another one.", "danger")
+            return redirect(url_for("get_user_team"))
+
+        team = user.team[0]
+
+        team_crest = request.files.get("team_crest", None)
+        if team_crest:
+            img = Image.open(team_crest)
+            target_size = (24, 24)
+            img.thumbnail(target_size, Image.LANCZOS)
+
+            output_img = Image.new("RGBA", target_size, (0, 0, 0, 0))
+
+            left = (target_size[0] - img.width) // 2
+            top = (target_size[1] - img.height) // 2
+
+            output_img.paste(img, (left, top))
+
+            buffered = io.BytesIO()
+            output_img.save(buffered, format="PNG")
+            team_crest_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+            team_crest_b64 = team_crest_b64.encode("utf-8")
+            team.logo = team_crest_b64
+
+        if new_team_name:
+            team.name = new_team_name
+
+        db.session.commit()
+
+        flash("Team successfully updated.", "success")
+
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
+
+    return redirect(url_for("user_profile"))
+
+
 def get_user_team():
     username = session["username"]
     if request.method == "GET":
@@ -211,9 +262,18 @@ def get_user_team():
             team_crest_b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAACRElEQVRIiZ2V3W6jMBCFPxtooDRJo6KqN1Uu+v4P0seoepFGipREBUod7NmLlS2S5U9rKSLA+JyZ8TmDen9/F2YsEUHkb6hSCqXUnG3EU6DOOaIoIk1T7u7uADDG0DQNIoLW+v8InHPEcczz8zNFUZCmKVEUAWCtpa5rdrsdp9NplKSXwDnHZrNhu92yWCxCe/xPa81qtWK5XLLf7/n4+BgkGaRu25YkSRARlFKICG3bht5baxERXl5eWK/XOOfmV6C15nw+8/n5yevrK19fXxwOB9q2Jc9zttttIAd4fHzkdDr1Ewwxa63Z7/ecz2fKsgzKqaqKKIp4e3vDWgtAkiQ453qVFT89PV098C3x/0WE+/v7cO+cI8/zkL2IEMcxRVH0nkO82WxCj/26ve+SLxYL8jwPPfdxt4lOtqgPPMuyq+y11vz8/GCMGdw3arQxcKUUdV1T1/Xo3nioHV3wJEkCuFIK5xxlWfL7+zs5MmZVkGXZFWFZlhhjZs0jPZY9/G2FV4dSCmstl8tl9sAbn1SdrD2gc+5Kon0k3WfhDIayERGMMSHGj4uuV7rneIsTezeOraqqgu67LetL5p8KpmTmV5ZlpGlK0zRUVTXZf/9+UEW+bOccq9WKoigAWK/XHA4Hvr+/A0if1IMZh5i7bl0ul4FMRHh4eJj9ydS3gUMz6DbbbtyQ1JVS0z4QEY7HI23borXmcrlwPB57wbpXv3fSyUopmqZht9uRJAnGGKy1QapdT/RV00vQ9UZX/0Me6AP26w+R334wsxKa7gAAAABJRU5ErkJggg=="
         else:
             img = Image.open(team_crest)
-            img = img.resize((24, 24))
+            target_size = (24, 24)
+            img.thumbnail(target_size, Image.LANCZOS)
+
+            output_img = Image.new("RGBA", target_size, (0, 0, 0, 0))
+
+            left = (target_size[0] - img.width) // 2
+            top = (target_size[1] - img.height) // 2
+
+            output_img.paste(img, (left, top))
+
             buffered = io.BytesIO()
-            img.save(buffered, format="PNG")
+            output_img.save(buffered, format="PNG")
             team_crest_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
         team_password = request.form["team_password"]

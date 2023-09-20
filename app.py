@@ -8,7 +8,7 @@ import pytz
 from apps.apps import add_exercise, delete_exercise, exercise, exercise_app, download_exercises
 from apps.authentication import login, logout
 from apps.team import (delete_team, get_user_team, invite_user_to_team, join_team,
-                       leave_team, get_teams_dashboard)
+                       leave_team, get_teams_dashboard, update_user_team)
 from apps.user import user_profile, create_user
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
@@ -70,6 +70,7 @@ app.route("/user/create", methods=["GET", "POST"])(create_user)
 
 # Register the team routes
 app.route("/team", methods=["GET", "POST"])(get_user_team)
+app.route("/team/update", methods=["POST"])(update_user_team)
 app.route("/team/invite", methods=["POST"])(invite_user_to_team)
 app.route("/team/join", methods=["POST"])(join_team)
 app.route("/team/leave", methods=["POST"])(leave_team)

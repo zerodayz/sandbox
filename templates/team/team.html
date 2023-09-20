@@ -86,6 +86,33 @@
                             {{ team.name if team else 'No Team' }}</p>
                     </div>
                 </div>
+                {% if team and team.owner_id == user.id %}
+                <div class="card mt-4">
+                    <div class="card-header sticky">
+                        <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Manage Team</span>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/team/update" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="team_name" class="form-label">Team Name</label>
+                                <input type="text" class="form-control" id="team_name" name="team_name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="team_crest" class="form-label">Team Crest {% if team.logo %}
+                                    <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
+                                    {% endif %}</label>
+                                <input class="form-control" type="file" id="team_crest" name="team_crest" accept="image/png">
+                            </div>
+                            <button type="submit" class="btn btn-success text-white me-3">Update</button>
+                            <span>
+                                <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">Delete</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
                 {% if not team %}
                 <div class="card mt-4">
                     <div class="card-header sticky">
@@ -130,30 +157,6 @@
                                 <br/>
                                 <button type="submit" class="btn btn-success">Send Invitation</button>
                             </form>
-                        </span>
-                    </div>
-                </div>
-                <div class="card mt-4">
-                    <div class="card-header sticky">
-                        <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">Delete Team</span>
-                    </div>
-                    <div class="card-body">
-                        <span>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">Delete</button>
-                        </span>
-                    </div>
-                </div>
-                {% endif %}
-                {% if team %}
-                <div class="card mt-4">
-                    <div class="card-header sticky">
-                        <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">Leave Team</span>
-                    </div>
-                    <div class="card-body">
-                        <span>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
                         </span>
                     </div>
                 </div>
