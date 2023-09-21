@@ -79,7 +79,7 @@ def add_ctf():
         return redirect(url_for("login"))
 
     user = user_utils.get_user_by_username(session["username"])
-    if len(user.team) == 0:
+    if user.team_id:
         flash("You need to be part of a team to access this page.", "danger")
         return redirect(url_for("ctf_app"))
 
@@ -212,7 +212,7 @@ def delete_ctf(ctf_id):
 
 def run_ctf(ex, ctf_id, user_code):
     user = user_utils.get_user_by_username(session["username"])
-    team_id = user.team[0].id
+    team_id = user.team_id
     user_team = Team.query.get(team_id)
     save_team_code(user_team.name, ctf_id, user_code)
 
@@ -323,7 +323,7 @@ def ctf(ctf_id):
 
     user = user_utils.get_user_by_username(session["username"])
 
-    if len(user.team) == 0:
+    if user.team_id:
         flash("You need to be part of a team to access this page.", "danger")
         return render_template("/ctf/password.html", ctf_id=ctf_id)
 
@@ -351,7 +351,7 @@ def ctf(ctf_id):
             top_scores=top_scores,
         )
 
-    team_id = user.team[0].id
+    team_id = user.team_id
     user_team = Team.query.get(team_id)
 
     print(f"{user.username} is opening... {ctf_id}")

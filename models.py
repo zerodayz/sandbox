@@ -38,7 +38,7 @@ class User(db.Model):
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
     timezone = db.Column(db.String(255), nullable=False, server_default='UTC')
 
-    team = db.relationship('Team', back_populates='members')
+    team_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     exercises = db.relationship('Exercise', back_populates='user')
     ctfs = db.relationship('Ctf', back_populates='user')
@@ -62,7 +62,7 @@ class Team(db.Model):
     name = db.Column(db.String(255), nullable=False)
     hashed_password = db.Column(db.String, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    members = db.relationship('User', back_populates='team')
+    members = db.relationship('User', backref='user')
     logo = db.Column(db.BLOB)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 

@@ -78,7 +78,7 @@
                                     <br/>
                                     <small>Created by
                                         {% if ctf.user.team %}
-                                        <img width="24" height="24" src="data:image/png;base64, {{ ctf.user.team[0].logo.decode('utf-8') }}"/>
+                                        <img width="24" height="24" src="data:image/png;base64, {{ ctf.user.team.logo.decode('utf-8') }}"/>
                                         {% endif %}{{ ctf.user.username }} on {{ ctf.date_created | to_user_timezone }}</small>
                                 </td>
                                 <td class="text-end">

@@ -94,7 +94,7 @@
                             <p class="text-muted small">
                                 Commented by <span class="comment-username">
                                 {% if comment.user.team %}
-                                            <img width="24" height="24" src="data:image/png;base64, {{ comment.user.team[0].logo.decode('utf-8') }}"/>
+                                            <img width="24" height="24" src="data:image/png;base64, {{ comment.user.team.logo.decode('utf-8') }}"/>
                                             {% endif %}
                                 {{ comment.user.username }}</span> on
                                 <span class="comment-date">{{ comment.date_created | to_user_timezone }}</span>

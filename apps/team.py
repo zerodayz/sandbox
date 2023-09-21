@@ -151,8 +151,8 @@ def join_team():
             return redirect(url_for("user_profile"))
 
         if mode == "accept":
-            members = User.query.filter_by(username=username).first().team
-            if members:
+            member = User.query.filter_by(username=username).first().team_id
+            if member:
                 flash("You are already member of a team. Please leave the team first.", "danger")
                 return redirect(url_for("get_user_team"))
 
@@ -161,9 +161,8 @@ def join_team():
                 if check_password_hash(team.hashed_password, team_password):
                     try:
                         user = User.query.filter_by(username=username).first()
-                        user.team = [team]
-                        user.team_invitation = None
-
+                        user.team_id = team.id
+                        TeamInvitation.query.filter_by(team_id=team_id, user_id=user.id).delete()
                         db.session.commit()
 
                         flash(
@@ -197,7 +196,7 @@ def update_user_team():
             flash("Team name already taken. Please choose another one.", "danger")
             return redirect(url_for("get_user_team"))
 
-        team = user.team[0]
+        team = user.team
 
         team_crest = request.files.get("team_crest", None)
         if team_crest:
@@ -237,8 +236,8 @@ def get_user_team():
     if request.method == "GET":
         user = User.query.filter_by(username=username).first()
         user_team = []
-        if len(user.team):
-            team_id = user.team[0].id
+        if user.team_id:
+            team_id = user.team_id
             user_team = Team.query.get(team_id)
 
         return render_template("/team/team.html", user=user, team=user_team)
@@ -246,7 +245,7 @@ def get_user_team():
     try:
         user = User.query.filter_by(username=username).first()
 
-        if user.team:
+        if user.team_id:
             flash("You are already part of a team.", "danger")
             return redirect(url_for("user_profile"))
 

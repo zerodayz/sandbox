@@ -35,8 +35,8 @@ def user_profile():
             db.session.commit()
             flash("Timezone changed successfully", "success")
 
-    if len(user.team):
-        team_id = user.team[0].id
+    if user.team_id:
+        team_id = user.team_id
         user_team = Team.query.get(team_id)
 
     team_invitations = TeamInvitation.query.filter_by(user_id=user.id).all()

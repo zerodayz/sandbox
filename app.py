@@ -17,17 +17,17 @@ from apps.forum import (create_post, delete_comment, delete_post, forum_board, f
                         view_post, create_category, edit_category, delete_category, view_category)
 from flask_migrate import Migrate
 
-# import logging
-# logger = logging.getLogger('sqlalchemy')
-# logger.setLevel(logging.DEBUG)
-# handler = logging.StreamHandler()
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# handler.setFormatter(formatter)
-# logger.addHandler(handler)
+import logging
+logger = logging.getLogger('sqlalchemy')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sandbox_db.sqlite'
-# app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = True
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 

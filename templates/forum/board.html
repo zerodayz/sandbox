@@ -80,7 +80,7 @@
                                 <small>{{ category.category_description }} | Posts: {{ category.post | length }}</small> |
                                 <small>Created by
                                     {% if category.user.team %}
-                                    <img width="24" height="24" src="data:image/png;base64, {{ category.user.team[0].logo.decode('utf-8') }}"/>
+                                    <img width="24" height="24" src="data:image/png;base64, {{ category.user.team.logo.decode('utf-8') }}"/>
                                     {% endif %}
                                     {{ category.user.username }}</small>
                             </td>
@@ -95,7 +95,7 @@
                                 <br>
                                 <small>Posted by
                                     {% if post.user.team %}
-                                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team[0].logo.decode('utf-8') }}"/>
+                                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team.logo.decode('utf-8') }}"/>
                                     {% endif %}
                                     {{ post.user.username }} on {{ post.date_created | to_user_timezone }}</small>
                             </td>
