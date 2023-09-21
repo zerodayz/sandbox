@@ -7,8 +7,6 @@ import utils.constants as constants
 from models import db
 from models import User, Team, TeamInvitation, ExerciseScore
 
-import plotly.graph_objs as go
-
 DB_NAME = constants.DB_NAME
 
 
