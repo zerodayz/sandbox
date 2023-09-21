@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}Teams{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="mt-4">Users</h1>
+        <hr/>
+        <div class="row">
+          <div class="col-md-12 mb-4">
+            <a href="/users/dashboard">Users</a>
+          </div>
+        </div>
+      </div>
+<!--      <div class="col-md-12">-->
+<!--        <div class="card">-->
+<!--          <div class="card-header sticky">-->
+<!--            <i class="bi bi-box pe-none me-2"></i>-->
+<!--            <span class="fs-5 fw-bold">Graph</span>-->
+<!--          </div>-->
+<!--          <div class="card-body">-->
+<!--            <canvas id="userChart" width="400" height="200"></canvas>-->
+<!--          </div>-->
+<!--      </div>-->
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header sticky">
+            <i class="bi bi-box pe-none me-2"></i>
+            <span class="fs-5 fw-bold">Exercise Top Scores</span>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for score in top_scores %}
+                <tr>
+                  <td>
+                    {% if loop.index0 == 0 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-warning"></i>
+                    {% elif loop.index0 == 1 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-light"></i>
+                    {% elif loop.index0 == 2 %}
+                    <i class="bi bi-trophy-fill pe-none me-2 text-bronze"></i>
+                    {% endif %}
+                    {% if score[3] %}
+                    <img width="24" height="24" src="data:image/png;base64, {{ score[3].decode('utf-8') }}"/>
+                    {% endif %}
+                    {{ score[0] }}
+                  </td>
+                  <td>{% if score[1] %}{{ score[1] }}{% else %}0{% endif %}</td>
+                  <td>{% if score[2] %}{{ score[2] | to_user_timezone }}{% else %}-{% endif %}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

@@ -10,8 +10,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 import apps.user as user_utils
 
-from apps.apps import decode_team_logo
-
 from models import db
 from models import User, Team, Ctf, CtfScore, Exercise, ExerciseScore, TeamInvitation
 
@@ -49,7 +47,6 @@ def get_teams_dashboard():
             .order_by(desc('TotalScore'))
             .all()
         )
-        team_scores = decode_team_logo(team_scores)
 
         ctf_team_scores = (
             db.session.query(
@@ -64,7 +61,6 @@ def get_teams_dashboard():
             .order_by(db.func.sum(CtfScore.total_score).desc())
             .all()
         )
-        ctf_team_scores = decode_team_logo(ctf_team_scores)
 
         return render_template("/team/dashboard.html", top_scores=team_scores, ctf_top_scores=ctf_team_scores)
     except Exception as e:

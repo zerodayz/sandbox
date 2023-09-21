@@ -5,7 +5,9 @@ import pytz
 import utils.constants as constants
 
 from models import db
-from models import User, Team, TeamInvitation
+from models import User, Team, TeamInvitation, ExerciseScore
+
+import plotly.graph_objs as go
 
 DB_NAME = constants.DB_NAME
 
@@ -86,3 +88,38 @@ def get_user_by_username(username):
         flash(f"Error: {e}", "danger")
 
     return user
+
+
+def get_all_top_scores():
+    try:
+        top_scores = (
+            db.session.query(
+                User.username,
+                db.func.sum(ExerciseScore.total_score).label('total_score'),
+                db.func.max(ExerciseScore.date_created).label('last_date_created'),
+                Team.logo,
+                db.func.sum(ExerciseScore.execution_time).label('execution_time')
+            )
+            .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
+            .outerjoin(Team, User.team_id == Team.id)
+            .group_by(User.username, Team.logo)
+            .order_by(db.desc('total_score'), 'execution_time')
+            .having(db.func.sum(ExerciseScore.total_score) > 0)
+            .all()
+        )
+
+        return top_scores
+
+    except Exception as e:
+        print(f"Database error: {e}")
+        return []
+
+
+def user_dashboard():
+    try:
+        top_scores = get_all_top_scores()
+        return render_template("/user/dashboard.html", top_scores=top_scores)
+
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
+        return render_template("/user/dashboard.html", top_scores=[])

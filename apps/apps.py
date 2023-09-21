@@ -133,14 +133,12 @@ def exercise_app():
         exercise.rank = rank
 
     top_scores = get_all_top_scores()
-    decoded_top_scores = decode_team_logo(top_scores)
 
     top_daily_scores = get_all_daily_top_scores()
-    decoded_daily_scores = decode_team_logo(top_daily_scores)
 
     return render_template("exercise/list.html", query=search_query,
-                           exercises=exercises, top_daily_scores=decoded_daily_scores,
-                           top_scores=decoded_top_scores)
+                           exercises=exercises, top_daily_scores=top_daily_scores,
+                           top_scores=top_scores)
 
 
 def add_exercise():
@@ -476,7 +474,6 @@ def run_exercise(ex, exercise_id, user_code):
     username = session["username"]
     file_path = save_user_code(username, exercise_id, user_code)
     top_scores = get_top_scores(exercise_id)
-    top_scores = decode_team_logo(top_scores)
 
     mypy_error_count, stdout_mypy = run_command(["mypy", "--strict", file_path])
 
@@ -533,7 +530,6 @@ def run_exercise(ex, exercise_id, user_code):
 
     result["message"] += f' You have earned {total_score}/{ex["score"]} points!'
     top_scores = get_top_scores(exercise_id)
-    top_scores = decode_team_logo(top_scores)
 
     return result, top_scores
 
@@ -707,7 +703,6 @@ def exercise(exercise_id):
         print(user_code)
 
     top_scores = get_top_scores(exercise_id)
-    top_scores = decode_team_logo(top_scores)
 
     return render_template(
         "/exercise/exercise.html",

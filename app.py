@@ -9,7 +9,7 @@ from apps.apps import add_exercise, delete_exercise, exercise, exercise_app, dow
 from apps.authentication import login, logout
 from apps.team import (delete_team, get_user_team, invite_user_to_team, join_team,
                        leave_team, get_teams_dashboard, update_user_team)
-from apps.user import user_profile, create_user
+from apps.user import user_profile, create_user, user_dashboard
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
 from apps.forum import (create_post, delete_comment, delete_post, forum_board, forum_search, edit_post,
@@ -68,6 +68,9 @@ app.route("/about", methods=["GET"])(lambda: render_template("about.html"))
 app.route("/user/profile", methods=["GET", "POST"])(user_profile)
 app.route("/user/create", methods=["GET", "POST"])(create_user)
 
+# Register the users routes
+app.route("/users/dashboard", methods=["GET"])(user_dashboard)
+
 # Register the team routes
 app.route("/team", methods=["GET", "POST"])(get_user_team)
 app.route("/team/update", methods=["POST"])(update_user_team)
@@ -85,7 +88,6 @@ app.route("/ctf/<int:ctf_id>", methods=["GET", "POST"])(ctf)
 app.route("/protected_ctf/<int:ctf_id>", methods=["GET", "POST"])(protected_ctf)
 app.route("/ctf/create", methods=["GET", "POST"])(add_ctf)
 app.route("/ctf/<int:ctf_id>/delete", methods=["POST"])(delete_ctf)
-
 
 # Register the exercises routes
 app.route("/exercises", methods=["GET"])(exercise_app)

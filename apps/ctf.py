@@ -12,8 +12,6 @@ from models import DifficultyEnum
 
 from sqlalchemy import or_
 
-from apps.apps import decode_team_logo
-
 import re
 
 DB_NAME = constants.DB_NAME
@@ -73,7 +71,6 @@ def ctf_app():
             ctf.user.team = Team.query.get(ctf.user.team_id)
 
     top_scores = get_all_top_scores()
-    top_scores = decode_team_logo(top_scores)
 
     return render_template("ctf/list.html", query=search_query, ctfs=ctfs, top_scores=top_scores)
 
@@ -240,7 +237,6 @@ def run_ctf(ex, ctf_id, user_code):
 
     result["message"] += f' Your team have earned {total_score} points!'
     top_scores = get_top_scores(ctf_id)
-    top_scores = decode_team_logo(top_scores)
 
     return result, top_scores
 
@@ -366,7 +362,6 @@ def ctf(ctf_id):
         print(team_code)
 
     top_scores = get_top_scores(ctf_id)
-    top_scores = decode_team_logo(top_scores)
 
     return render_template(
         "/ctf/ctf.html",
