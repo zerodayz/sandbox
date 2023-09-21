@@ -31,6 +31,11 @@
     </div>
     <div class="row">
       <div class="col-md-12">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
         {% if result['type'] %}
         <div class="alert alert-{{ result['type'] }} alert-dismissible fade show" role="alert">
           <pre>{{ result['message'] }}</pre>
@@ -229,8 +234,14 @@
 </style>
 <script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
+  var spinner = document.getElementById("spinner");
   var editor = ace.edit("editor-1");
   editor.session.setMode("ace/mode/python");
+  spinner.style.display = "none";
+  function showSpinner() {
+    spinner.style.display = "block";
+  }
+
   function saveCode() {
     var filename = "{{ exercise['id'] }}.py";
     var code = editor.getValue();
@@ -253,6 +264,7 @@
     form.appendChild(filenameInput);
 
     document.body.appendChild(form);
+    showSpinner();
     form.submit();
   }
 
