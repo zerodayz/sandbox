@@ -68,6 +68,10 @@ def ctf_app():
 
     # ctfs = fetch_ctfs_from_database()
 
+    for ctf in ctfs:
+        if ctf.user.team_id:
+            ctf.user.team = Team.query.get(ctf.user.team_id)
+
     top_scores = get_all_top_scores()
     top_scores = decode_team_logo(top_scores)
 

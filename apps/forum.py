@@ -5,7 +5,7 @@ import apps.user as user_utils
 from apps.apps import check_login
 
 from models import db
-from models import ForumPost, ForumComment, ForumCategory
+from models import ForumPost, ForumComment, ForumCategory, Team
 
 import re
 
@@ -20,6 +20,7 @@ def get_last_5_posts_by_category(category_id):
 
 
 def forum_search():
+    user = user_utils.get_user_by_username(session["username"])
     search_query = request.args.get('query', '')
     page = request.args.get("page", 1, type=int)
     items_per_page = 10
@@ -37,7 +38,8 @@ def forum_search():
         post.search = []
         search_indexes = []
         post.tmp = post.content.decode("utf-8").split()
-
+        if user.team_id:
+            post.user.team = Team.query.filter_by(id=post.user.team_id).first()
         post.title = re.sub(search_query, "<mark>" + search_query + "</mark>",
                             post.title, flags=re.IGNORECASE)
 
@@ -62,8 +64,17 @@ def forum_search():
 
 
 def forum_board():
+    user = user_utils.get_user_by_username(session["username"])
     posts = ForumPost.query.all()
+    for post in posts:
+        if user.team_id:
+            post.user.team = Team.query.filter_by(id=post.user.team_id).first()
+
     categories = ForumCategory.query.all()
+    for category in categories:
+        if user.team_id:
+            category.user.team = Team.query.filter_by(id=category.user.team_id).first()
+
     return render_template("/forum/board.html", posts=posts, categories=categories,
                            get_last_5_posts_by_category=get_last_5_posts_by_category)
 
@@ -142,6 +153,10 @@ def view_category(category_id):
              .order_by(ForumPost.date_created.desc())
              .paginate(page=page, per_page=items_per_page))
 
+    for post in posts:
+        if user.team_id:
+            post.user.team = Team.query.filter_by(id=post.user.team_id).first()
+
     return render_template("/forum/category/view.html", user=user, category=category, posts=posts)
 
 
@@ -151,6 +166,9 @@ def view_post(post_id):
 
     user = user_utils.get_user_by_username(session["username"])
     post = ForumPost.query.get_or_404(post_id)
+    for comment in post.comments:
+        if user.team_id:
+            comment.user.team = Team.query.filter_by(id=comment.user.team_id).first()
     markdown_content = post.content.decode("utf-8")
     if request.method == "POST":
         content = request.form["content"]

@@ -122,6 +122,9 @@ def exercise_app():
         exercise.description = exercise.description.replace("\n", "<br>")
         exercise.description = exercise.description.split("<br>")[0]
 
+        if exercise.user.team_id:
+            exercise.user.team = Team.query.filter_by(id=exercise.user.team_id).first()
+
         tmp = get_top_scores(exercise.id)
         rank = []
         for score in tmp:
