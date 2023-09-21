@@ -79,7 +79,7 @@ def add_ctf():
         return redirect(url_for("login"))
 
     user = user_utils.get_user_by_username(session["username"])
-    if user.team_id:
+    if not user.team_id:
         flash("You need to be part of a team to access this page.", "danger")
         return redirect(url_for("ctf_app"))
 
@@ -323,7 +323,7 @@ def ctf(ctf_id):
 
     user = user_utils.get_user_by_username(session["username"])
 
-    if user.team_id:
+    if not user.team_id:
         flash("You need to be part of a team to access this page.", "danger")
         return render_template("/ctf/password.html", ctf_id=ctf_id)
 

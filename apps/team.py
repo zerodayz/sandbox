@@ -42,7 +42,7 @@ def get_teams_dashboard():
                 func.max(ExerciseScore.date_created).label('LastScoreUpdateDate'),
                 Team.logo.label('TeamLogo'),
             )
-            .join(User.team)
+            .join(User, Team.id == User.team_id)
             .join(ExerciseScore, ExerciseScore.user_id == User.id)
             .group_by(Team.name, Team.logo)
             .having(func.sum(ExerciseScore.total_score) > 0)
@@ -185,7 +185,9 @@ def update_user_team():
 
     try:
         user = User.query.filter_by(username=username).first()
-        if not user.team and user.team.owner_id != user.id:
+        team = Team.query.get(user.team_id)
+
+        if not user.team_id and team.owner_id != user.id:
             flash("You are not the owner of this team.", "danger")
             return redirect(url_for("user_profile"))
 
@@ -195,8 +197,6 @@ def update_user_team():
         if existing_team:
             flash("Team name already taken. Please choose another one.", "danger")
             return redirect(url_for("get_user_team"))
-
-        team = user.team
 
         team_crest = request.files.get("team_crest", None)
         if team_crest:
