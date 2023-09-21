@@ -111,7 +111,8 @@ def delete_team():
 def leave_team():
     if request.method == "POST":
         username = session["username"]
-        members = User.query.filter_by(username=username).first().team
+        user = User.query.filter_by(username=username).first()
+        members = User.query.filter_by(team_id=user.team_id).all()
         if len(members) == 1:
             flash("You are the last member of the team. Please delete the team instead.", "danger")
             return redirect(url_for("get_user_team"))
@@ -119,7 +120,7 @@ def leave_team():
             user = User.query.filter_by(username=username).first()
 
             if user:
-                user.team = None
+                user.team_id = None
                 db.session.commit()
                 flash("Successfully left team.", "success")
             else:
