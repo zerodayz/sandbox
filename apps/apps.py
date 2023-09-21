@@ -597,13 +597,15 @@ def update_user_score(user, exercise_id, total_score, result, benchmark_time):
 def get_top_scores(exercise_id):
     try:
         top_scores = (
-            db.session.query(User.username.label("username"),
-                             db.func.sum(ExerciseScore.total_score).label("total_score"),
-                             db.func.max(ExerciseScore.date_created).label("date_created"),
-                             Team.logo.label("logo"),
-                             db.func.sum(ExerciseScore.execution_time).label("execution_time"))
+            db.session.query(
+                User.username.label("username"),
+                db.func.sum(ExerciseScore.total_score).label("total_score"),
+                db.func.max(ExerciseScore.date_created).label("date_created"),
+                Team.logo.label("logo"),
+                db.func.sum(ExerciseScore.execution_time).label("execution_time"),
+            )
             .join(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(User.team)
+            .join(Team, User.team_id == Team.id, isouter=True)
             .filter(ExerciseScore.exercise_id == exercise_id)
             .group_by(User.username, Team.logo)
             .order_by(db.desc("total_score"), "execution_time")
@@ -620,11 +622,15 @@ def get_top_scores(exercise_id):
 def get_all_daily_top_scores():
     try:
         top_scores = (
-            db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
-                             db.func.max(ExerciseScore.date_created).label('date_created'), Team.logo,
-                             db.func.sum(ExerciseScore.execution_time).label('execution_time'))
+            db.session.query(
+                User.username,
+                db.func.sum(ExerciseScore.total_score).label('total_score'),
+                db.func.max(ExerciseScore.date_created).label('date_created'),
+                Team.logo,
+                db.func.sum(ExerciseScore.execution_time).label('execution_time')
+            )
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(User.team)
+            .outerjoin(Team, User.team_id == Team.id)
             .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
@@ -641,11 +647,15 @@ def get_all_daily_top_scores():
 def get_all_top_scores():
     try:
         top_scores = (
-            db.session.query(User.username, db.func.sum(ExerciseScore.total_score).label('total_score'),
-                             db.func.max(ExerciseScore.date_created).label('last_date_created'), Team.logo,
-                             db.func.sum(ExerciseScore.execution_time).label('execution_time'))
+            db.session.query(
+                User.username,
+                db.func.sum(ExerciseScore.total_score).label('total_score'),
+                db.func.max(ExerciseScore.date_created).label('last_date_created'),
+                Team.logo,
+                db.func.sum(ExerciseScore.execution_time).label('execution_time')
+            )
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
-            .outerjoin(User.team)
+            .outerjoin(Team, User.team_id == Team.id)
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
             .having(db.func.sum(ExerciseScore.total_score) > 0)
