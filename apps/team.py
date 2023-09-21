@@ -135,7 +135,6 @@ def join_team():
     if request.method == "POST":
         team_id = request.form["team_id"]
         username = request.form["username"]
-        team_password = request.form["team_password"]
         mode = request.form["mode"]
 
         if mode == "reject":
@@ -157,11 +156,12 @@ def join_team():
                 flash("You are already member of a team. Please leave the team first.", "danger")
                 return redirect(url_for("get_user_team"))
 
+            user = User.query.filter_by(username=username).first()
             team = Team.query.get(team_id)
             if team:
-                if check_password_hash(team.hashed_password, team_password):
+                invitation = TeamInvitation.query.filter_by(team_id=team_id, user_id=user.id).first()
+                if invitation:
                     try:
-                        user = User.query.filter_by(username=username).first()
                         user.team_id = team.id
                         TeamInvitation.query.filter_by(team_id=team_id, user_id=user.id).delete()
                         db.session.commit()
