@@ -44,7 +44,7 @@
                         <p>You will leave the team {% if team.logo %}
                             <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
-                            {{ team.name }}, everyone else will remain.</p>
+                            {{ team.name }}.</p>
                     </div>
                     <div class="modal-footer">
                         <form method="post" action="/team/leave">
@@ -84,16 +84,18 @@
                             <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
                             {{ team.name if team else 'No Team' }}</p>
+                            {% if user.team_id %}
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
+                            {% endif %}
                     </div>
                 </div>
-                {% if team %}
+                {% if team.owner_id == user.id %}
                 <div class="card mt-4">
                     <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Manage Team</span>
                     </div>
                     <div class="card-body">
-                        {% if team.owner_id == user.id %}
                         <form method="post" action="/team/update" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="team_name" class="form-label">Team Name</label>
@@ -107,11 +109,7 @@
                             </div>
                             <button type="submit" class="btn btn-success text-white me-2">Update</button>
                             <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">Delete</button>
-                            {% if user.team %}
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
-                            {% endif %}
                         </form>
-                        {% endif %}
                     </div>
                 </div>
                 {% endif %}
