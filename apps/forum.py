@@ -53,11 +53,11 @@ def forum_search():
             else:
                 post.search.extend(post.tmp[i - 5:i + 5])
 
-    try:
-        post.search = " ".join(post.search)
-        post.search = re.sub(search_query, "<mark>" + search_query + "</mark>", post.search, flags=re.IGNORECASE)
-    except:
-        pass
+        try:
+            post.search = " ".join(post.search)
+            post.search = re.sub(search_query, "<mark>" + search_query + "</mark>", post.search, flags=re.IGNORECASE)
+        except:
+            pass
 
     return render_template("/forum/search.html", posts=posts, query=search_query, page=page,
                            items_per_page=items_per_page)
