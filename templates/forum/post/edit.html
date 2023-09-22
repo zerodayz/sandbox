@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="editor-card">
       <div class="card-header d-flex align-items-center">
         <div class="flex-grow-1">
           <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>
@@ -63,7 +63,8 @@
             </span>
         </div>
         <div>
-          <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-code-slash pe-none me-2" width="30" height="24"></i></span>
+          <span class="eye-button" onclick="toggleMD()"><i id="title-md-icon" class="bi bi-code-slash pe-none me-3" width="30" height="24"></i></span>
+          <span class="eye-button" onclick="fullScreen()"><i id="fullscreen-icon" class="bi bi-fullscreen pe-none me-3" width="30" height="24"></i></span>
           <a href="#" onclick="savePost()" class="btn btn-sm btn-primary text-white">Update Post</a>
         </div>
       </div>
@@ -131,6 +132,14 @@
   }
   .eye-button:hover {
     color: #dc3545;
+  }
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index:9999;
   }
   /* Style for the main container */
   .markdown-container {
@@ -228,6 +237,20 @@
     form.submit();
   }
 
+  function fullScreen() {
+    var titleIcon = document.getElementById("fullscreen-icon");
+    var editorCard = document.getElementById("editor-card");
+    if (titleIcon.classList.contains("bi-fullscreen")) {
+      titleIcon.classList.remove("bi-fullscreen");
+      titleIcon.classList.add("bi-fullscreen-exit");
+      editorCard.classList.add("fullscreen");
+    } else {
+      titleIcon.classList.remove("bi-fullscreen-exit");
+      titleIcon.classList.add("bi-fullscreen");
+      editorCard.classList.remove("fullscreen");
+    }
+  }
+
   function toggleMD() {
     var preview = document.getElementById("preview-4");
     var editor = document.getElementById("editor-4");
@@ -238,13 +261,11 @@
       preview.innerHTML = marked.parse(post_editor.getValue());
       titleIcon.classList.remove("bi-code-slash");
       titleIcon.classList.add("bi-eye-fill");
-      editor.parentElement.classList.remove("post-container");
     } else {
       preview.style.display = "none";
       editor.style.display = "block";
       titleIcon.classList.remove("bi-eye-fill");
       titleIcon.classList.add("bi-code-slash");
-      editor.parentElement.classList.add("post-container");
     }
   }
 </script>
