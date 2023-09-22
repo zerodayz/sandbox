@@ -85,23 +85,6 @@
                                     {{ category.user.username }}</small>
                             </td>
                         </tr>
-<!--                        {% set last_5_posts = get_last_5_posts_by_category(category.id) %}-->
-<!--                        {% if last_5_posts %}-->
-<!--                        {% for post in last_5_posts %}-->
-<!--                        <tr>-->
-<!--                            <td>-->
-<!--                                <i class="bi bi-justify-left pe-none me-2" width="30" height="24"></i>-->
-<!--                                <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>-->
-<!--                                <br>-->
-<!--                                <small>Posted by-->
-<!--                                    {% if post.user.team %}-->
-<!--                                    <img width="24" height="24" src="data:image/png;base64, {{ post.user.team.logo.decode('utf-8') }}"/>-->
-<!--                                    {% endif %}-->
-<!--                                    {{ post.user.username }} on {{ post.date_created | to_user_timezone }}</small>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        {% endfor %}-->
-                        {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>

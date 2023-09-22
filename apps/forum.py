@@ -65,18 +65,12 @@ def forum_search():
 
 def forum_board():
     user = user_utils.get_user_by_username(session["username"])
-    posts = ForumPost.query.all()
-    for post in posts:
-        if user.team_id:
-            post.user.team = Team.query.filter_by(id=post.user.team_id).first()
-
     categories = ForumCategory.query.all()
     for category in categories:
         if user.team_id:
             category.user.team = Team.query.filter_by(id=category.user.team_id).first()
 
-    return render_template("/forum/board.html", posts=posts, categories=categories,
-                           get_last_5_posts_by_category=get_last_5_posts_by_category)
+    return render_template("/forum/board.html", categories=categories)
 
 
 def create_new_as_template(post_id):
