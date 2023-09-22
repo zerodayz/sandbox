@@ -15,4 +15,5 @@ static/ctf/**
 cert.pem
 key.pem
 sandbox.db
+sandbox_db.sqlite
 *.iml
