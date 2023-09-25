@@ -160,10 +160,17 @@ def view_post(post_id):
 
     user = user_utils.get_user_by_username(session["username"])
     post = ForumPost.query.get_or_404(post_id)
+
     for comment in post.comments:
         if user.team_id:
             comment.user.team = Team.query.filter_by(id=comment.user.team_id).first()
     markdown_content = post.content.decode("utf-8")
+
+    query = request.args.get('query', None)
+    if query:
+        post.title = re.sub(query, "<mark>" + query + "</mark>", post.title, flags=re.IGNORECASE)
+        markdown_content = re.sub(query, "<mark>" + query + "</mark>", markdown_content, flags=re.IGNORECASE)
+
     if request.method == "POST":
         content = request.form["content"]
 
@@ -175,7 +182,7 @@ def view_post(post_id):
 
         return redirect(url_for("view_post", post_id=post_id))
 
-    return render_template("/forum/post/post.html", user=user, post=post, markdown_content=markdown_content)
+    return render_template("/forum/post/post.html", user=user, post=post, markdown_content=markdown_content, query=query)
 
 
 def edit_post(post_id):
