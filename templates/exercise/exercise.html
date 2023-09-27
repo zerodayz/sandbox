@@ -121,7 +121,7 @@
             <span class="fs-5 fw-semibold">{{ exercise['title'] }}</span>
           </div>
           <div class="card-body">
-            <p class="card-text">{{ exercise['description'] | safe }}</p>
+            <div id="card-text"></div>
             <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
             <span class="badge bg-secondary">{{ exercise['language'] }}</span>
           </div>
@@ -232,12 +232,20 @@
 </div>
 <style>
 </style>
+<script src="/static/marked/marked.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
+  const markdownText = {{ exercise['description'] | tojson | safe }};
   var spinner = document.getElementById("spinner");
   var editor = ace.edit("editor-1");
   editor.session.setMode("ace/mode/python");
   spinner.style.display = "none";
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('card-text');
+    markdownContent.innerHTML = marked.parse(markdownText);
+  });
+
   function showSpinner() {
     spinner.style.display = "block";
   }
