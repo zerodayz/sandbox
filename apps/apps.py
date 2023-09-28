@@ -681,6 +681,20 @@ def exercise(exercise_id):
     num_of_exercises = len(exercises)
 
     if request.method == "POST":
+        description = request.form.get("description", None)
+        if description:
+            ex["description"] = description
+            exercise = Exercise.query.filter_by(id=exercise_id).first()
+            user = User.query.filter_by(username=session["username"]).first()
+            if user.id != exercise.added_by_user_id:
+                flash("You are not allowed to edit this exercise", "danger")
+                return redirect(url_for("exercise", exercise_id=exercise_id))
+
+            exercise.description = description
+            db.session.commit()
+            flash("Description updated successfully", "success")
+            return redirect(url_for("exercise", exercise_id=exercise_id))
+
         user_code = request.form["code"]
         result, top_scores = run_exercise(ex, exercise_id, user_code)
         return render_template(
