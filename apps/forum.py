@@ -10,13 +10,10 @@ from models import ForumPost, ForumComment, ForumCategory, Team
 import re
 
 
-def get_last_5_posts_by_category(category_id):
-    last_5_posts = (ForumPost.query.filter_by(category_id=category_id)
-                    .order_by(ForumPost.date_created.desc())
-                    .limit(5)
-                    .all())
+def get_last_post_in_category(category_id):
+    last_post = ForumPost.query.filter_by(category_id=category_id).order_by(ForumPost.date_created.desc()).first()
 
-    return last_5_posts
+    return last_post
 
 
 def forum_search():
@@ -70,7 +67,8 @@ def forum_board():
         if user.team_id:
             category.user.team = Team.query.filter_by(id=category.user.team_id).first()
 
-    return render_template("/forum/board.html", categories=categories)
+    return render_template("/forum/board.html", categories=categories,
+                           get_last_post_in_category=get_last_post_in_category)
 
 
 def create_new_as_template(post_id):
