@@ -74,7 +74,7 @@
                                 <td>
                                     <a href="{{ url_for('ctf', ctf_id=ctf['id']) }}">{{ ctf.title | safe }}</a>
                                     <br/>
-                                    <small>The description of the challenge is behind a password protected area.</small>
+                                    <small>{{ ctf.description.decode('utf-8') }}</small>
                                     <br/>
                                     <small>Created by
                                         {% if ctf.user.team %}

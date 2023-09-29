@@ -67,6 +67,11 @@ def ctf_app():
     # ctfs = fetch_ctfs_from_database()
 
     for ctf in ctfs:
+        if ctf.ctf_password:
+            ctf.description = "The description of the challenge is behind a password protected area.".encode("utf-8")
+        else:
+            ctf.description = ctf.description.decode("utf-8").split("\n")[0].encode("utf-8")
+
         if ctf.user.team_id:
             ctf.user.team = Team.query.get(ctf.user.team_id)
 
