@@ -1,5 +1,7 @@
 import base64
 import io
+import os
+import shutil
 
 from sqlite3 import IntegrityError
 
@@ -93,8 +95,14 @@ def delete_team():
                 CtfScore.query.filter_by(team_id=team.id).delete()
                 TeamInvitation.query.filter_by(team_id=team.id).delete()
 
+                user.team_id = None
                 db.session.delete(team)
                 db.session.commit()
+
+                team_directory = os.path.join("teams", team.name)
+                if os.path.exists(team_directory):
+                    shutil.rmtree(team_directory)
+
                 flash("Successfully deleted team.", "success")
             else:
                 flash("Team not found.", "danger")
