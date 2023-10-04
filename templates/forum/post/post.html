@@ -70,24 +70,8 @@
                 </div>
             </div>
         </div>
-        {% if post['user_id'] == user.id %}
+        {% if post.comments|length > 0 %}
         <div class="card mt-4">
-            <div class="card-header">
-                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                <span class="fs-5 fw-semibold">Delete Post</span>
-            </div>
-            <div class="card-body">
-                <span>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePostModal">Delete</button>
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/forum/post/{{ post.id }}/edit'">Edit</button>
-                </span>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    {% if post.comments|length > 0 %}
-    <div class="container mt-4">
-        <div class="card">
             <div class="card-header">
                 <i class="bi bi-chat-right-dots pe-none me-2" width="30" height="24"></i>
                 <span class="fs-5 fw-semibold">Comments</span>
@@ -100,10 +84,10 @@
                             <p>{{ comment.content }}</p>
                             <p class="text-muted small">
                                 Commented by <span class="comment-username">
-                                {% if comment.user.team %}
-                                            <img width="24" height="24" src="data:image/png;base64, {{ comment.user.team.logo.decode('utf-8') }}"/>
-                                            {% endif %}
-                                {{ comment.user.username }}</span> on
+                            {% if comment.user.team %}
+                                        <img width="24" height="24" src="data:image/png;base64, {{ comment.user.team.logo.decode('utf-8') }}"/>
+                                        {% endif %}
+                            {{ comment.user.username }}</span> on
                                 <span class="comment-date">{{ comment.date_created | to_user_timezone }}</span>
                             </p>
                         </div>
@@ -119,8 +103,22 @@
                 </ul>
             </div>
         </div>
+        {% endif %}
+        {% if post['user_id'] == user.id %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                <span class="fs-5 fw-semibold">Delete Post</span>
+            </div>
+            <div class="card-body">
+                <span>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePostModal">Delete</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/forum/post/{{ post.id }}/edit'">Edit</button>
+                </span>
+            </div>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
