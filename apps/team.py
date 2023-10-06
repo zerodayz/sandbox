@@ -224,9 +224,17 @@ def update_user_team():
             team.logo = team_crest_b64
 
         if new_team_name:
+            old_team_directory = os.path.join("teams", team.name)
+            new_team_directory = os.path.join("teams", new_team_name)
+            if os.path.exists(old_team_directory):
+                os.rename(old_team_directory, new_team_directory)
+
             team.name = new_team_name
 
         db.session.commit()
+
+
+
 
         flash("Team successfully updated.", "success")
 
