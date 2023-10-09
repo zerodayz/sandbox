@@ -35,7 +35,7 @@ if (THEME && THEME.isDark) {
                         <a class="nav-link text-white active" aria-current="page" href="/forum">
                             Forums
                         </a>
-                        <a class="nav-link text-white active" aria-current="page" href="/exercises">
+                        <a class="nav-link text-white active" aria-current="page" href="/exercises?lang={{ request.args.get('lang', 'python3') }}">
                             Exercises
                         </a>
                         <a class="nav-link text-white active" aria-current="page" href="/users/dashboard">
