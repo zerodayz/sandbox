@@ -47,10 +47,10 @@
             <div class="col-md-12 mb-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <a href="/exercises">Exercises</a>
+                        <a href="/exercises?lang={{ request.args.get('lang', 'python3') }}">Exercises</a>
                     </div>
                     <div>
-                        <a href="/exercise/create" class="btn btn-sm btn-primary text-white me-2">
+                        <a href="/exercise/create?lang={{ request.args.get('lang', 'python3') }}" class="btn btn-sm btn-primary text-white me-2">
                             Add Exercise
                         </a>
                     </div>
