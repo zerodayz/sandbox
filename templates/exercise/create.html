@@ -106,7 +106,6 @@
                         <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Easy' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Easy</span>
                         <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Medium' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Medium</span>
                         <span class="badge difficulty {% if exercise['exercise_difficulty'] == 'Hard' %}selected{% else %}{% endif %}" onclick="selectDifficultyBadge(this)">Hard</span>
-                        <span class="badge language {% if exercise['language'] == 'python3' %}selected{% else %}{% endif %}"  onclick="selectLanguageBadge(this)">python3</span>
                     </div>
                 </div>
                 <div id="sample-sections">
@@ -234,9 +233,20 @@
                 <button id="add-sample-button" type="button" class="btn btn-primary text-white mt-4">Sample Input and Output</button>
                 <button id="add-output-button" type="button" class="btn btn-primary text-white mt-4">Sample Output</button>
                 <div class="card mt-4">
-                    <div class="card-header">
-                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">Your Solution</span>
+                    <div class="card-header solution-header d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Your Solution</span>
+                        </div>
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary text-white dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">Python3</button>
+                                <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                    <li><a class="dropdown-item" href="{{ url_for('add_exercise', lang='python3') }}">Python3</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('add_exercise', lang='go') }}">Go</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body" style="padding: 0px !important;">
                         <form method="post" id="code-form">
@@ -292,6 +302,27 @@
 <script>
     var editor = ace.edit("editor-1");
     editor.session.setMode("ace/mode/python");
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    var lang = urlParams.get('lang') || 'python3';
+
+    const langText = '{{ exercise["language"] }}';
+    if (langText) {
+        console.log(langText)
+        lang = langText;
+    }
+
+    if (lang) {
+        if (lang === 'go') {
+            document.getElementById('languageDropdown').textContent = 'Go';
+            editor.session.setMode("ace/mode/golang");
+        } else if (lang === 'python3') {
+            document.getElementById('languageDropdown').textContent = 'Python3';
+            editor.session.setMode("ace/mode/python");
+        }
+    }
+
     function runCode(action) {
         var filename = "0.py";
         var code = editor.getValue();
@@ -323,12 +354,7 @@
         var languageInput = document.createElement("input");
         languageInput.setAttribute("type", "hidden");
         languageInput.setAttribute("name", "language");
-        const badgesLang = document.querySelectorAll('.language');
-        badgesLang.forEach(b => {
-            if (b.classList.contains('selected')) {
-                languageInput.setAttribute("value", b.textContent);
-            }
-        });
+        languageInput.setAttribute("value", lang);
 
         var difficultyInput = document.createElement("input");
         difficultyInput.setAttribute("type", "hidden");
@@ -428,8 +454,8 @@
         form.appendChild(titleInput);
         form.appendChild(descriptionInput);
         form.appendChild(actionInput);
-        form.appendChild(codeInput);
         form.appendChild(languageInput);
+        form.appendChild(codeInput);
         form.appendChild(difficultyInput);
         if (sample1Input != null) {
             form.appendChild(sample1Input);
@@ -457,17 +483,6 @@
 
 </script>
 <script>
-    function selectLanguageBadge(badge) {
-        const badges = document.querySelectorAll('.language');
-
-        badges.forEach(b => {
-            if (b === badge) {
-                b.classList.add('selected');
-            } else {
-                b.classList.remove('selected');
-            }
-        });
-    }
     function selectDifficultyBadge(badge) {
         const badges = document.querySelectorAll('.difficulty');
 

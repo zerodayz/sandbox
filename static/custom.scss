@@ -97,6 +97,10 @@ body {
   text-overflow: ellipsis;
 }
 
+.solution-header{
+  overflow: unset!important;
+}
+
 .card-header i {
   vertical-align: middle;
   margin-right: 5px;

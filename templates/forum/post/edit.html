@@ -153,7 +153,8 @@
 <script src="/static/marked/marked.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
-  const markdownText = {{ markdown_content|tojson|safe }};
+  var markdownText = '{{ markdown_content|tojson|safe }}';
+  markdownText = markdownText.substring(1, markdownText.length - 1);
 
   document.addEventListener('DOMContentLoaded', function() {
     const markdownContent = document.getElementById('markdown-content');

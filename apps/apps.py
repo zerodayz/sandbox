@@ -36,7 +36,6 @@ def fetch_exercises_from_database():
             "sample_3_input": exercise.sample_3_input,
             "sample_3_output": exercise.sample_3_output,
             "code": exercise.code,
-            "language": exercise.language,
             "exercise_difficulty": exercise.exercise_difficulty,
             "added_by_user_id": exercise.added_by_user_id,
             "score": exercise.score,
@@ -97,6 +96,7 @@ def exercise_app():
     items_per_page = 10
 
     search_query = request.args.get('query', '')
+    language = request.args.get('lang', 'python3')
 
     exercises = Exercise.query.filter(
         or_(
@@ -123,17 +123,16 @@ def exercise_app():
 
         if exercise.user.team_id:
             exercise.user.team = Team.query.filter_by(id=exercise.user.team_id).first()
-
-        tmp = get_top_scores(exercise.id)
+        tmp = get_top_scores(exercise.id, language)
         rank = []
         for score in tmp:
             if score[0]:
                 rank.append(score[0])
         exercise.rank = rank
 
-    top_scores = get_all_top_scores()
+    top_scores = get_all_top_scores(language)
 
-    top_daily_scores = get_all_daily_top_scores()
+    top_daily_scores = get_all_daily_top_scores(language)
 
     return render_template("exercise/list.html", query=search_query,
                            exercises=exercises, top_daily_scores=top_daily_scores,
@@ -163,7 +162,7 @@ def add_exercise():
                 f"sample_{i}_output", None
             )
 
-        language = request.form["language"]
+        language = request.form.get("language", "python3")
         exercise_difficulty = request.form["difficulty"]
         username = session.get("username", None)
         user_id = User.query.filter_by(username=username).first().id
@@ -181,7 +180,6 @@ def add_exercise():
         ex = {
             "title": title,
             "description": description,
-            "language": language,
             "exercise_difficulty": exercise_difficulty,
             "added_by_user_id": user_id,
             "score": score,
@@ -214,7 +212,6 @@ def add_exercise():
                 sample_3_input=ex.get("sample_3_input", None),
                 sample_3_output=ex.get("sample_3_output", None),
                 code=code,
-                language=language,
                 exercise_difficulty=insert_difficulty,
                 added_by_user_id=user_id,
                 score=score,
@@ -233,6 +230,7 @@ def add_exercise():
         elif action == "run":
             code = request.form["code"]
             ex["code"] = code
+            ex["language"] = language
             result, _ = run_exercise(ex, 0, code)
 
     return render_template("/exercise/create.html", result=result, exercise=ex)
@@ -244,11 +242,17 @@ def check_login():
     return True
 
 
-def save_user_code(username, exercise_id, user_code):
+def save_user_code(username, exercise_id, user_code, language):
     user_directory = os.path.join("users", username)
     os.makedirs(user_directory, exist_ok=True)
 
-    file_name = f"{exercise_id}.py3"
+    if language == "python3":
+        file_name = f"{exercise_id}.py3"
+    elif language == "go":
+        file_name = f"{exercise_id}.go"
+    else:
+        file_name = f"{exercise_id}.py3"
+
     file_path = os.path.join(user_directory, file_name)
 
     with open(file_path, "w") as file:
@@ -257,9 +261,14 @@ def save_user_code(username, exercise_id, user_code):
     return file_path
 
 
-def get_user_code(username, exercise_id):
-    file_path = os.path.join("users", username, f"{exercise_id}.py3")
-    print(file_path)
+def get_user_code(username, exercise_id, language):
+    if language == "python3":
+        file_path = os.path.join("users", username, f"{exercise_id}.py3")
+    elif language == "go":
+        file_path = os.path.join("users", username, f"{exercise_id}.go")
+    else:
+        file_path = os.path.join("users", username, f"{exercise_id}.py3")
+
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             return file.read()
@@ -276,8 +285,10 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
         image_name = "python:3.11"
         benchmark_file_path = os.path.join("/", "benchmark.py")
         host_benchmark_file_path = os.path.join(current_dir, "benchmark.py")
-    else:
-        raise ValueError("Unsupported language")
+    elif language == "go":
+        image_name = "golang:1.21"
+        benchmark_file_path = os.path.join("/", "benchmark.go")
+        host_benchmark_file_path = os.path.join(current_dir, "benchmark.go")
 
     command = [
         "podman",
@@ -289,10 +300,16 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
         f"{host_file_path}:{container_file_path}",
         "-i",
         image_name,
-        language,
-        benchmark_file_path,
-        container_file_path,
     ]
+    if language == "python3":
+        command.append(language)
+        command.append(benchmark_file_path)
+        command.append(container_file_path)
+    elif language == "go":
+        command.append("/bin/sh")
+        command.append("-c")
+        benchmark_command = "go build -o /benchmark /benchmark.go && /benchmark " + container_file_path
+        command.append(benchmark_command)
 
     try:
         if stdin:
@@ -324,8 +341,11 @@ def execute_inside_container(language, file_path, stdin=None):
 
     if language == "python3":
         image_name = "python:3.11"
+    elif language == "go":
+        image_name = "golang:1.21"
     else:
-        raise ValueError("Unsupported language")
+        language = "python3"
+        image_name = "python:3.11"
 
     command = [
         "podman",
@@ -335,9 +355,15 @@ def execute_inside_container(language, file_path, stdin=None):
         f"{host_file_path}:{container_file_path}",
         "-i",
         image_name,
-        language,
-        container_file_path,
     ]
+
+    if language == "python3":
+        command.append(language)
+        command.append(container_file_path)
+    elif language == "go":
+        command.append(language)
+        command.append("run")
+        command.append(container_file_path)
 
     try:
         if stdin:
@@ -471,19 +497,21 @@ def delete_exercise(exercise_id):
 
 def run_exercise(ex, exercise_id, user_code):
     username = session["username"]
-    file_path = save_user_code(username, exercise_id, user_code)
-    top_scores = get_top_scores(exercise_id)
+    language = ex["language"]
+    file_path = save_user_code(username, exercise_id, user_code, language)
+    top_scores = get_top_scores(exercise_id, language)
 
-    mypy_error_count, stdout_mypy = run_command(["mypy", "--strict", file_path])
+    if language == "python3":
+        mypy_error_count, stdout_mypy = run_command(["mypy", "--strict", file_path])
 
-    black_error, stdout_black = run_command(["black", "--check", "--diff", file_path])
-    black_error = 1 if stdout_black else 0
+        black_error, stdout_black = run_command(["black", "--check", "--diff", file_path])
+        black_error = 1 if stdout_black else 0
 
-    pylint_error, stdout_pylint = run_command(
-        ["pylint", "--disable=C0103", "--score=no", file_path]
-    )
+        pylint_error, stdout_pylint = run_command(
+            ["pylint", "--disable=C0103", "--score=no", file_path]
+        )
 
-    flake8_error_count, stdout_flake8 = run_command(["flake8", file_path])
+        flake8_error_count, stdout_flake8 = run_command(["flake8", file_path])
 
     result = execute_and_validate(ex, file_path, user_code)
 
@@ -496,19 +524,35 @@ def run_exercise(ex, exercise_id, user_code):
     ex["code"] = user_code
 
     total_score = ex["score"]
-    total_score, result = adjust_score_and_results(
-        total_score,
-        mypy_error_count,
-        black_error,
-        pylint_error,
-        flake8_error_count,
-        result,
-        stdout_mypy,
-        stdout_black,
-        stdout_pylint,
-        stdout_flake8,
-        ex["score"]
-    )
+
+    if language == "python3":
+        total_score, result = adjust_score_and_results(
+            total_score,
+            mypy_error_count,
+            black_error,
+            pylint_error,
+            flake8_error_count,
+            result,
+            stdout_mypy,
+            stdout_black,
+            stdout_pylint,
+            stdout_flake8,
+            ex["score"]
+        )
+    else:
+        total_score, result = adjust_score_and_results(
+            total_score,
+            0,
+            0,
+            0,
+            0,
+            result,
+            "",
+            "",
+            "",
+            "",
+            ex["score"]
+        )
 
     if total_score < ex["score"]:
         result["type"] = "warning"
@@ -521,14 +565,14 @@ def run_exercise(ex, exercise_id, user_code):
 
     if exercise_id != 0:
         total_score, result = update_user_score(
-            user, exercise_id, total_score, result, benchmark_time
+            user, language, exercise_id, total_score, result, benchmark_time
         )
 
     if total_score == ex["score"]:
         result["full_score"] = True
 
     result["message"] += f' You have earned {total_score}/{ex["score"]} points!'
-    top_scores = get_top_scores(exercise_id)
+    top_scores = get_top_scores(exercise_id, language)
 
     return result, top_scores
 
@@ -573,8 +617,8 @@ def adjust_score_and_results(
     return total_score, result
 
 
-def update_user_score(user, exercise_id, total_score, result, benchmark_time):
-    score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise_id).first()
+def update_user_score(user, language, exercise_id, total_score, result, benchmark_time):
+    score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise_id, language=language).first()
 
     if score:
         if total_score > score.total_score or benchmark_time < score.execution_time:
@@ -583,7 +627,7 @@ def update_user_score(user, exercise_id, total_score, result, benchmark_time):
         score.total_score = total_score
         score.execution_time = benchmark_time
     else:
-        score = ExerciseScore(user_id=user.id, exercise_id=exercise_id, total_score=total_score,
+        score = ExerciseScore(user_id=user.id, language=language, exercise_id=exercise_id, total_score=total_score,
                               execution_time=benchmark_time)
 
     db.session.add(score)
@@ -592,7 +636,7 @@ def update_user_score(user, exercise_id, total_score, result, benchmark_time):
     return total_score, result
 
 
-def get_top_scores(exercise_id):
+def get_top_scores(exercise_id, language):
     try:
         top_scores = (
             db.session.query(
@@ -605,6 +649,7 @@ def get_top_scores(exercise_id):
             .join(ExerciseScore, User.id == ExerciseScore.user_id)
             .join(Team, User.team_id == Team.id, isouter=True)
             .filter(ExerciseScore.exercise_id == exercise_id)
+            .filter(ExerciseScore.language == language)
             .group_by(User.username, Team.logo)
             .order_by(db.desc("total_score"), "execution_time")
             .all()
@@ -617,7 +662,7 @@ def get_top_scores(exercise_id):
         return []
 
 
-def get_all_daily_top_scores():
+def get_all_daily_top_scores(language):
     try:
         top_scores = (
             db.session.query(
@@ -630,6 +675,7 @@ def get_all_daily_top_scores():
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(Team, User.team_id == Team.id)
             .filter(ExerciseScore.date_created >= db.func.date('now', '-1 day'))
+            .filter(ExerciseScore.language == language)
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
             .all()
@@ -642,7 +688,7 @@ def get_all_daily_top_scores():
         return []
 
 
-def get_all_top_scores():
+def get_all_top_scores(language):
     try:
         top_scores = (
             db.session.query(
@@ -654,6 +700,7 @@ def get_all_top_scores():
             )
             .outerjoin(ExerciseScore, User.id == ExerciseScore.user_id)
             .outerjoin(Team, User.team_id == Team.id)
+            .filter(ExerciseScore.language == language)
             .group_by(User.username, Team.logo)
             .order_by(db.desc('total_score'), 'execution_time')
             .having(db.func.sum(ExerciseScore.total_score) > 0)
@@ -679,6 +726,7 @@ def exercise(exercise_id):
         return render_template("/exercise/404.html", user=user)
 
     num_of_exercises = len(exercises)
+    language = request.args.get('lang', 'python3')
 
     if request.method == "POST":
         description = request.form.get("description", None)
@@ -696,6 +744,7 @@ def exercise(exercise_id):
             return redirect(url_for("exercise", exercise_id=exercise_id))
 
         user_code = request.form["code"]
+        ex["language"] = language
         result, top_scores = run_exercise(ex, exercise_id, user_code)
         return render_template(
             "/exercise/exercise.html",
@@ -706,14 +755,13 @@ def exercise(exercise_id):
             top_scores=top_scores,
         )
 
-    print(f"{user.username} is opening... {exercise_id}")
-    user_code = get_user_code(user.username, exercise_id)
+    user_code = get_user_code(user.username, exercise_id, language)
 
     if user_code:
         ex["code"] = user_code
         print(user_code)
 
-    top_scores = get_top_scores(exercise_id)
+    top_scores = get_top_scores(exercise_id, language)
 
     return render_template(
         "/exercise/exercise.html",

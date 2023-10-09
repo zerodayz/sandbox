@@ -132,7 +132,6 @@ class Exercise(db.Model):
     sample_3_input = db.Column(db.Text)
     sample_3_output = db.Column(db.BLOB)
     code = db.Column(db.Text)
-    language = db.Column(db.String)
     exercise_difficulty = db.Column(db.Enum(DifficultyEnum), nullable=False)
     added_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     score = db.Column(db.Integer)
@@ -153,6 +152,7 @@ class ExerciseScore(db.Model):
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
     execution_time = db.Column(db.Float, nullable=True)
+    language = db.Column(db.String, nullable=True)
     date_created = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
 

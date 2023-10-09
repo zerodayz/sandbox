@@ -60,11 +60,20 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header sticky">
-                        <i class="bi bi-box-fill pe-none me-2" width="30" height="24"></i>
-                        <span class="fs-5 fw-semibold">
-                            Exercises
-                        </span>
+                    <div class="card-header solution-header d-flex align-items-center sticky">
+                        <div class="flex-grow-1">
+                            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                            <span class="fs-5 fw-semibold">Exercises</span>
+                        </div>
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary text-white dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">Python3</button>
+                                <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                    <li><a class="dropdown-item" href="{{ url_for('exercise_app', lang='python3') }}">Python3</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('exercise_app', lang='go') }}">Go</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body-list">
                         <table class="table table-striped">
@@ -81,7 +90,7 @@
                                     <i class="bi bi-trophy-fill pe-none me-2 text-bronze"></i>
                                     {% endif %}
                                     {% endfor %}
-                                    <a href="{{ url_for('exercise', exercise_id=exercise['id']) }}">{{ exercise.title | safe }}</a>
+                                    <a href="{{ url_for('exercise', exercise_id=exercise['id'], lang=request.args.get('lang', 'python3')) }}">{{ exercise.title | safe }}</a>
                                     <br/>
                                     <small>{{ exercise.description | safe }}</small>
                                     <br/>
@@ -178,9 +187,11 @@
         </div>
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header sticky">
-                    <i class="bi bi-box pe-none me-2"></i>
-                    <span class="fs-5 fw-bold">Individual Top Scores</span>
+                <div class="card-header solution-header d-flex align-items-center sticky">
+                    <div class="flex-grow-1">
+                        <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Individual Top Scores</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -250,4 +261,16 @@
         padding: 16px;
     }
 </style>
+<script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const lang = urlParams.get('lang') || 'python3';
+    if (lang) {
+        if (lang === 'go') {
+            document.getElementById('languageDropdown').textContent = 'Go';
+        } else if (lang === 'python3') {
+            document.getElementById('languageDropdown').textContent = 'Python3';
+        }
+    }
+</script>
 {% endblock %}

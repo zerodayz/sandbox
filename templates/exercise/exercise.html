@@ -146,7 +146,6 @@
                 <a onclick="updateCode()" class="btn btn-primary text-white mb-4">Update</a>
             </div>
             <span class="badge bg-secondary">{{ exercise['exercise_difficulty'] }}</span>
-            <span class="badge bg-secondary">{{ exercise['language'] }}</span>
           </div>
         </div>
         {% for sample_num in range(1, 4) %}
@@ -181,9 +180,20 @@
         {% endfor %}
 
         <div class="card mt-4">
-          <div class="card-header">
-            <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">Your Solution</span>
+          <div class="card-header solution-header d-flex align-items-center">
+            <div class="flex-grow-1">
+              <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
+              <span class="fs-5 fw-semibold">Your Solution</span>
+            </div>
+            <div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-secondary text-white dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">Python3</button>
+                <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                  <li><a class="dropdown-item" href="{{ url_for('exercise', exercise_id=exercise.id, lang='python3') }}">Python3</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('exercise', exercise_id=exercise.id, lang='go') }}">Go</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
           <div class="card-body" style="padding: 0px !important;">
             <form method="post" id="code-form">
@@ -287,11 +297,24 @@
   editor.session.setMode("ace/mode/python");
   spinner.style.display = "none";
 
+
   document.addEventListener('DOMContentLoaded', function() {
     const markdownContent = document.getElementById('card-text');
     markdownContent.innerHTML = marked.parse(markdownText);
   });
 
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const lang = urlParams.get('lang') || 'python3';
+  if (lang) {
+    if (lang === 'go') {
+      document.getElementById('languageDropdown').textContent = 'Go';
+      editor.session.setMode("ace/mode/golang");
+    } else if (lang === 'python3') {
+      document.getElementById('languageDropdown').textContent = 'Python3';
+      editor.session.setMode("ace/mode/python");
+    }
+  }
   function showSpinner() {
     spinner.style.display = "block";
   }
@@ -350,8 +373,14 @@
     filenameInput.setAttribute("name", "filename");
     filenameInput.setAttribute("value", filename);
 
+    var languageInput = document.createElement("input");
+    languageInput.setAttribute("type", "hidden");
+    languageInput.setAttribute("name", "language");
+    languageInput.setAttribute("value", lang);
+
     form.appendChild(codeInput);
     form.appendChild(filenameInput);
+    form.appendChild(languageInput);
 
     document.body.appendChild(form);
     showSpinner();

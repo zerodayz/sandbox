@@ -162,7 +162,8 @@
 <script src="/static/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
-    const markdownText = {{ markdown_content|tojson|safe }};
+    var markdownText = '{{ markdown_content|tojson|safe }}';
+    markdownText = markdownText.substring(1, markdownText.length - 1);
     var post_editor = ace.edit("editor-4");
     post_editor.session.setMode("ace/mode/markdown");
     post_editor.setValue(markdownText);
