@@ -300,16 +300,10 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
         f"{host_file_path}:{container_file_path}",
         "-i",
         image_name,
+        language,
+        benchmark_file_path,
+        container_file_path,
     ]
-    if language == "python3":
-        command.append(language)
-        command.append(benchmark_file_path)
-        command.append(container_file_path)
-    elif language == "go":
-        command.append("/bin/sh")
-        command.append("-c")
-        benchmark_command = "go build -o /benchmark /benchmark.go && /benchmark " + container_file_path
-        command.append(benchmark_command)
 
     try:
         if stdin:
