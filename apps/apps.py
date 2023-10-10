@@ -389,7 +389,7 @@ def execute_inside_container(language, file_path, stdin=None):
     return stdout.decode("utf-8"), stderr.decode("utf-8")
 
 
-def execute_subprocess(command, cwd=None, stdin=None, timeout=10):
+def execute_subprocess(command, cwd=None, stdin=None, timeout=15):
     try:
         process = subprocess.Popen(
             command,
