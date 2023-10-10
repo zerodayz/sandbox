@@ -32,5 +32,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("%.3f", elapsed)
+	fmt.Printf("%f", elapsed)
 }
