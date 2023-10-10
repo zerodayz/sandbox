@@ -1,7 +1,7 @@
 import os
 import tarfile
 import subprocess
-from threading import Timer
+from threading import Timer, Thread
 
 from flask import (flash, jsonify, redirect, render_template, request, session,
                    url_for, send_from_directory)
@@ -415,8 +415,9 @@ def execute_subprocess(command, cwd=None, stdin=None, timeout=10):
 def execute_benchmark_and_validate(ex, file_path, user_code):
     sample_inputs = ["sample_1_input", "sample_2_input", "sample_3_input"]
     sample_outputs = ["sample_1_output", "sample_2_output", "sample_3_output"]
-    execution_time = []
-    for input_key, output_key in zip(sample_inputs, sample_outputs):
+    execution_times = []
+
+    def benchmark_example(input_key, output_key):
         if input_key in ex and output_key in ex:
             if ex[input_key] is not None and ex[output_key] is not None:
                 stdin = ex[input_key]
@@ -424,18 +425,27 @@ def execute_benchmark_and_validate(ex, file_path, user_code):
                 stdout, stderr = execute_benchmark_inside_container(
                     ex["language"], file_path, stdin=stdin
                 )
-                execution_time.append(float(stdout))
+                execution_times.append(float(stdout))
             elif ex[output_key] is not None:
                 expected_output = ex[output_key]
                 stdout, stderr = execute_benchmark_inside_container(ex["language"], file_path)
-                execution_time.append(float(stdout))
+                execution_times.append(float(stdout))
         elif output_key in ex:
             if ex[output_key] is not None:
                 expected_output = ex[output_key]
                 stdout, stderr = execute_benchmark_inside_container(ex["language"], file_path)
-                execution_time.append(float(stdout))
+                execution_times.append(float(stdout))
 
-    average_execution_time = sum(execution_time) / len(execution_time)
+    threads = []
+    for input_key, output_key in zip(sample_inputs, sample_outputs):
+        thread = Thread(target=benchmark_example, args=(input_key, output_key))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    average_execution_time = sum(execution_times) / len(execution_times)
     return average_execution_time
 
 
@@ -445,14 +455,12 @@ def execute_and_validate(ex, file_path, user_code):
     sample_inputs = ["sample_1_input", "sample_2_input", "sample_3_input"]
     sample_outputs = ["sample_1_output", "sample_2_output", "sample_3_output"]
 
-    for input_key, output_key in zip(sample_inputs, sample_outputs):
+    def validate_example(input_key, output_key):
         if input_key in ex and output_key in ex:
             if ex[input_key] is not None and ex[output_key] is not None:
                 stdin = ex[input_key]
                 expected_output = ex[output_key]
-                stdout, stderr = execute_inside_container(
-                    ex["language"], file_path, stdin=stdin
-                )
+                stdout, stderr = execute_inside_container(ex["language"], file_path, stdin=stdin)
             elif ex[output_key] is not None:
                 expected_output = ex[output_key]
                 stdout, stderr = execute_inside_container(ex["language"], file_path)
@@ -471,6 +479,17 @@ def execute_and_validate(ex, file_path, user_code):
         else:
             result["stdout"] = stdout
             result["stderr"] = stderr
+
+        return result
+
+    threads = []
+    for input_key, output_key in zip(sample_inputs, sample_outputs):
+        thread = Thread(target=validate_example, args=(input_key, output_key))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
     return result
 
