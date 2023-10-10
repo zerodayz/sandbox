@@ -287,8 +287,8 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
         host_benchmark_file_path = os.path.join(current_dir, "benchmark.py")
     elif language == "go":
         image_name = "golang:1.21"
-        benchmark_file_path = os.path.join("/", "benchmark")
-        host_benchmark_file_path = os.path.join(current_dir, "benchmark")
+        benchmark_file_path = os.path.join("/", "benchmark.go")
+        host_benchmark_file_path = os.path.join(current_dir, "benchmark.go")
 
     command = [
         "podman",
@@ -307,8 +307,10 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
         command.append(benchmark_file_path)
         command.append(container_file_path)
     elif language == "go":
-        command.append(benchmark_file_path)
-        command.append(container_file_path)
+        command.append("/bin/sh")
+        command.append("-c")
+        benchmark_command = "go build -o /benchmark /benchmark.go && /benchmark " + container_file_path
+        command.append(benchmark_command)
 
     try:
         if stdin:
