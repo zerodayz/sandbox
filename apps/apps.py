@@ -276,7 +276,7 @@ def get_user_code(username, exercise_id, language):
     return None
 
 
-def execute_benchmark_inside_container(language, file_path, stdin=None):
+def execute_benchmark_inside_container(language, file_path, stdin=None, timeout=15):
     current_dir = os.getcwd()
     container_file_path = os.path.join("/", os.path.basename(file_path))
     host_file_path = os.path.join(current_dir, file_path)
@@ -321,12 +321,12 @@ def execute_benchmark_inside_container(language, file_path, stdin=None):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            stdout, stderr = process.communicate(input=bytes_stdin, timeout=10)
+            stdout, stderr = process.communicate(input=bytes_stdin, timeout=timeout)
         else:
             process = subprocess.Popen(
                 command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
-            stdout, stderr = process.communicate(timeout=10)
+            stdout, stderr = process.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
         process.kill()
         stdout = b""
