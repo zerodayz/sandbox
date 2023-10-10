@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 certs
+benchmark
 static/.sass-cache/
 teams/**/
 users/**/
