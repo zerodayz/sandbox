@@ -351,6 +351,21 @@ def ctf(ctf_id):
     num_of_ctfs = len(ctfs)
 
     if request.method == "POST":
+        description = request.form.get("description", None)
+        title = request.form.get("title", None)
+        if description and title:
+            ctf_d = Ctf.query.filter_by(id=ctf_id).first()
+            user = User.query.filter_by(username=session["username"]).first()
+            if user.id != ctf_d.added_by_user_id:
+                flash("You are not allowed to edit this ctf", "danger")
+                return redirect(url_for("ctf", ctf_id=ctf_id))
+
+            ctf_d.description = description.encode("utf-8")
+            ctf_d.title = title
+            db.session.commit()
+            flash("Updated successfully", "success")
+            return redirect(url_for("ctf", ctf_id=ctf_id))
+
         user_code = request.form["code"]
         result, top_scores = run_ctf(ex, ctf_id, user_code)
         return render_template(

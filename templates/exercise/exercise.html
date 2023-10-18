@@ -131,11 +131,14 @@
         </div>
         <div class="card">
           <div class="card-header sticky">
+            {% if exercise['added_by_user_id'] == user.id %}
+            <span id="edit-button" class="edit-button" onclick="updateDescription()"><i class="bi bi-pencil-fill pe-none me-2" width="30" height="24"></i></span>
+            {% else %}
             <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
-            <span class="fs-5 fw-semibold">{{ exercise['title'] }}
-              {% if exercise['added_by_user_id'] == user.id %}<span id="edit-button" class="edit-button" onclick="updateDescription()"><i class="bi bi-pencil-fill pe-none ms-2" width="30" height="24"></i></span>{% endif %}
+            {% endif %}
+            <span class="fs-5 fw-semibold">
+              <input type="text" id="title" class="input-as-span" value="{% if exercise['title'] %}{{ exercise['title'] }}{% endif %}" placeholder="{% if exercise['title'] %}{{ exercise['title'] }}{% else %}Type your title here{% endif %}">
             </span>
-
           </div>
           <div class="card-body">
             <div id="card-text"></div>
@@ -330,7 +333,13 @@
     descriptionInput.setAttribute("name", "description");
     descriptionInput.setAttribute("value", description);
 
+    var titleInput = document.createElement("input");
+    titleInput.setAttribute("type", "hidden");
+    titleInput.setAttribute("name", "title");
+    titleInput.setAttribute("value", document.getElementById("title").value);
+
     form.appendChild(descriptionInput);
+    form.appendChild(titleInput);
 
     document.body.appendChild(form);
     showSpinner();

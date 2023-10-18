@@ -750,7 +750,8 @@ def exercise(exercise_id):
 
     if request.method == "POST":
         description = request.form.get("description", None)
-        if description:
+        title = request.form.get("title", None)
+        if description and title:
             ex["description"] = description
             exercise = Exercise.query.filter_by(id=exercise_id).first()
             user = User.query.filter_by(username=session["username"]).first()
@@ -759,8 +760,9 @@ def exercise(exercise_id):
                 return redirect(url_for("exercise", exercise_id=exercise_id))
 
             exercise.description = description
+            exercise.title = title
             db.session.commit()
-            flash("Description updated successfully", "success")
+            flash("Updated successfully", "success")
             return redirect(url_for("exercise", exercise_id=exercise_id))
 
         user_code = request.form["code"]
