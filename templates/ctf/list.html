@@ -71,7 +71,7 @@
                             <tbody>
                             {% for ctf in ctfs %}
                             <tr>
-                                <td>
+                                <td style="max-width: 300px;">
                                     <a href="{{ url_for('ctf', ctf_id=ctf['id']) }}">{{ ctf.title | safe }}</a>
                                     <br/>
                                     <small>{{ ctf.description.decode('utf-8') }}</small>
