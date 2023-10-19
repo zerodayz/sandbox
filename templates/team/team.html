@@ -83,7 +83,16 @@
                             {% if team.logo %}
                             <img width="24" height="24" src="data:image/png;base64, {{ team.logo.decode('utf-8') if team.logo else '' }}"/>
                             {% endif %}
-                            {{ team.name if team else 'No Team' }}</p>
+                            {{ team.name if team else 'No Team' }}
+                            {% if team %}
+                            <br>Role:
+                                {% if team.owner_id == user.id %}
+                                    Captain
+                                {% else %}
+                                    Member
+                            {% endif %}
+                        </p>
+                        {% endif %}
                             {% if user.team_id %}
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveTeamModal">Leave</button>
                             {% endif %}
@@ -143,6 +152,26 @@
                 </div>
                 {% endif %}
                 {% if team and team.owner_id == user.id %}
+                <div class="card mt-4">
+                    <div class="card-header sticky">
+                        <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>
+                        <span class="fs-5 fw-semibold">Change Captain</span>
+                    </div>
+                    <div class="card-body">
+                        <span>
+                            <form method="post" action="/team/update">
+                                <label for="new_owner" class="form-label">Username</label>
+                                    <select class="form-select" name="new_owner" id="new_owner" required>
+                                    {% for member in members %}
+                                        <option value="{{ member.id }}">{{ member.username }}</option>
+                                    {% endfor %}
+                                    </select>
+                                <br/>
+                                <button type="submit" class="btn btn-danger">Transfer</button>
+                            </form>
+                        </span>
+                    </div>
+                </div>
                 <div class="card mt-4">
                     <div class="card-header sticky">
                         <i class="bi bi-people-fill pe-none me-2" width="30" height="24"></i>

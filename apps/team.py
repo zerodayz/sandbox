@@ -117,8 +117,12 @@ def leave_team():
         username = session["username"]
         user = User.query.filter_by(username=username).first()
         members = User.query.filter_by(team_id=user.team_id).all()
+        team = Team.query.get(user.team_id)
         if len(members) == 1:
             flash("You are the last member of the team. Please delete the team instead.", "danger")
+            return redirect(url_for("get_user_team"))
+        elif user.team_id == team.owner_id:
+            flash("You are the captain of this team. Please transfer ownership first.", "danger")
             return redirect(url_for("get_user_team"))
         try:
             user = User.query.filter_by(username=username).first()
@@ -196,6 +200,15 @@ def update_user_team():
             flash("You are not the owner of this team.", "danger")
             return redirect(url_for("user_profile"))
 
+        if new_owner := request.form.get("new_owner", None):
+            new_owner = User.query.filter_by(id=new_owner).first()
+            if new_owner:
+                team.owner_id = new_owner.id
+                db.session.commit()
+                flash(f"Successfully transferred ownership to {new_owner.username}.", "success")
+            else:
+                flash("User not found.", "danger")
+
         new_team_name = request.form.get("team_name", None)
 
         existing_team = Team.query.filter_by(name=new_team_name).first()
@@ -252,8 +265,9 @@ def get_user_team():
         if user.team_id:
             team_id = user.team_id
             user_team = Team.query.get(team_id)
+            members = User.query.filter_by(team_id=user.team_id).all()
 
-        return render_template("/team/team.html", user=user, team=user_team)
+        return render_template("/team/team.html", user=user, team=user_team, members=members)
 
     try:
         user = User.query.filter_by(username=username).first()
