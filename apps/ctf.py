@@ -188,10 +188,10 @@ def get_team_code(team, ctf_id):
     return None
 
 
-def execute_and_validate(ex, user_code):
+def execute_and_validate(ex, ctf_id, user_code):
     result = {"type": "", "message": "", "stdout": "", "stderr": ""}
     expected_output = ex['solution']
-    if expected_output == '':
+    if expected_output == '' and ctf_id != 0:
         result["type"] = "danger"
         result["message"] = "That is not the correct solution."
         ex["code"] = user_code
@@ -234,7 +234,7 @@ def run_ctf(ex, ctf_id, user_code):
     save_team_code(user_team.name, ctf_id, user_code)
 
     top_scores = get_top_scores(ctf_id)
-    result = execute_and_validate(ex, user_code)
+    result = execute_and_validate(ex, ctf_id, user_code)
 
     if result["type"] == "danger":
         return result, top_scores
