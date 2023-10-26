@@ -261,6 +261,7 @@ def get_user_team():
     username = session["username"]
     if request.method == "GET":
         user = User.query.filter_by(username=username).first()
+        members = []
         user_team = []
         if user.team_id:
             team_id = user.team_id
