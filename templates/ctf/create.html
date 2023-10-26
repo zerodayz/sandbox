@@ -388,20 +388,14 @@
       alert("Please select a difficulty");
       return;
     }
-    if (codeInput.value === "") {
-      alert("Please write your code");
-      return;
-    }
-    if (solutionInput == null) {
-      alert("Please fill out the flag");
-      return;
-    }
 
 
     form.appendChild(titleInput);
     form.appendChild(descriptionInput);
     form.appendChild(actionInput);
-    form.appendChild(codeInput);
+    if (codeInput != null) {
+      form.appendChild(codeInput);
+    }
     form.appendChild(difficultyInput);
     if (solutionInput != null) {
       form.appendChild(solutionInput);

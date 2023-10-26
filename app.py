@@ -12,6 +12,7 @@ from apps.team import (delete_team, get_user_team, invite_user_to_team, join_tea
 from apps.user import user_profile, create_user, user_dashboard
 from apps.ctf import add_ctf, delete_ctf, ctf, ctf_app, protected_ctf
 from apps.upload import upload_file, serve_uploaded_file
+from apps.challenge import challenge_checksum
 from apps.forum import (create_post, delete_comment, delete_post, forum_board, forum_search, edit_post,
                         create_new_as_template,
                         view_post, create_category, edit_category, delete_category, view_category)
@@ -88,6 +89,7 @@ app.route("/ctf/<int:ctf_id>", methods=["GET", "POST"])(ctf)
 app.route("/protected_ctf/<int:ctf_id>", methods=["GET", "POST"])(protected_ctf)
 app.route("/ctf/create", methods=["GET", "POST"])(add_ctf)
 app.route("/ctf/<int:ctf_id>/delete", methods=["POST"])(delete_ctf)
+app.route("/ctf/challenge/checksum", methods=["POST"])(challenge_checksum)
 
 # Register the exercises routes
 app.route("/exercises", methods=["GET"])(exercise_app)

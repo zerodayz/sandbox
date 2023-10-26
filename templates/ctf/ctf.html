@@ -107,7 +107,7 @@
                         <span class="badge bg-secondary">{{ ctf['ctf_difficulty'] }}</span>
                     </div>
                 </div>
-                <div class="card mt-4">
+                <div class="card mt-4" style="{% if ctf['solution'] == '' %}display: none{% endif %}" >
                     <div class="card-header">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
                         <span class="fs-5 fw-semibold">Your Flag</span>
@@ -120,7 +120,9 @@
                         </form>
                     </div>
                 </div>
+                {% if ctf['solution'] %}
                 <a href="#" class="btn btn-primary text-white mt-4" onclick="saveCode()">Submit</a>
+                {% endif %}
                 <div class="card mt-4">
                     <div class="card-header sticky">
                         <i class="bi bi-box pe-none me-2" width="30" height="24"></i>
@@ -209,7 +211,6 @@
     var spinner = document.getElementById("spinner");
     editor.session.setMode("ace/mode/python");
     spinner.style.display = "none";
-
     function saveCode() {
         var filename = "{{ ctf['id'] }}.py";
         var code = editor.getValue();

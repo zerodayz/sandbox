@@ -106,7 +106,7 @@ def add_ctf():
         password = request.form.get("password", None)
         next_password = request.form.get("next_password", None)
         next_text = request.form.get("next_text", None)
-        solution = request.form["solution"]
+        solution = request.form.get("solution", '')
 
         ctf_difficulty = request.form["difficulty"]
         username = session.get("username", None)
@@ -191,6 +191,11 @@ def get_team_code(team, ctf_id):
 def execute_and_validate(ex, user_code):
     result = {"type": "", "message": "", "stdout": "", "stderr": ""}
     expected_output = ex['solution']
+    if expected_output == '':
+        result["type"] = "danger"
+        result["message"] = "That is not the correct solution."
+        ex["code"] = user_code
+        return result
     if user_code != expected_output:
         result["type"] = "danger"
         result["message"] = "That is not the correct solution."
