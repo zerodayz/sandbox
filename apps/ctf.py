@@ -44,6 +44,7 @@ def ctf_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
+    user = user_utils.get_user_by_username(session["username"])
     page = request.args.get('page', 1, type=int)
     items_per_page = 10
 
@@ -80,6 +81,12 @@ def ctf_app():
 
         if ctf.user.team_id:
             ctf.user.team = Team.query.get(ctf.user.team_id)
+
+        ctf_score = CtfScore.query.filter_by(ctf_id=ctf.id, team_id=user.team_id).first()
+        if ctf_score:
+            ctf.solved = True
+        else:
+            ctf.solved = False
 
     top_scores = get_all_top_scores()
 

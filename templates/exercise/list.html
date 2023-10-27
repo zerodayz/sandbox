@@ -82,6 +82,9 @@
                             {% for exercise in exercises %}
                             <tr>
                                 <td>
+                                    {% if exercise.solved %}
+                                    <i class="bi bi-check-circle-fill pe-none me-2 text-success" width="30" height="24"></i>
+                                    {% endif %}
                                     {% for score in exercise.rank %}
                                     {% if loop.index0 == 0 and score == session['username'] %}
                                     <i class="bi bi-trophy-fill pe-none me-2 text-warning"></i>

@@ -92,6 +92,7 @@ def exercise_app():
     if "username" not in session:
         return redirect(url_for("login"))
 
+    user = user_utils.get_user_by_username(session["username"])
     page = request.args.get('page', 1, type=int)
     items_per_page = 10
 
@@ -129,6 +130,13 @@ def exercise_app():
             if score[0]:
                 rank.append(score[0])
         exercise.rank = rank
+
+        exercise_score = ExerciseScore.query.filter_by(user_id=user.id, exercise_id=exercise.id,
+                                                       language=language).first()
+        if exercise_score:
+            exercise.solved = True
+        else:
+            exercise.solved = False
 
     top_scores = get_all_top_scores(language)
 
